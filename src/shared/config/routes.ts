@@ -8,9 +8,10 @@ export const ROUTES = {
   document: "/document",
   mypage: "/mypage",
   search: "/search",
+  /** 아직 작성되지 않은 문서로 이동했을 때 보이는 화면 (404 핸들러가 아니다) */
+  missingDocument: "/missing-document",
 
   /** 아직 포팅하지 않은 화면. 각 화면을 구현할 때 실제 경로로 교체한다. */
   edit: "#",
   history: "#",
-  missingDocument: "#",
 } as const;
