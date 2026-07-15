@@ -103,7 +103,7 @@ export function DocumentTopNav({
                 링크 복사
               </div>
               <Link
-                href="#"
+                href="/document/history"
                 className="block cursor-pointer rounded-[7px] px-[11px] py-[9px] text-[13.5px] text-fg-muted hover:bg-[#262a31]"
               >
                 편집 역사 전체 보기

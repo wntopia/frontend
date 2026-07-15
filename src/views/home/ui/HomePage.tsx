@@ -9,7 +9,7 @@ const pages = [
   { href: "/document", label: "문서 상세 페이지", status: "구현됨" },
   { href: "#", label: "문서없음", status: "예정" },
   { href: "#", label: "편집", status: "예정" },
-  { href: "#", label: "편집역사", status: "예정" },
+  { href: "/document/history", label: "편집역사", status: "구현됨" },
 ];
 
 export function HomePage() {

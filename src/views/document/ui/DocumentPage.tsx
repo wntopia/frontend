@@ -211,7 +211,10 @@ export function DocumentPage() {
             <div className="mt-4 rounded-[14px] border border-line bg-surface p-4">
               <div className="mb-4 flex items-center justify-between">
                 <div className="text-[13px] font-bold text-fg">편집 역사</div>
-                <Link href="#" className="text-[11.5px] text-accent">
+                <Link
+                  href="/document/history"
+                  className="text-[11.5px] text-accent"
+                >
                   전체
                 </Link>
               </div>
