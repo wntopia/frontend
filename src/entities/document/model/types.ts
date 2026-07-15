@@ -29,6 +29,15 @@ export type PopularDocument = {
   views: number;
 };
 
+/** 이 문서를 링크하고 있는 다른 문서 */
+export type Backlink = {
+  id: string;
+  title: string;
+  href: string;
+  /** 링크가 걸린 위치 (예: "개요 문단", "인기 문서") */
+  section: string;
+};
+
 /** 검색 결과 본문 발췌의 한 조각. highlight는 검색어와 일치해 강조되는 부분이다. */
 export type SnippetSegment = {
   text: string;
