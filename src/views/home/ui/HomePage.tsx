@@ -9,7 +9,7 @@ import { WikiStats } from "@/widgets/wiki-stats";
 export function HomePage() {
   return (
     <div className="min-h-screen bg-bg text-fg">
-      <Header variant="full" />
+      <Header variant="home" />
       <HomeHero />
 
       <div className="mx-auto flex max-w-[1120px] gap-10 px-8 pb-[100px] pt-5">
