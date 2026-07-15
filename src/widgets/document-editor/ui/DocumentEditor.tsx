@@ -7,6 +7,7 @@ type DocumentEditorProps = {
   title: string;
   /** 위키 문법으로 된 본문 */
   content: string;
+  onContentChange: (content: string) => void;
   showPreview: boolean;
 };
 
@@ -14,6 +15,7 @@ type DocumentEditorProps = {
 export function DocumentEditor({
   title,
   content,
+  onContentChange,
   showPreview,
 }: DocumentEditorProps) {
   return (
@@ -29,7 +31,8 @@ export function DocumentEditor({
       ) : (
         <textarea
           aria-label="본문"
-          defaultValue={content}
+          value={content}
+          onChange={(event) => onContentChange(event.target.value)}
           placeholder={TEXTAREA_PLACEHOLDER}
           className="h-[480px] w-full resize-y rounded-xl border border-line bg-[#131417] p-[22px] font-mono text-sm leading-[1.9] text-[#d2d6db] outline-none placeholder:text-[#4a4f57]"
         />

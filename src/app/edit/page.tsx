@@ -1,0 +1,8 @@
+import type { Metadata } from "next";
+import { EditPage } from "@/views/edit";
+
+export const metadata: Metadata = {
+  title: "편집 · 금성위키",
+};
+
+export default EditPage;
