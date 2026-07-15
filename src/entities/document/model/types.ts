@@ -28,3 +28,21 @@ export type PopularDocument = {
   href: string;
   views: number;
 };
+
+/** 검색 결과 본문 발췌의 한 조각. highlight는 검색어와 일치해 강조되는 부분이다. */
+export type SnippetSegment = {
+  text: string;
+  highlight?: boolean;
+};
+
+/** 검색 결과 목록의 한 항목 */
+export type SearchResult = {
+  id: string;
+  title: string;
+  href: string;
+  snippet: SnippetSegment[];
+  /** 아직 작성되지 않은 문서. 붉은 제목과 '미작성' 뱃지로 표시된다. */
+  missing?: boolean;
+  /** 미작성 문서에는 수정 이력이 없다 */
+  lastModified?: string;
+};
