@@ -35,7 +35,7 @@ export function Header({ variant = "minimal" }: HeaderProps) {
             <div className="flex-1" />
             <Link
               href={ROUTES.search}
-              className="flex w-60 items-center gap-2 rounded-[9px] border border-line bg-surface-2 px-3 py-2 text-[13px] text-fg-subtle"
+              className="flex w-60 items-center gap-2 rounded-[9px] border border-line bg-surface-2 px-3 py-2 text-[13px] text-fg-subtle hover:text-fg-subtle"
             >
               <span className="inline-block h-[13px] w-[13px] flex-shrink-0 rounded-full border-[1.5px] border-fg-subtle" />
               문서 검색
@@ -45,7 +45,7 @@ export function Header({ variant = "minimal" }: HeaderProps) {
             </Link>
             <Link
               href={ROUTES.mypage}
-              className="flex h-[34px] w-[34px] flex-shrink-0 items-center justify-center rounded-full border border-line-strong bg-elevated text-[12.5px] font-bold text-fg-muted"
+              className="flex h-[34px] w-[34px] flex-shrink-0 items-center justify-center rounded-full border border-line-strong bg-elevated text-[12.5px] font-bold text-fg-muted hover:text-fg-muted"
             >
               이
             </Link>
