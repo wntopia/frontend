@@ -6,15 +6,20 @@ const CONTAINER_WIDTH = {
   minimal: "max-w-[1000px]",
   home: "max-w-[1120px]",
   search: "max-w-[900px]",
+  plain: "max-w-[760px]",
 } as const;
+
+/** plain을 뺀 나머지는 스크롤 시 상단에 고정되고 배경이 흐려진다. */
+const STICKY = "sticky top-0 z-50 bg-bg/85 backdrop-blur-[10px]";
 
 type HeaderProps =
   | {
       /**
        * minimal: 로고만 노출하는 기본 형태
        * home: 검색 진입점과 프로필 아바타를 함께 노출
+       * plain: 로고만 노출하며 고정되지 않는 좁은 형태 (집중형 화면용)
        */
-      variant?: "minimal" | "home";
+      variant?: "minimal" | "home" | "plain";
     }
   | {
       /** search: 검색어가 채워진 입력창과 프로필 아바타를 노출 */
@@ -27,7 +32,9 @@ export function Header(props: HeaderProps) {
   const variant = props.variant ?? "minimal";
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[#23262c] bg-bg/85 backdrop-blur-[10px]">
+    <header
+      className={`border-b border-[#23262c] ${variant === "plain" ? "" : STICKY}`}
+    >
       <div
         className={`mx-auto flex h-[58px] items-center gap-[18px] px-8 ${CONTAINER_WIDTH[variant]}`}
       >
