@@ -7,9 +7,9 @@ export const ROUTES = {
   home: "/home",
   document: "/document",
   mypage: "/mypage",
+  search: "/search",
 
   /** 아직 포팅하지 않은 화면. 각 화면을 구현할 때 실제 경로로 교체한다. */
-  search: "#",
   edit: "#",
   history: "#",
   missingDocument: "#",
