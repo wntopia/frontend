@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Header from "@/components/Header";
+import { Header } from "@/widgets/header";
 
 const stats = [
   { value: "128", label: "총 편집 수", color: "text-accent" },

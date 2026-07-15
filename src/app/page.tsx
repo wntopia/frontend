@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Header from "@/components/Header";
+import { Header } from "@/widgets/header";
 
 /** 초기 세팅용 임시 홈 — 각 화면 라우트 진입점 */
 const pages = [
