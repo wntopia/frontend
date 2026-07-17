@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
  * 문서 상세 페이지 전용 상단 네비게이션.
  * 검색·편집 진입점과 케밥 메뉴(드롭다운)를 포함하므로 클라이언트 컴포넌트로 둔다.
  */
-export default function DocumentTopNav({
+export function DocumentTopNav({
   editingName = "이서연",
   showEditing = true,
 }: {
