@@ -1,1 +1,3 @@
-export { HomePage as default } from "@/views/home";
+import { ScreenIndexPage } from "@/views/screen-index";
+
+export default ScreenIndexPage;
