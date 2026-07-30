@@ -19,7 +19,7 @@ export function ScreenIndexPage() {
     <div className="min-h-screen bg-bg text-fg">
       <Header />
       <div className="mx-auto max-w-[1000px] px-8 pb-[120px] pt-11">
-        <h1 className="text-[21px] font-extrabold">금성위키 · 화면 목록</h1>
+        <h1 className="text-[21px] font-extrabold">G무위키 · 화면 목록</h1>
         <p className="mt-1 text-[13.5px] text-fg-subtle">
           디자인에서 가져온 7개 화면의 라우트입니다.
         </p>

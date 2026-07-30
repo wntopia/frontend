@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* 금성위키 design tokens — extracted from the imported design (dark theme) */
+/* G무위키 design tokens — extracted from the imported design (dark theme) */
 @theme {
   --color-bg: #101114;
   --color-surface: #16181c;
