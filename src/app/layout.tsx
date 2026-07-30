@@ -9,7 +9,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "금성위키",
+  title: "G무위키",
   description: "금성고등학교 교내 위키",
 };
 

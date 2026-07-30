@@ -39,7 +39,7 @@ export function DocumentTopNav({
           <span className="inline-flex h-6 w-6 items-center justify-center rounded-[7px] bg-accent font-mono text-sm font-bold text-[#06101f]">
             W
           </span>
-          금성위키
+          G무위키
         </Link>
 
         {/* 위치 경로 */}
