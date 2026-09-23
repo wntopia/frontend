@@ -1,0 +1,20 @@
+enabled: true
+groups:
+  - claude
+overrides:
+  claude/agents/contradiction-finder: false
+  claude/agents/doc-polisher: false
+  claude/agents/kotlin-convention-validator: false
+  claude/agents/kotlin-test-fixer: false
+  claude/hooks/eslint: true
+  claude/hooks/prettier: true
+  claude/skills/api-design: false
+  claude/skills/database-schema: false
+  claude/skills/docker: false
+  claude/skills/java-spring-arch: false
+  claude/skills/kotest-guide: false
+  claude/skills/kotlin-spring-arch: false
+  claude/skills/migration-guide: false
+  claude/skills/planning: true
+  claude/skills/systematic-debugging: false
+  claude/skills/the-sdk: false
