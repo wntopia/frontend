@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ROUTES } from "@/shared/config";
+import { Logo } from "@/shared/ui";
 
 /** 화면마다 본문 컨테이너 폭이 달라 헤더도 같은 폭을 따라간다. */
 const CONTAINER_WIDTH = {
@@ -42,9 +43,7 @@ export function Header(props: HeaderProps) {
           href={ROUTES.home}
           className="flex flex-shrink-0 items-center gap-[9px] text-base font-extrabold"
         >
-          <span className="inline-flex h-6 w-6 items-center justify-center rounded-[7px] bg-accent elevate-control font-mono text-sm font-bold text-on-accent">
-            W
-          </span>
+          <Logo />
           금성위키
         </Link>
 

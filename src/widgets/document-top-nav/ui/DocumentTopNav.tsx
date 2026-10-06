@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { Logo } from "@/shared/ui";
 
 /**
  * 문서 상세 페이지 전용 상단 네비게이션.
@@ -36,9 +37,7 @@ export function DocumentTopNav({
           href="/"
           className="flex flex-shrink-0 items-center gap-[9px] text-base font-extrabold tracking-[-0.01em]"
         >
-          <span className="inline-flex h-6 w-6 items-center justify-center rounded-[7px] bg-accent elevate-control font-mono text-sm font-bold text-on-accent">
-            W
-          </span>
+          <Logo />
           금성위키
         </Link>
 
