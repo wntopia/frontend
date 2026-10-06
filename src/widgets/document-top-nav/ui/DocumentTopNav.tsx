@@ -38,7 +38,7 @@ export function DocumentTopNav({
           className="flex flex-shrink-0 items-center gap-[9px] text-base font-extrabold tracking-[-0.01em]"
         >
           <Logo />
-          금성위키
+          지무위키
         </Link>
 
         {/* 위치 경로 */}

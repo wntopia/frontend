@@ -4,7 +4,7 @@
 @custom-variant light (&:where([data-mode="light"], [data-mode="light"] *));
 
 /*
- * 금성위키 design tokens
+ * 지무위키 design tokens
  * @theme 값은 다크 모드이고, [data-mode="light"] 블록이 같은 변수를 덮어써
  * 라이트 모드로 즉시 전환한다. 색을 추가할 때는 두 블록 모두에 정의한다.
  */

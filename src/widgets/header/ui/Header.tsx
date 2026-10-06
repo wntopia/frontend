@@ -44,7 +44,7 @@ export function Header(props: HeaderProps) {
           className="flex flex-shrink-0 items-center gap-[9px] text-base font-extrabold"
         >
           <Logo />
-          금성위키
+          지무위키
         </Link>
 
         {variant === "home" && (
