@@ -9,7 +9,7 @@ type SidebarCardProps = {
 /** 사이드바 카드 골격 (위키 현황·분류 등에서 공유) */
 export function SidebarCard({ title, children }: SidebarCardProps) {
   return (
-    <div className="rounded-[14px] border border-line bg-surface p-[18px]">
+    <div className="rounded-[14px] bg-surface p-[18px] elevate-1">
       <div className="mb-[14px] font-mono text-[10.5px] uppercase tracking-[.1em] text-fg-subtle">
         {title}
       </div>

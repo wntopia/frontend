@@ -5,7 +5,7 @@
  */
 export function EditorPreview() {
   return (
-    <div className="min-h-[480px] rounded-xl border border-line bg-[#131417] px-[26px] py-6">
+    <div className="min-h-[480px] rounded-xl bg-surface px-[26px] py-6 elevate-1">
       <h2 className="mb-[14px] text-[22px] font-bold">개요</h2>
       <p className="mb-[18px] text-[15.5px] leading-[1.85] text-fg-muted">
         금성고등학교(錦城高等學校)는 서울특별시 ○○구에 위치한{" "}

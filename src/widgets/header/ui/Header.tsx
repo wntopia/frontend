@@ -10,7 +10,7 @@ const CONTAINER_WIDTH = {
 } as const;
 
 /** plain을 뺀 나머지는 스크롤 시 상단에 고정되고 배경이 흐려진다. */
-const STICKY = "sticky top-0 z-50 bg-bg/85 backdrop-blur-[10px]";
+const STICKY = "sticky top-0 z-50 bg-bg/85 elevate-header backdrop-blur-[10px]";
 
 type HeaderProps =
   | {
@@ -33,7 +33,7 @@ export function Header(props: HeaderProps) {
 
   return (
     <header
-      className={`border-b border-[#23262c] ${variant === "plain" ? "" : STICKY}`}
+      className={`${variant === "plain" ? "" : STICKY}`}
     >
       <div
         className={`mx-auto flex h-[58px] items-center gap-[18px] px-8 ${CONTAINER_WIDTH[variant]}`}
@@ -42,7 +42,7 @@ export function Header(props: HeaderProps) {
           href={ROUTES.home}
           className="flex flex-shrink-0 items-center gap-[9px] text-base font-extrabold"
         >
-          <span className="inline-flex h-6 w-6 items-center justify-center rounded-[7px] bg-accent font-mono text-sm font-bold text-[#06101f]">
+          <span className="inline-flex h-6 w-6 items-center justify-center rounded-[7px] bg-accent elevate-control font-mono text-sm font-bold text-on-accent">
             W
           </span>
           금성위키
@@ -53,7 +53,7 @@ export function Header(props: HeaderProps) {
             <div className="flex-1" />
             <Link
               href={ROUTES.search}
-              className="flex w-60 items-center gap-2 rounded-[9px] border border-line bg-surface-2 px-3 py-2 text-[13px] text-fg-subtle hover:text-fg-subtle"
+              className="flex w-60 items-center gap-2 rounded-[9px] bg-surface-2 elevate-control px-3 py-2 text-[13px] text-fg-subtle hover:text-fg-subtle"
             >
               <SearchIcon />
               문서 검색
@@ -68,7 +68,7 @@ export function Header(props: HeaderProps) {
         {props.variant === "search" && (
           <>
             {/* 디자인상 검색어를 보여주기만 하는 상자다. 입력 기능은 아직 없다. */}
-            <div className="flex flex-1 items-center gap-2 rounded-[9px] border border-line-strong bg-surface-2 px-3 py-2 text-[13.5px] text-fg">
+            <div className="flex flex-1 items-center gap-2 rounded-[9px] bg-surface-2 elevate-control px-3 py-2 text-[13.5px] text-fg">
               <SearchIcon />
               {props.query}
             </div>
@@ -91,7 +91,7 @@ function ProfileAvatar() {
   return (
     <Link
       href={ROUTES.mypage}
-      className="flex h-[34px] w-[34px] flex-shrink-0 items-center justify-center rounded-full border border-line-strong bg-elevated text-[12.5px] font-bold text-fg-muted hover:text-fg-muted"
+      className="flex h-[34px] w-[34px] flex-shrink-0 items-center justify-center rounded-full bg-elevated elevate-control text-[12.5px] font-bold text-fg-muted hover:text-fg-muted"
     >
       이
     </Link>

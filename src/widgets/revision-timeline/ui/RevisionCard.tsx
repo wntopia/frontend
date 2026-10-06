@@ -18,9 +18,9 @@ const DELTA_TONE = {
 } as const;
 
 const DIFF_LINE: Record<NonNullable<RevisionDiffLine["change"]>, string> = {
-  added: "rounded-[3px] bg-success/10 px-1 py-0.5 text-[#9be3c4]",
+  added: "rounded-[3px] bg-success/10 px-1 py-0.5 text-success-fg",
   removed:
-    "rounded-[3px] bg-[#ff6b6b]/[0.08] px-1 py-0.5 text-[#ff9b9b] line-through decoration-[#ff6b6b]/40",
+    "rounded-[3px] bg-danger/[0.08] px-1 py-0.5 text-danger-fg line-through decoration-danger/40",
 };
 
 type RevisionCardProps = {
@@ -32,7 +32,7 @@ export function RevisionCard({ revision }: RevisionCardProps) {
   const [diffOpen, setDiffOpen] = useState(false);
 
   return (
-    <div className="rounded-xl border border-line bg-[#131417] px-4 py-[14px]">
+    <div className="rounded-xl bg-surface px-4 py-[14px] elevate-1">
       <div className="flex items-center justify-between">
         <div className="text-sm text-fg">
           {revision.summary.map((segment, index) => (
@@ -50,7 +50,7 @@ export function RevisionCard({ revision }: RevisionCardProps) {
           <button
             type="button"
             onClick={() => setDiffOpen((prev) => !prev)}
-            className="cursor-pointer rounded-[7px] border border-line-strong bg-surface-2 px-2.5 py-[5px] text-xs text-[#a8adb5]"
+            className="cursor-pointer rounded-[7px] bg-surface-2 elevate-control px-2.5 py-[5px] text-xs text-fg-soft"
           >
             {diffOpen ? "차이 닫기" : "차이 보기"}
           </button>
@@ -67,7 +67,7 @@ export function RevisionCard({ revision }: RevisionCardProps) {
       </div>
 
       {revision.diff && diffOpen && (
-        <div className="mt-[14px] border-t border-[#202329] pt-[14px] font-mono text-[13px] leading-[1.9]">
+        <div className="mt-[14px] border-t border-divider pt-[14px] font-mono text-[13px] leading-[1.9]">
           {revision.diff.map((line, index) => (
             <div
               key={index}
