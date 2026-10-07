@@ -5,13 +5,13 @@ import { WIKI_STATS } from "../model/mock";
 export function WikiStats() {
   return (
     <SidebarCard title="위키 현황">
-      <div className="divide-y divide-[#202329]">
+      <div className="divide-y divide-divider">
         {WIKI_STATS.map((stat) => (
           <div
             key={stat.label}
             className="flex justify-between py-[7px] text-[13.5px]"
           >
-            <span className="text-[#a8adb5]">{stat.label}</span>
+            <span className="text-fg-soft">{stat.label}</span>
             <b className={`font-mono ${stat.highlight ? "text-success" : ""}`}>
               {stat.value}
             </b>

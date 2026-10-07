@@ -8,11 +8,11 @@ type BacklinksProps = {
 /** '이 문서를 링크한 문서' 카드 */
 export function Backlinks({ backlinks }: BacklinksProps) {
   return (
-    <div className="rounded-xl border border-line px-5 py-[18px] text-left">
+    <div className="rounded-xl bg-surface px-5 py-[18px] text-left elevate-1">
       <div className="mb-3 font-mono text-[10.5px] uppercase tracking-[.1em] text-fg-subtle">
         이 문서를 링크한 문서
       </div>
-      <div className="divide-y divide-[#202329]">
+      <div className="divide-y divide-divider">
         {backlinks.map((backlink) => (
           <Link
             key={backlink.id}

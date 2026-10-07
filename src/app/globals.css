@@ -1,36 +1,152 @@
 @import "tailwindcss";
 
-/* 금성위키 design tokens — extracted from the imported design (dark theme) */
+/* 라이트 모드 전용 스타일 (예: light:hidden) */
+@custom-variant light (&:where([data-mode="light"], [data-mode="light"] *));
+
+/*
+ * 지무위키 design tokens
+ * @theme 값은 다크 모드이고, [data-mode="light"] 블록이 같은 변수를 덮어써
+ * 라이트 모드로 즉시 전환한다. 색을 추가할 때는 두 블록 모두에 정의한다.
+ */
 @theme {
-  --color-bg: #101114;
+  --color-bg: #0e0f12;
   --color-surface: #16181c;
   --color-surface-2: #1c1f24;
   --color-elevated: #2a2e35;
+  --color-sunken: #121316;
+  --color-row-hover: #1a1c21;
+  --color-hover: #262a31;
 
   --color-fg: #e6e8eb;
   --color-fg-muted: #cfd3d9;
+  --color-fg-soft: #a8adb5;
+  --color-fg-dim: #8b919a;
   --color-fg-subtle: #6f757e;
+  --color-faint: #3a3f47;
 
   --color-line: #2c3037;
   --color-line-strong: #33373f;
+  --color-divider: #202328;
 
   --color-accent: #4c8dff;
   --color-accent-hover: #7db0ff;
+  --color-accent-fg: #cfe1ff;
+  --color-on-accent: #06101f;
+
   --color-success: #3ecf8e;
+  --color-success-fg: #9be3c4;
+  --color-success-strong: #c7f2df;
+  --color-danger: #ff6b6b;
+  --color-danger-fg: #ff9b9b;
 
   --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
     system-ui, sans-serif;
   --font-mono: var(--font-jetbrains-mono), "JetBrains Mono", monospace;
 }
 
+/*
+ * 그림자(elevation) 토큰 — 테두리 대신 면의 높낮이로 영역을 구분한다.
+ * 다크 모드는 그림자가 잘 보이지 않아 위쪽 하이라이트와 아주 옅은 윤곽을 함께 쓴다.
+ */
 :root {
   color-scheme: dark;
+
+  --elevation-control:
+    inset 0 1px 0 rgb(255 255 255 / 0.05), 0 0 0 1px rgb(255 255 255 / 0.035),
+    0 1px 2px rgb(0 0 0 / 0.4);
+  --elevation-1:
+    inset 0 1px 0 rgb(255 255 255 / 0.04), 0 0 0 1px rgb(255 255 255 / 0.03),
+    0 2px 4px rgb(0 0 0 / 0.25), 0 8px 24px -12px rgb(0 0 0 / 0.6);
+  --elevation-2:
+    inset 0 1px 0 rgb(255 255 255 / 0.06), 0 0 0 1px rgb(255 255 255 / 0.05),
+    0 4px 8px rgb(0 0 0 / 0.3), 0 16px 36px -14px rgb(0 0 0 / 0.75);
+  --elevation-3:
+    inset 0 1px 0 rgb(255 255 255 / 0.06), 0 0 0 1px rgb(255 255 255 / 0.06),
+    0 24px 48px -12px rgb(0 0 0 / 0.8);
+  --elevation-inset:
+    inset 0 1px 3px rgb(0 0 0 / 0.45), inset 0 0 0 1px rgb(255 255 255 / 0.03);
+  --elevation-header: 0 1px 0 rgb(255 255 255 / 0.04), 0 8px 24px -16px rgb(0 0 0 / 0.8);
+}
+
+:root[data-mode="light"] {
+  color-scheme: light;
+
+  --color-bg: #f4f5f7;
+  --color-surface: #ffffff;
+  --color-surface-2: #ffffff;
+  --color-elevated: #e9ecf0;
+  --color-sunken: #f9fafb;
+  --color-row-hover: #f6f7f9;
+  --color-hover: #eef0f3;
+
+  --color-fg: #15171a;
+  --color-fg-muted: #2e3238;
+  --color-fg-soft: #4f555e;
+  --color-fg-dim: #646a73;
+  --color-fg-subtle: #8a9099;
+  --color-faint: #c5cad1;
+
+  --color-line: #e3e6ea;
+  --color-line-strong: #d4d8de;
+  --color-divider: #eef0f3;
+
+  --color-accent: #2f6fe4;
+  --color-accent-hover: #1f56c0;
+  --color-accent-fg: #1a3f86;
+  --color-on-accent: #ffffff;
+
+  --color-success: #12a26b;
+  --color-success-fg: #0b7a50;
+  --color-success-strong: #065c3b;
+  --color-danger: #e03131;
+  --color-danger-fg: #c92a2a;
+
+  --elevation-control: 0 0 0 1px rgb(16 24 40 / 0.06), 0 1px 2px rgb(16 24 40 / 0.06);
+  --elevation-1:
+    0 0 0 1px rgb(16 24 40 / 0.04), 0 1px 2px rgb(16 24 40 / 0.04),
+    0 4px 16px -4px rgb(16 24 40 / 0.08);
+  --elevation-2:
+    0 0 0 1px rgb(16 24 40 / 0.05), 0 2px 4px rgb(16 24 40 / 0.05),
+    0 12px 28px -8px rgb(16 24 40 / 0.14);
+  --elevation-3:
+    0 0 0 1px rgb(16 24 40 / 0.06), 0 20px 44px -12px rgb(16 24 40 / 0.22);
+  --elevation-inset:
+    inset 0 1px 2px rgb(16 24 40 / 0.06), inset 0 0 0 1px rgb(16 24 40 / 0.06);
+  --elevation-header: 0 1px 0 rgb(16 24 40 / 0.05), 0 8px 24px -16px rgb(16 24 40 / 0.18);
+}
+
+/* 컨트롤(입력창·보조 버튼·아바타)용 얕은 그림자 */
+@utility elevate-control {
+  box-shadow: var(--elevation-control);
+}
+/* 카드 기본 */
+@utility elevate-1 {
+  box-shadow: var(--elevation-1);
+}
+/* 카드 hover · 강조 */
+@utility elevate-2 {
+  box-shadow: var(--elevation-2);
+}
+/* 드롭다운 · 팝오버 */
+@utility elevate-3 {
+  box-shadow: var(--elevation-3);
+}
+/* 에디터 · 코드처럼 눌려 들어간 면 */
+@utility elevate-inset {
+  box-shadow: var(--elevation-inset);
+}
+/* 고정 헤더 하단 */
+@utility elevate-header {
+  box-shadow: var(--elevation-header);
 }
 
 body {
   background: var(--color-bg);
   color: var(--color-fg);
   font-family: var(--font-sans);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 a {
@@ -44,12 +160,12 @@ a:hover {
 /* 편집 중 상태를 나타내는 점의 맥박 애니메이션 (문서 상세) */
 @keyframes livepulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(62, 207, 142, 0.5);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-success) 50%, transparent);
   }
   70% {
-    box-shadow: 0 0 0 6px rgba(62, 207, 142, 0);
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--color-success) 0%, transparent);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(62, 207, 142, 0);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-success) 0%, transparent);
   }
 }

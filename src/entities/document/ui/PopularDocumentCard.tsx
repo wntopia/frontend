@@ -12,7 +12,7 @@ export function PopularDocumentCard({ doc, rank }: PopularDocumentCardProps) {
   return (
     <Link
       href={doc.href}
-      className="block rounded-xl border border-line bg-surface p-4 transition-colors hover:border-[#3a3f47]"
+      className="block rounded-xl bg-surface p-4 elevate-1 transition hover:-translate-y-0.5 hover:elevate-2"
     >
       <div className="mb-1.5 font-mono text-[11px] text-accent">
         {String(rank).padStart(2, "0")}

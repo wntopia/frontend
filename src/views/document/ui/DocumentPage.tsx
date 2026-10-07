@@ -83,7 +83,7 @@ export function DocumentPage() {
             {tags.map((t) => (
               <span
                 key={t}
-                className="rounded-[5px] border border-line bg-surface-2 px-2 py-0.5 font-mono text-[11px] text-[#8b919a]"
+                className="rounded-[5px] bg-surface-2 elevate-control px-2 py-0.5 font-mono text-[11px] text-fg-dim"
               >
                 {t}
               </span>
@@ -96,11 +96,11 @@ export function DocumentPage() {
 
           <div className="mt-[14px] flex flex-wrap items-center gap-[14px] font-mono text-xs text-fg-subtle">
             <span>
-              최종 수정 <b className="text-[#a8adb5]">2026-07-06 14:32</b>
+              최종 수정 <b className="text-fg-soft">2026-07-06 14:32</b>
             </span>
-            <span className="text-[#3a3f47]">·</span>
+            <span className="text-faint">·</span>
             <span>기여자 48</span>
-            <span className="text-[#3a3f47]">·</span>
+            <span className="text-faint">·</span>
             <span>조회 12,904</span>
           </div>
 
@@ -178,7 +178,7 @@ export function DocumentPage() {
         <aside className="w-[260px] flex-shrink-0 pt-[52px]">
           <div className="sticky top-[78px]">
             {/* 목차 */}
-            <nav className="rounded-[14px] border border-line bg-surface-2/70 p-4 pb-3.5 backdrop-blur-[10px]">
+            <nav className="rounded-[14px] bg-surface-2/70 p-4 pb-3.5 elevate-1 backdrop-blur-[10px]">
               <div className="mb-3 font-mono text-[10.5px] uppercase tracking-[0.12em] text-fg-subtle">
                 이 문서에서
               </div>
@@ -198,7 +198,7 @@ export function DocumentPage() {
                       className={`flex-shrink-0 ${
                         active
                           ? "h-0.5 w-5 bg-accent"
-                          : "h-[1.5px] w-[14px] bg-[#3a3f47]"
+                          : "h-[1.5px] w-[14px] bg-faint"
                       }`}
                     />
                     {item.label}
@@ -208,7 +208,7 @@ export function DocumentPage() {
             </nav>
 
             {/* 편집 역사 */}
-            <div className="mt-4 rounded-[14px] border border-line bg-surface p-4">
+            <div className="mt-4 rounded-[14px] bg-surface p-4 elevate-1">
               <div className="mb-4 flex items-center justify-between">
                 <div className="text-[13px] font-bold text-fg">편집 역사</div>
                 <Link href="#" className="text-[11.5px] text-accent">
@@ -228,7 +228,7 @@ export function DocumentPage() {
                       className={`absolute -left-6 top-0 flex h-[18px] w-[18px] items-center justify-center rounded-full text-[8.5px] font-bold ${
                         item.active
                           ? "border-[1.5px] border-success bg-success/15 text-success"
-                          : "border-[1.5px] border-line-strong bg-surface-2 text-[#a8adb5]"
+                          : "border-[1.5px] border-line-strong bg-surface-2 text-fg-soft"
                       }`}
                     >
                       {item.initial}

@@ -15,7 +15,7 @@ export function MissingLink({ children }: { children: ReactNode }) {
   return (
     <Link
       href="#"
-      className="border-b border-dashed border-[#ff6b6b]/45 text-[#ff6b6b]"
+      className="border-b border-dashed border-danger/45 text-danger"
     >
       {children}
     </Link>

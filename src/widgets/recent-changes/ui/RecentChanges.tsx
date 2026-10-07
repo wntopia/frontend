@@ -16,7 +16,7 @@ export function RecentChanges() {
           전체 보기
         </Link>
       </div>
-      <div className="divide-y divide-[#202329] overflow-hidden rounded-[14px] border border-line">
+      <div className="divide-y divide-divider overflow-hidden rounded-[14px] bg-surface elevate-1">
         {RECENT_CHANGES.map((change) => (
           <RecentChangeItem key={change.id} change={change} />
         ))}
