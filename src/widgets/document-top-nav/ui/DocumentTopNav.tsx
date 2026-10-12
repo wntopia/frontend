@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { AccountButton } from "@/features/auth";
 import { Logo } from "@/shared/ui";
 
 /**
@@ -115,6 +116,9 @@ export function DocumentTopNav({
             </div>
           )}
         </div>
+
+        {/* 계정 — 시안에는 없고 로그인 연동 때 더했다. 다른 헤더처럼 오른쪽 끝에 둔다. */}
+        <AccountButton />
       </div>
     </header>
   );
