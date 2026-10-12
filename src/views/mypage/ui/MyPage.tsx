@@ -1,4 +1,7 @@
 import Link from "next/link";
+import { SignoutButton } from "@/features/auth";
+import { requireSession } from "@/features/auth/server";
+import { ROUTES } from "@/shared/config";
 import { Header } from "@/widgets/header";
 
 const stats = [
@@ -20,7 +23,10 @@ const contributions = [
 
 const favorites = ["금성고등학교", "방송부", "2026 체육대회"];
 
-export function MyPage() {
+/** 마이페이지. 로그인한 사용자만 들어올 수 있다. */
+export async function MyPage() {
+  await requireSession(ROUTES.mypage);
+
   return (
     <div className="min-h-screen bg-bg text-fg">
       <Header />
@@ -41,6 +47,7 @@ export function MyPage() {
           <button className="cursor-pointer rounded-[9px] bg-surface-2 px-[15px] py-[9px] text-[13px] font-semibold text-fg-muted elevate-control transition hover:elevate-1">
             프로필 편집
           </button>
+          <SignoutButton />
         </div>
 
         {/* 통계 */}
