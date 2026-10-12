@@ -1,6 +1,6 @@
 @AGENTS.md
 
-# G무위키
+# 지무위키
 
 교내 나무위키 서비스의 프론트엔드다. 학생·교사가 함께 문서를 쓰고 고치는 위키로,
 문서 열람 / 검색 / 편집 / 편집역사(리비전) 화면을 갖는다.
@@ -10,7 +10,7 @@
 **디자인 시안을 화면으로 옮긴 단계다. 아직 제품 내용이 아니다.**
 
 - 백엔드·인증·실제 편집 기능이 없다. 모든 데이터는 각 슬라이스의 `model/mock.ts`에서 온다.
-- 서비스 이름은 **G무위키**다. 화면에 보이는 학교 이름("금성고등학교", "금성고")은
+- 서비스 이름은 **지무위키**다. 화면에 보이는 학교 이름("금성고등학교", "금성고")은
   디자인 시안에 들어있던 **임시 문구**이며 실제 학교가 아니다. 문서 제목
   ("2026 체육대회", "방송부"), 사용자 이름, 조회수, 날짜도 전부 시안용 더미값이다.
   이걸 근거로 도메인 규칙을 추론하지 말 것.
@@ -23,7 +23,7 @@
 - Next.js 16 (App Router) + React 19 + TypeScript strict
 - Tailwind CSS v4 — 설정 파일 없이 `src/app/globals.css`의 `@theme`에 토큰을 정의한다
 - 폰트: Pretendard(본문, CDN) + JetBrains Mono(숫자·라벨, next/font)
-- 다크 테마 전용 (`color-scheme: dark`)
+- 라이트/다크 모드 — 기본은 다크. `<html>`의 `data-mode`로 전환하고 선택값은 `localStorage`에 저장한다
 
 ```
 npm run dev     # 개발 서버
@@ -39,8 +39,9 @@ npm run lint    # eslint
 app/       Next.js 라우트. 페이지 파일은 views의 컴포넌트를 re-export만 한다
 views/     한 화면 전체. 위젯을 배치하고 여백/레이아웃만 담당한다
 widgets/   화면의 한 덩어리 (최근 변경, 헤더, 리비전 타임라인 …)
+features/  사용자 동작 단위 (theme-switcher: 라이트/다크 전환)
 entities/  도메인 단위 UI와 타입 (document: RecentChangeItem, SearchResultCard …)
-shared/    어디서나 쓰는 것 (ROUTES, SidebarCard, WikiLink)
+shared/    어디서나 쓰는 것 (ROUTES, SidebarCard, WikiLink, Logo)
 ```
 
 슬라이스 구조는 `<슬라이스>/{ui,model}/` + 배럴 `index.ts`.
@@ -78,16 +79,23 @@ export default HomePage;
 
 색은 `globals.css`의 토큰을 Tailwind 유틸로 쓴다 — `bg-bg`, `bg-surface`, `bg-surface-2`,
 `bg-elevated`, `text-fg`, `text-fg-muted`, `text-fg-subtle`, `border-line`, `border-line-strong`,
-`text-accent`, `text-success`. 새 hex를 도입하기 전에 토큰이 있는지 먼저 확인한다
-(미작성 문서의 붉은색처럼 토큰이 없는 1회성 색만 임의값을 쓴다).
+`text-accent`, `text-success`, `text-danger`, `text-on-accent`. 컴포넌트에 hex를 직접 쓰지 않는다.
+
+`@theme`의 값이 다크 모드이고 `:root[data-mode="light"]` 블록이 같은 변수를 덮어써 라이트
+모드가 된다. 색을 추가할 때는 **두 블록 모두**에 정의한다. 한쪽 모드에서만 보일 요소는
+`light:` 커스텀 variant로 가른다 (예: `light:hidden`).
+
+영역 구분은 테두리 대신 그림자 유틸로 한다 — `elevate-control`(입력창·보조 버튼),
+`elevate-1`/`elevate-2`(카드 기본/hover), `elevate-3`(드롭다운), `elevate-inset`(에디터),
+`elevate-header`(고정 헤더). 위키 링크 밑줄이나 목록 구분선처럼 의미가 있는 테두리만 남긴다.
 
 `text-[13.5px]`, `rounded-[14px]` 같은 임의값이 많은 것은 시안 수치를 그대로 맞춘 결과다.
 실수가 아니므로 임의로 반올림하지 않는다.
 
 ## 컴포넌트 관례
 
-- **기본은 서버 컴포넌트.** `"use client"`는 실제 상태가 있는 3개 파일에만 있다. 새로 붙일
-  때는 트리 최하단 컴포넌트에만 붙인다.
+- **기본은 서버 컴포넌트.** `"use client"`는 실제 상태가 있는 파일에만 있다 (편집 화면,
+  문서 상단 내비, 리비전 카드, 테마 전환). 새로 붙일 때는 트리 최하단 컴포넌트에만 붙인다.
 - **목 데이터는 슬라이스의 `model/mock.ts`에 격리한다.** 백엔드가 붙을 때 이 파일만 갈아끼우면
   되도록, UI 컴포넌트에 데이터 리터럴을 박지 않는다.
 - **강조 위치는 데이터가 정한다.** 변경 요약(`ChangeSummarySegment`)과 검색 스니펫
