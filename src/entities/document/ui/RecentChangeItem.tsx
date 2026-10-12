@@ -8,7 +8,7 @@ import type {
 const ACTIVITY_DOT: Record<DocumentActivity, string> = {
   active: "bg-success",
   created: "bg-accent/60",
-  idle: "bg-[#3a3f47]",
+  idle: "bg-faint",
 };
 
 const SEGMENT_EMPHASIS: Record<
@@ -28,14 +28,14 @@ export function RecentChangeItem({ change }: RecentChangeItemProps) {
   return (
     <Link
       href={change.href}
-      className="flex items-center gap-[14px] px-[18px] py-[15px] transition-colors hover:bg-[#161719]"
+      className="flex items-center gap-[14px] px-[18px] py-[15px] transition-colors hover:bg-row-hover"
     >
       <span
         className={`h-2 w-2 flex-shrink-0 rounded-full ${ACTIVITY_DOT[change.activity]}`}
       />
       <div className="min-w-0 flex-1">
         <div className="text-[14.5px] font-semibold text-fg">{change.title}</div>
-        <div className="mt-0.5 text-[12.5px] text-[#8b919a]">
+        <div className="mt-0.5 text-[12.5px] text-fg-dim">
           {change.summary.map((segment, index) => (
             <span
               key={index}

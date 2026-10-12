@@ -3,9 +3,9 @@ import { ROUTES } from "@/shared/config";
 import { QUICK_LINKS, type QuickLink } from "../model/quick-links";
 
 const TAG_TONE: Record<NonNullable<QuickLink["tone"]>, string> = {
-  default: "border-line bg-surface-2 text-[#a8adb5] hover:text-[#a8adb5]",
+  default: "bg-surface-2 text-fg-soft elevate-control hover:text-fg",
   missing:
-    "border-[#ff6b6b]/25 bg-[#ff6b6b]/[.08] text-[#ff9b9b] hover:text-[#ff9b9b]",
+    "bg-danger/12 text-danger-fg hover:text-danger-fg",
 };
 
 /** 홈 상단 히어로 — 제목, 검색 진입점, 바로가기 태그 */
@@ -21,7 +21,7 @@ export function HomeHero() {
 
       <Link
         href={ROUTES.search}
-        className="flex max-w-[620px] items-center gap-3 rounded-xl border border-line bg-surface px-[18px] py-[15px] text-[15px] text-fg-subtle hover:text-fg-subtle"
+        className="flex max-w-[620px] items-center gap-3 rounded-xl bg-surface px-[18px] py-[15px] text-[15px] text-fg-subtle elevate-1 transition hover:elevate-2 hover:text-fg-subtle"
       >
         <span className="inline-block h-4 w-4 flex-shrink-0 rounded-full border-[1.8px] border-fg-subtle" />
         문서, 동아리, 인물, 행사를 검색해보세요
@@ -32,7 +32,7 @@ export function HomeHero() {
           <Link
             key={link.label}
             href={link.href}
-            className={`rounded-[20px] border px-3 py-1.5 text-[12.5px] ${TAG_TONE[link.tone ?? "default"]}`}
+            className={`rounded-[20px] px-3 py-1.5 transition-colors text-[12.5px] ${TAG_TONE[link.tone ?? "default"]}`}
           >
             {link.label}
           </Link>

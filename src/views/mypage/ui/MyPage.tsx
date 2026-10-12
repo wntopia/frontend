@@ -14,7 +14,7 @@ const contributions = [
     text: "금성고등학교 · 급식 위생 점검 결과 추가",
     time: "방금",
   },
-  { href: "#", dot: "bg-[#3a3f47]", text: "방송부 · 부원 명단 갱신", time: "어제" },
+  { href: "#", dot: "bg-faint", text: "방송부 · 부원 명단 갱신", time: "어제" },
   { href: "#", dot: "bg-accent/60", text: "급식 메뉴 · 문서 생성", time: "3일 전" },
 ];
 
@@ -28,7 +28,7 @@ export function MyPage() {
       <div className="mx-auto max-w-[1000px] px-8 pb-[120px] pt-11">
         {/* 프로필 */}
         <div className="mb-[34px] flex items-center gap-[18px]">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full border border-line-strong bg-elevated text-[22px] font-bold text-fg-muted">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-elevated elevate-2 text-[22px] font-bold text-fg-muted">
             이
           </div>
           <div>
@@ -38,7 +38,7 @@ export function MyPage() {
             </div>
           </div>
           <div className="flex-1" />
-          <button className="cursor-pointer rounded-[9px] border border-line-strong bg-surface-2 px-[15px] py-[9px] text-[13px] font-semibold text-fg-muted">
+          <button className="cursor-pointer rounded-[9px] bg-surface-2 px-[15px] py-[9px] text-[13px] font-semibold text-fg-muted elevate-control transition hover:elevate-1">
             프로필 편집
           </button>
         </div>
@@ -48,7 +48,7 @@ export function MyPage() {
           {stats.map((s) => (
             <div
               key={s.label}
-              className="flex-1 rounded-xl border border-line bg-surface p-4"
+              className="flex-1 rounded-xl bg-surface p-4 elevate-1"
             >
               <div className={`font-mono text-[22px] font-bold ${s.color}`}>
                 {s.value}
@@ -64,13 +64,13 @@ export function MyPage() {
         <div className="flex gap-10">
           <div className="min-w-0 flex-1">
             <div className="mb-[14px] text-base font-bold">최근 기여</div>
-            <div className="overflow-hidden rounded-xl border border-line">
+            <div className="overflow-hidden rounded-xl bg-surface elevate-1">
               {contributions.map((c, i) => (
                 <Link
                   key={i}
                   href={c.href}
-                  className={`flex items-center gap-3 px-4 py-[13px] transition-colors hover:bg-[#161719] ${
-                    i < contributions.length - 1 ? "border-b border-[#202329]" : ""
+                  className={`flex items-center gap-3 px-4 py-[13px] transition-colors hover:bg-row-hover ${
+                    i < contributions.length - 1 ? "border-b border-divider" : ""
                   }`}
                 >
                   <span
@@ -89,12 +89,12 @@ export function MyPage() {
 
           <div className="w-[260px] flex-shrink-0">
             <div className="mb-[14px] text-base font-bold">즐겨찾는 문서</div>
-            <div className="rounded-xl border border-line bg-surface p-1.5">
+            <div className="rounded-xl bg-surface p-1.5 elevate-1">
               {favorites.map((f) => (
                 <Link
                   key={f}
                   href="#"
-                  className="block rounded-[7px] px-[11px] py-[9px] text-[13.5px] text-fg-muted transition-colors hover:bg-surface-2"
+                  className="block rounded-[7px] px-[11px] py-[9px] text-[13.5px] text-fg-muted transition-colors hover:bg-hover"
                 >
                   {f}
                 </Link>

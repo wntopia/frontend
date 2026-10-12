@@ -11,7 +11,7 @@ export function SearchResults({ query, results }: SearchResultsProps) {
     <section>
       <div className="mb-6 text-sm text-fg-subtle">
         &apos;<span className="font-semibold text-fg">{query}</span>&apos; 검색
-        결과 <b className="text-[#a8adb5]">{results.length}건</b>
+        결과 <b className="text-fg-soft">{results.length}건</b>
       </div>
       <div className="flex flex-col gap-3">
         {results.map((result) => (

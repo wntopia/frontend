@@ -11,7 +11,7 @@ export function CategoryList() {
         <Link
           key={category}
           href={ROUTES.search}
-          className="block py-[5px] text-[13.5px] text-[#a8adb5] transition-colors hover:text-fg"
+          className="block py-[5px] text-[13.5px] text-fg-soft transition-colors hover:text-fg"
         >
           {category}
         </Link>

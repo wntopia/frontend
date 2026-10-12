@@ -12,7 +12,7 @@ export function RevisionStats() {
       {REVISION_STATS.map((stat) => (
         <div
           key={stat.label}
-          className="flex-1 rounded-xl border border-line bg-surface px-4 py-[14px]"
+          className="flex-1 rounded-xl bg-surface px-4 py-[14px] elevate-1"
         >
           <div
             className={`font-mono text-xl font-bold ${

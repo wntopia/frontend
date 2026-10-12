@@ -10,29 +10,29 @@ export function SearchResultCard({ result }: SearchResultCardProps) {
   return (
     <Link
       href={result.href}
-      className="block rounded-xl border border-line px-5 py-4 transition-colors hover:border-[#3a3f47] hover:bg-[#151619]"
+      className="block rounded-xl bg-surface px-5 py-4 elevate-1 transition hover:-translate-y-0.5 hover:elevate-2"
     >
       <div className="mb-1.5 flex items-center gap-2">
         <span
           className={`text-[15.5px] font-bold ${
-            result.missing ? "text-[#ff6b6b]" : "text-fg"
+            result.missing ? "text-danger" : "text-fg"
           }`}
         >
           {result.title}
         </span>
         {result.missing && (
-          <span className="rounded border border-[#ff6b6b]/25 bg-[#ff6b6b]/10 px-1.5 py-px font-mono text-[10.5px] text-[#ff9b9b]">
+          <span className="rounded bg-danger/12 px-1.5 py-px font-mono text-[10.5px] text-danger-fg">
             미작성
           </span>
         )}
       </div>
 
-      <p className="text-[13.5px] leading-[1.6] text-[#8b919a]">
+      <p className="text-[13.5px] leading-[1.6] text-fg-dim">
         {result.snippet.map((segment, index) =>
           segment.highlight ? (
             <mark
               key={index}
-              className="rounded-[3px] bg-accent/[.22] px-0.5 text-[#cfe1ff]"
+              className="rounded-[3px] bg-accent/[.22] px-0.5 text-accent-fg"
             >
               {segment.text}
             </mark>
