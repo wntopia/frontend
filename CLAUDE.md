@@ -84,7 +84,7 @@ export default HomePage;
 문서 라우트가 아직 `/document` 하나로 고정되어 있다는 점에 주의한다. 실제 위키라면
 문서별 동적 경로가 필요하고, 지금 목 데이터의 `href`는 대부분 `#`이거나 이 고정 경로를 가리킨다.
 
-`/api/v1/**`는 Next 라우트가 아니다. `next.config.ts`의 rewrites가 백엔드로 넘기는 프록시 경로다.
+`/api/v1/**`와 `/callback`은 Next 라우트가 아니다. `next.config.ts`의 rewrites가 백엔드로 넘기는 프록시 경로다. `/callback`은 DataGSM이 로그인 후 돌려보내는 주소(`OAUTH_REDIRECT_PATH`)로, 백엔드 callback으로 이어진다.
 
 ## 백엔드 연동과 인증
 

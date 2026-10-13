@@ -43,12 +43,15 @@ npm run dev
 ### 로그인이 동작하려면 백엔드 설정이 맞아야 한다
 
 로그인은 `fetch`가 아니라 페이지 이동이다. 브라우저가 `/api/v1/oauth/datagsm/signin`(프록시)으로
-이동하면 백엔드가 DataGSM으로 보내고, DataGSM은 백엔드의 callback으로 돌려보낸다. 이때 세션 쿠키가
-프론트 도메인에 있으므로 **callback도 프론트 오리진을 거쳐야** 한다.
+이동하면 백엔드가 DataGSM으로 보내고, DataGSM은 로그인이 끝나면 `redirect_uri`로 돌려보낸다. 세션 쿠키가
+프론트 도메인에 있으므로 **`redirect_uri`도 프론트 오리진이어야** 한다. 프론트는 `/callback`으로 돌아온
+요청을 `code`·`state`째로 백엔드 callback에 넘긴다 (`next.config.ts`). 백엔드 도메인으로 돌려보내면
+쿠키가 따라가지 않아 `OAuth state가 올바르지 않습니다`로 실패한다.
 
 | 백엔드 환경 변수 | 값 |
 |---|---|
-| `DATAGSM_OAUTH_REDIRECT_URI` | `<프론트 오리진>/api/v1/oauth/datagsm/callback` — DataGSM 클라이언트에도 같은 주소를 등록 |
+| `DATAGSM_OAUTH_REDIRECT_URI` | `<프론트 오리진>/callback` — DataGSM 클라이언트에도 등록. 글자 하나까지 같아야 통과한다 |
+| `DATAGSM_OAUTH_SCOPE` | 비워 두거나 `datagsm:self_read` |
 | `DATAGSM_OAUTH_SUCCESS_REDIRECT_URI` | `/signin/callback` |
 | `DATAGSM_OAUTH_FAILURE_REDIRECT_URI` | `/signin?error` (기본값 그대로) |
 
