@@ -4,9 +4,13 @@ import { API_PREFIX } from "./base-url";
 export const API_PATHS = {
   /**
    * DataGSM 인가 페이지로 302를 돌려준다. `fetch`가 아니라 **페이지 이동**으로 연다.
-   * 이어지는 callback은 백엔드가 받아 처리한 뒤 성공/실패 주소로 다시 리다이렉트한다.
    */
   oauthSignin: `${API_PREFIX}/oauth/datagsm/signin`,
+  /**
+   * DataGSM이 준 `code`·`state`를 검증하고 성공/실패 주소로 302를 돌려준다.
+   * 코드에서 직접 부르지 않는다 — `OAUTH_REDIRECT_PATH`로 돌아온 브라우저를 프록시가 여기로 넘긴다.
+   */
+  oauthCallback: `${API_PREFIX}/oauth/datagsm/callback`,
   /** 비로그인 시 401 */
   authMe: `${API_PREFIX}/auth/me`,
   signout: `${API_PREFIX}/auth/signout`,
