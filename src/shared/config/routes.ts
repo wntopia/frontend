@@ -12,4 +12,10 @@ export const ROUTES = {
   missingDocument: "/missing-document",
   edit: "/edit",
   history: "/history",
+  signin: "/signin",
+  /**
+   * 로그인 성공 후 백엔드가 돌려보내는 착지 지점.
+   * 백엔드의 `success-redirect-uri` 설정이 이 경로를 가리켜야 한다.
+   */
+  signinCallback: "/signin/callback",
 } as const;

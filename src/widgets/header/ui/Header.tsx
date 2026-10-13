@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AccountButton } from "@/features/auth";
 import { ROUTES } from "@/shared/config";
 import { Logo } from "@/shared/ui";
 
@@ -17,13 +18,13 @@ type HeaderProps =
   | {
       /**
        * minimal: 로고만 노출하는 기본 형태
-       * home: 검색 진입점과 프로필 아바타를 함께 노출
+       * home: 검색 진입점과 계정 버튼(로그인 버튼 또는 아바타)을 함께 노출
        * plain: 로고만 노출하며 고정되지 않는 좁은 형태 (집중형 화면용)
        */
       variant?: "minimal" | "home" | "plain";
     }
   | {
-      /** search: 검색어가 채워진 입력창과 프로필 아바타를 노출 */
+      /** search: 검색어가 채워진 입력창과 계정 버튼을 노출 */
       variant: "search";
       query: string;
     };
@@ -60,7 +61,7 @@ export function Header(props: HeaderProps) {
                 /
               </span>
             </Link>
-            <ProfileAvatar />
+            <AccountButton />
           </>
         )}
 
@@ -71,7 +72,7 @@ export function Header(props: HeaderProps) {
               <SearchIcon />
               {props.query}
             </div>
-            <ProfileAvatar />
+            <AccountButton />
           </>
         )}
       </div>
@@ -83,16 +84,5 @@ export function Header(props: HeaderProps) {
 function SearchIcon() {
   return (
     <span className="inline-block h-[13px] w-[13px] flex-shrink-0 rounded-full border-[1.5px] border-fg-subtle" />
-  );
-}
-
-function ProfileAvatar() {
-  return (
-    <Link
-      href={ROUTES.mypage}
-      className="flex h-[34px] w-[34px] flex-shrink-0 items-center justify-center rounded-full bg-elevated elevate-control text-[12.5px] font-bold text-fg-muted hover:text-fg-muted"
-    >
-      이
-    </Link>
   );
 }

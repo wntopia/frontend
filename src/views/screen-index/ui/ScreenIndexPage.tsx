@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ROUTES } from "@/shared/config";
 import { Header } from "@/widgets/header";
 
-/** 디자인에서 가져온 7개 화면. 모두 포팅되어 각 라우트로 연결된다. */
+/** 디자인에서 가져온 7개 화면과, 시안 없이 만든 로그인 화면. 모두 각 라우트로 연결된다. */
 const SCREENS = [
   { label: "마이페이지", href: ROUTES.mypage },
   { label: "홈", href: ROUTES.home },
@@ -11,6 +11,7 @@ const SCREENS = [
   { label: "문서없음", href: ROUTES.missingDocument },
   { label: "편집", href: ROUTES.edit },
   { label: "편집역사", href: ROUTES.history },
+  { label: "로그인", href: ROUTES.signin },
 ];
 
 /** 초기 세팅용 임시 홈 — 각 화면 라우트 진입점 */
@@ -21,7 +22,7 @@ export function ScreenIndexPage() {
       <div className="mx-auto max-w-[1000px] px-8 pb-[120px] pt-11">
         <h1 className="text-[21px] font-extrabold">지무위키 · 화면 목록</h1>
         <p className="mt-1 text-[13.5px] text-fg-subtle">
-          디자인에서 가져온 7개 화면의 라우트입니다.
+          디자인에서 가져온 7개 화면과 로그인 화면의 라우트입니다.
         </p>
 
         <div className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-3">
