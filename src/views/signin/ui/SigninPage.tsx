@@ -1,15 +1,10 @@
 import { RETURN_TO_PARAM, SigninButton } from "@/features/auth";
+import { firstParam, type SearchParams } from "@/shared/lib";
 import { Logo } from "@/shared/ui";
 import { Header } from "@/widgets/header";
 
-type SearchParams = Record<string, string | string[] | undefined>;
-
 /** 사유는 주소에 실려 오는 임의의 문자열이라 화면을 덮지 않을 만큼만 보여 준다. */
 const MAX_REASON_LENGTH = 200;
-
-function first(value: string | string[] | undefined): string | undefined {
-  return Array.isArray(value) ? value[0] : value;
-}
 
 /**
  * 로그인 화면.
@@ -25,7 +20,7 @@ export async function SigninPage({
   // 백엔드는 로그인에 실패하면 `/signin?error&reason=<사유>`로 돌려보낸다.
   // `error`는 값 없이 이름만 오므로 값이 아니라 존재 여부를 본다.
   const failed = params.error !== undefined;
-  const reason = first(params.reason)?.slice(0, MAX_REASON_LENGTH);
+  const reason = firstParam(params.reason)?.slice(0, MAX_REASON_LENGTH);
 
   return (
     <div className="min-h-screen bg-bg text-fg">
@@ -59,7 +54,7 @@ export async function SigninPage({
           )}
 
           <SigninButton
-            returnTo={first(params[RETURN_TO_PARAM])}
+            returnTo={firstParam(params[RETURN_TO_PARAM])}
             className="block rounded-[9px] bg-accent px-5 py-[11px] text-sm font-bold text-on-accent elevate-control transition hover:bg-accent-hover hover:text-on-accent"
           >
             DataGSM으로 로그인
