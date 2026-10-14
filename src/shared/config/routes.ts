@@ -1,10 +1,16 @@
 /** 새 문서 화면에 미리 채울 제목을 실어 보내는 쿼리 이름 */
 export const NEW_DOCUMENT_TITLE_PARAM = "title";
 
-/** 앱 전역 라우트 경로. 주소에 값이 들어가는 화면은 경로를 만들어 주는 함수로 둔다. */
+/**
+ * 앱 전역 라우트 경로. 주소에 값이 들어가는 화면은 경로를 만들어 주는 함수로 둔다.
+ *
+ * 문서는 제목이 아니라 숫자 id로 가리킨다 — 백엔드가 `articleId`로만 조회하기 때문이다.
+ */
 export const ROUTES = {
   home: "/",
-  document: "/document",
+  document: (articleId: number) => `/document/${articleId}`,
+  documentEdit: (articleId: number) => `/document/${articleId}/edit`,
+  documentHistory: (articleId: number) => `/document/${articleId}/history`,
   /** 새 문서 작성. 제목을 주면 그 제목이 채워진 채로 열린다. */
   documentNew: (title?: string) =>
     title
@@ -14,8 +20,6 @@ export const ROUTES = {
   search: "/search",
   /** 아직 작성되지 않은 문서로 이동했을 때 보이는 화면 (404 핸들러가 아니다) */
   missingDocument: "/missing-document",
-  edit: "/edit",
-  history: "/history",
   signin: "/signin",
   /**
    * 로그인 성공 후 백엔드가 돌려보내는 착지 지점.

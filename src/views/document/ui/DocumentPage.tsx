@@ -1,6 +1,9 @@
 import Link from "next/link";
+import { readArticleId, type ArticleRouteProps } from "@/entities/document";
+import { ROUTES } from "@/shared/config";
 import { WikiLink, MissingLink } from "@/shared/ui";
 import { DocumentTopNav } from "@/widgets/document-top-nav";
+import { DOCUMENT_TITLE } from "../model/mock";
 
 const tags = ["분류: 학교", "서울", "고등학교"];
 
@@ -71,10 +74,12 @@ const h2 =
   "scroll-mt-20 mt-[46px] mb-4 text-2xl font-bold tracking-[-0.015em]";
 const p = "mb-5 text-base leading-[1.9] text-fg-muted";
 
-export function DocumentPage() {
+export async function DocumentPage(props: ArticleRouteProps) {
+  const articleId = await readArticleId(props);
+
   return (
     <div className="min-h-screen bg-bg text-fg">
-      <DocumentTopNav />
+      <DocumentTopNav articleId={articleId} />
 
       <div className="mx-auto flex max-w-[1120px] gap-12 px-8">
         {/* 본문 */}
@@ -91,7 +96,7 @@ export function DocumentPage() {
           </div>
 
           <h1 className="text-[38px] font-extrabold leading-[1.15] tracking-[-0.025em]">
-            금성고등학교
+            {DOCUMENT_TITLE}
           </h1>
 
           <div className="mt-[14px] flex flex-wrap items-center gap-[14px] font-mono text-xs text-fg-subtle">
@@ -211,7 +216,10 @@ export function DocumentPage() {
             <div className="mt-4 rounded-[14px] bg-surface p-4 elevate-1">
               <div className="mb-4 flex items-center justify-between">
                 <div className="text-[13px] font-bold text-fg">편집 역사</div>
-                <Link href="#" className="text-[11.5px] text-accent">
+                <Link
+                  href={ROUTES.documentHistory(articleId)}
+                  className="text-[11.5px] text-accent"
+                >
                   전체
                 </Link>
               </div>
