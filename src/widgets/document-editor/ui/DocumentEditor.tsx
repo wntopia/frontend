@@ -27,7 +27,7 @@ export function DocumentEditor({
       />
 
       {showPreview ? (
-        <EditorPreview />
+        <EditorPreview content={content} />
       ) : (
         <textarea
           aria-label="본문"
