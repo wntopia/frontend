@@ -30,6 +30,11 @@ jobs:
           fetch-depth: 1
 
       - uses: anthropics/claude-code-action@v1
+        # 리뷰 플러그인이 하위 에이전트를 백그라운드로 띄우면 action이 그 결과를 기다리지 않고
+        # 종료해, 리뷰 없이 성공으로 끝납니다. 백그라운드 실행을 꺼서 끝까지 기다리게 합니다.
+        # https://github.com/anthropics/claude-code-action/issues/1499
+        env:
+          CLAUDE_CODE_DISABLE_BACKGROUND_TASKS: "1"
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           plugin_marketplaces: "https://github.com/anthropics/claude-code.git"
