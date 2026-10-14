@@ -33,7 +33,7 @@ export function MissingDocumentNotice({ title }: MissingDocumentNoticeProps) {
           이 문서 새로 만들기
         </Link>
         <Link
-          href={ROUTES.search}
+          href={ROUTES.search(title)}
           className="rounded-[9px] bg-surface-2 elevate-control px-5 py-[11px] text-sm font-semibold text-fg-muted hover:text-fg-muted"
         >
           비슷한 문서 찾기

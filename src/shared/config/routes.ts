@@ -1,3 +1,6 @@
+/** 검색 화면에 검색어를 실어 보내는 쿼리 이름 */
+export const SEARCH_QUERY_PARAM = "q";
+
 /** 새 문서 화면에 미리 채울 제목을 실어 보내는 쿼리 이름 */
 export const NEW_DOCUMENT_TITLE_PARAM = "title";
 
@@ -17,7 +20,10 @@ export const ROUTES = {
       ? `/document/new?${NEW_DOCUMENT_TITLE_PARAM}=${encodeURIComponent(title)}`
       : "/document/new",
   mypage: "/mypage",
-  search: "/search",
+  search: (query?: string) =>
+    query
+      ? `/search?${SEARCH_QUERY_PARAM}=${encodeURIComponent(query)}`
+      : "/search",
   /** 아직 작성되지 않은 문서로 이동했을 때 보이는 화면 (404 핸들러가 아니다) */
   missingDocument: "/missing-document",
   signin: "/signin",
