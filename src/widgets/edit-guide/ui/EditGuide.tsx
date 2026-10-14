@@ -15,6 +15,13 @@ export function EditGuide() {
           <span className={CODE_CHIP}>[[문서명]]</span> 으로 다른 문서를
           연결합니다.
         </p>
+        <p className="mb-3 text-[13px] leading-[1.8] text-fg-soft">
+          <span className={CODE_CHIP}>&apos;&apos;&apos;글자&apos;&apos;&apos;</span>{" "}
+          로 굵게 씁니다.
+        </p>
+        <p className="mb-3 text-[13px] leading-[1.8] text-fg-soft">
+          <span className={CODE_CHIP}>* 항목</span> 으로 목록을 만듭니다.
+        </p>
 
         <div className="my-[14px] h-px bg-divider" />
 
