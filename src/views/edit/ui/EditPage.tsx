@@ -1,5 +1,6 @@
 import { requireSession } from "@/features/auth/server";
 import { ROUTES } from "@/shared/config";
+import { EDIT_DOCUMENT } from "../model/mock";
 import { EditWorkspace } from "./EditWorkspace";
 
 /**
@@ -11,5 +12,12 @@ import { EditWorkspace } from "./EditWorkspace";
 export async function EditPage() {
   await requireSession(ROUTES.edit);
 
-  return <EditWorkspace />;
+  return (
+    <EditWorkspace
+      title={EDIT_DOCUMENT.title}
+      initialContent={EDIT_DOCUMENT.content}
+      backHref={ROUTES.document}
+      backLabel={EDIT_DOCUMENT.title}
+    />
+  );
 }
