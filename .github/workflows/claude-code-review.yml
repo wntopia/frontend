@@ -1,0 +1,38 @@
+# .github/workflows/claude-code-review.yml
+# PR이 열리거나 업데이트될 때 Claude가 리뷰하고 PR에 인라인 코멘트를 남깁니다.
+# 코멘트 작성자: Claude GitHub App (github_token 미지정 시 기본값)
+# 모델 호출 인증: 레포 시크릿 CLAUDE_CODE_OAUTH_TOKEN (구독 사용량에서 차감)
+
+name: Claude Code Review
+
+on:
+  pull_request:
+    # 사용량을 아끼려면 [opened, ready_for_review] 만 남기세요.
+    types: [opened, synchronize, ready_for_review, reopened]
+
+# 같은 PR에 새 푸시가 오면 진행 중인 이전 리뷰는 취소
+concurrency:
+  group: claude-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      pull-requests: read
+      issues: read
+      id-token: write   # Claude GitHub App 인증에 필수
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          plugin_marketplaces: "https://github.com/anthropics/claude-code.git"
+          plugins: "code-review@claude-code-plugins"
+          prompt: "/code-review:code-review --comment ${{ github.repository }}/pull/${{ github.event.pull_request.number }}"
+          claude_args: '--allowedTools "mcp__github_inline_comment__create_inline_comment"'
