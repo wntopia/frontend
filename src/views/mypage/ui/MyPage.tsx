@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getClassLabel, getDisplayName, getInitial } from "@/entities/session";
 import { SignoutButton } from "@/features/auth";
 import { requireSession } from "@/features/auth/server";
 import { ROUTES } from "@/shared/config";
@@ -25,7 +26,9 @@ const favorites = ["금성고등학교", "방송부", "2026 체육대회"];
 
 /** 마이페이지. 로그인한 사용자만 들어올 수 있다. */
 export async function MyPage() {
-  await requireSession(ROUTES.mypage);
+  const user = await requireSession(ROUTES.mypage);
+  // 학생이 아닌 계정(교사 등)은 학년 · 반이 없어 어떤 계정으로 들어왔는지 알 수 있게 이메일을 보인다.
+  const caption = getClassLabel(user) ?? user.email;
 
   return (
     <div className="min-h-screen bg-bg text-fg">
@@ -35,13 +38,17 @@ export async function MyPage() {
         {/* 프로필 */}
         <div className="mb-[34px] flex items-center gap-[18px]">
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-elevated elevate-2 text-[22px] font-bold text-fg-muted">
-            이
+            {getInitial(user)}
           </div>
           <div>
-            <div className="text-[21px] font-extrabold">이서연</div>
-            <div className="mt-[3px] font-mono text-xs text-fg-subtle">
-              2학년 3반 · 2026.03 가입
+            <div className="text-[21px] font-extrabold">
+              {getDisplayName(user)}
             </div>
+            {caption && (
+              <div className="mt-[3px] font-mono text-xs text-fg-subtle">
+                {caption}
+              </div>
+            )}
           </div>
           <div className="flex-1" />
           <button className="cursor-pointer rounded-[9px] bg-surface-2 px-[15px] py-[9px] text-[13px] font-semibold text-fg-muted elevate-control transition hover:elevate-1">
