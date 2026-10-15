@@ -141,6 +141,9 @@ export default HomePage;
 - **강조 위치는 데이터가 정한다.** 변경 요약(`ChangeSummarySegment`)과 검색 스니펫
   (`SnippetSegment`)은 문장을 조각 배열로 표현해 어디를 굵게/하이라이트할지 데이터가
   결정한다. 컴포넌트에서 문자열을 파싱하지 않는다.
+- **위키 본문은 `parseWikiText` → `WikiContent`로 그린다** (`@/entities/document`). 본문을 HTML
+  문자열로 주입하지 않는다. 목차는 같은 파싱 결과에 `extractToc`를 써서 제목 id가 어긋나지 않게 한다.
+  지원 문법은 `entities/document/model/wiki-syntax.ts` 머리말에 있다.
 - **주석은 한국어로, '무엇'이 아니라 '왜'를 적는다.** 기존 파일들이 그렇게 되어 있다.
 
 ## 디자인 원본
