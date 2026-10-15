@@ -27,13 +27,13 @@ export function MissingDocumentNotice({ title }: MissingDocumentNoticeProps) {
 
       <div className="flex justify-center gap-2.5">
         <Link
-          href={ROUTES.edit}
+          href={ROUTES.documentNew(title)}
           className="rounded-[9px] bg-accent px-5 py-[11px] text-sm font-bold text-on-accent elevate-control transition hover:bg-accent-hover hover:text-on-accent"
         >
           이 문서 새로 만들기
         </Link>
         <Link
-          href={ROUTES.search}
+          href={ROUTES.search(title)}
           className="rounded-[9px] bg-surface-2 elevate-control px-5 py-[11px] text-sm font-semibold text-fg-muted hover:text-fg-muted"
         >
           비슷한 문서 찾기

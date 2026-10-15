@@ -1,5 +1,7 @@
+import { readArticleId, type ArticleRouteProps } from "@/entities/document";
 import { requireSession } from "@/features/auth/server";
 import { ROUTES } from "@/shared/config";
+import { EDIT_DOCUMENT } from "../model/mock";
 import { EditWorkspace } from "./EditWorkspace";
 
 /**
@@ -8,8 +10,16 @@ import { EditWorkspace } from "./EditWorkspace";
  * 로그인 검사는 서버에서 해야 하는데 편집 화면 본체는 상태를 가진 클라이언트 컴포넌트라,
  * 검사만 하는 서버 컴포넌트를 한 겹 두었다.
  */
-export async function EditPage() {
-  await requireSession(ROUTES.edit);
+export async function EditPage(props: ArticleRouteProps) {
+  const articleId = await readArticleId(props);
+  await requireSession(ROUTES.documentEdit(articleId));
 
-  return <EditWorkspace />;
+  return (
+    <EditWorkspace
+      title={EDIT_DOCUMENT.title}
+      initialContent={EDIT_DOCUMENT.content}
+      backHref={ROUTES.document(articleId)}
+      backLabel={EDIT_DOCUMENT.title}
+    />
+  );
 }

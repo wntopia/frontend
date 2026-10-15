@@ -52,7 +52,7 @@ export function Header(props: HeaderProps) {
           <>
             <div className="flex-1" />
             <Link
-              href={ROUTES.search}
+              href={ROUTES.search()}
               className="flex w-60 items-center gap-2 rounded-[9px] bg-surface-2 elevate-control px-3 py-2 text-[13px] text-fg-subtle hover:text-fg-subtle"
             >
               <SearchIcon />

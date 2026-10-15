@@ -23,7 +23,9 @@ export function DocumentEditor({
       <input
         aria-label="문서 제목"
         defaultValue={title}
-        className="mb-[18px] w-full border-b border-divider bg-transparent pb-[14px] text-[30px] font-extrabold tracking-[-.02em] text-fg outline-none"
+        // 새 문서는 제목 없이 열릴 수 있어, 빈 줄만 보이지 않게 자리를 알려 준다.
+        placeholder="문서 제목"
+        className="mb-[18px] w-full border-b border-divider bg-transparent pb-[14px] text-[30px] font-extrabold tracking-[-.02em] text-fg outline-none placeholder:text-faint"
       />
 
       {showPreview ? (

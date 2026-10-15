@@ -11,7 +11,7 @@ export function CreateDocumentCta({ query }: CreateDocumentCtaProps) {
     <div className="mt-8 flex items-center justify-between rounded-xl bg-surface px-5 py-[18px] elevate-1">
       <div className="text-[13.5px] text-fg-soft">찾는 문서가 없나요?</div>
       <Link
-        href={ROUTES.edit}
+        href={ROUTES.documentNew(query)}
         className="flex-shrink-0 rounded-lg bg-accent px-[14px] py-2 text-[13px] font-bold text-on-accent elevate-control transition hover:bg-accent-hover hover:text-on-accent"
       >
         {`'${query}' 문서 새로 만들기`}

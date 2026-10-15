@@ -1,4 +1,4 @@
-import type { Backlink } from "@/entities/document";
+import { SAMPLE_ARTICLE_ID, type Backlink } from "@/entities/document";
 import { ROUTES } from "@/shared/config";
 
 /** 백엔드 연동 전까지 사용하는 디자인 시안 데이터 */
@@ -8,7 +8,7 @@ export const BACKLINKS: Backlink[] = [
   {
     id: "geumseong-high",
     title: "금성고등학교",
-    href: ROUTES.document,
+    href: ROUTES.document(SAMPLE_ARTICLE_ID),
     section: "개요 문단",
   },
   {

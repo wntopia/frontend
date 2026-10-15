@@ -1,12 +1,18 @@
-import type { RecentChange } from "@/entities/document";
+import { SAMPLE_ARTICLE_ID, type RecentChange } from "@/entities/document";
 import { ROUTES } from "@/shared/config";
+
+/**
+ * '전체 보기'가 가는 곳. 위키 전체의 변경 목록 화면이 아직 없어,
+ * 시안이 그랬듯 시안 문서의 편집 역사로 보낸다.
+ */
+export const ALL_CHANGES_HREF = ROUTES.documentHistory(SAMPLE_ARTICLE_ID);
 
 /** 백엔드 연동 전까지 사용하는 디자인 시안 데이터 */
 export const RECENT_CHANGES: RecentChange[] = [
   {
     id: "geumseong-high",
     title: "금성고등학교",
-    href: ROUTES.document,
+    href: ROUTES.document(SAMPLE_ARTICLE_ID),
     activity: "active",
     summary: [
       { text: "이서연", emphasis: "strong" },

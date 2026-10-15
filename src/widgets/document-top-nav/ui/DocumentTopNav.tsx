@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { AccountButton } from "@/features/auth";
+import { ROUTES } from "@/shared/config";
 import { Logo } from "@/shared/ui";
 
 /**
@@ -10,9 +11,12 @@ import { Logo } from "@/shared/ui";
  * 검색·편집 진입점과 케밥 메뉴(드롭다운)를 포함하므로 클라이언트 컴포넌트로 둔다.
  */
 export function DocumentTopNav({
+  articleId,
   editingName = "이서연",
   showEditing = true,
 }: {
+  /** 보고 있는 문서. 편집·편집 역사 링크가 같은 문서로 이어지게 한다. */
+  articleId: number;
   editingName?: string;
   showEditing?: boolean;
 }) {
@@ -35,7 +39,7 @@ export function DocumentTopNav({
       <div className="mx-auto flex h-[58px] max-w-[1120px] items-center gap-[18px] px-8">
         {/* 로고 */}
         <Link
-          href="/"
+          href={ROUTES.home}
           className="flex flex-shrink-0 items-center gap-[9px] text-base font-extrabold tracking-[-0.01em]"
         >
           <Logo />
@@ -53,7 +57,7 @@ export function DocumentTopNav({
 
         {/* 검색 */}
         <Link
-          href="#"
+          href={ROUTES.search()}
           className="flex w-60 items-center gap-2 rounded-[9px] bg-surface-2 elevate-control px-3 py-2 text-[13px] text-fg-subtle"
         >
           <span className="inline-block h-[13px] w-[13px] rounded-full border-[1.5px] border-fg-subtle" />
@@ -73,7 +77,7 @@ export function DocumentTopNav({
 
         {/* 편집 버튼 */}
         <Link
-          href="#"
+          href={ROUTES.documentEdit(articleId)}
           className="flex flex-shrink-0 items-center gap-[7px] rounded-[9px] bg-surface-2 elevate-control px-[15px] py-2 transition hover:elevate-1 text-[13.5px] font-semibold text-fg"
         >
           <span className="inline-block h-3 w-3 rounded-[3px] border-[1.6px] border-fg-soft" />
@@ -103,7 +107,7 @@ export function DocumentTopNav({
                 링크 복사
               </div>
               <Link
-                href="#"
+                href={ROUTES.documentHistory(articleId)}
                 className="block cursor-pointer rounded-[7px] px-[11px] py-[9px] text-[13.5px] text-fg-muted hover:bg-hover"
               >
                 편집 역사 전체 보기

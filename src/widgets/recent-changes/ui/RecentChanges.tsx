@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { RecentChangeItem } from "@/entities/document";
-import { ROUTES } from "@/shared/config";
-import { RECENT_CHANGES } from "../model/mock";
+import { ALL_CHANGES_HREF, RECENT_CHANGES } from "../model/mock";
 
 /** 홈의 '최근 변경' 목록 */
 export function RecentChanges() {
@@ -10,7 +9,7 @@ export function RecentChanges() {
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-[19px] font-bold">최근 변경</h2>
         <Link
-          href={ROUTES.history}
+          href={ALL_CHANGES_HREF}
           className="text-[12.5px] text-accent hover:text-accent"
         >
           전체 보기
