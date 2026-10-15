@@ -10,7 +10,7 @@ export function CategoryList() {
       {CATEGORIES.map((category) => (
         <Link
           key={category}
-          href={ROUTES.search}
+          href={ROUTES.search()}
           className="block py-[5px] text-[13.5px] text-fg-soft transition-colors hover:text-fg"
         >
           {category}

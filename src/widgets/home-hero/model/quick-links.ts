@@ -1,3 +1,4 @@
+import { SAMPLE_ARTICLE_ID } from "@/entities/document";
 import { ROUTES } from "@/shared/config";
 
 /** 히어로 하단의 바로가기 태그 */
@@ -10,7 +11,7 @@ export type QuickLink = {
 
 /** 백엔드 연동 전까지 사용하는 디자인 시안 데이터 */
 export const QUICK_LINKS: QuickLink[] = [
-  { label: "금성고등학교", href: ROUTES.document },
+  { label: "금성고등학교", href: ROUTES.document(SAMPLE_ARTICLE_ID) },
   { label: "2026 체육대회", href: "#" },
   { label: "방송부", href: "#" },
   {

@@ -44,7 +44,7 @@ views/     한 화면 전체. 위젯을 배치하고 여백/레이아웃만 담�
 widgets/   화면의 한 덩어리 (최근 변경, 헤더, 리비전 타임라인 …)
 features/  사용자 동작 단위 (theme-switcher: 라이트/다크 전환, auth: 로그인·로그아웃·접근 제어)
 entities/  도메인 단위 UI와 타입 (document: RecentChangeItem …, session: 로그인한 사용자)
-shared/    어디서나 쓰는 것 (ROUTES, SidebarCard, WikiLink, Logo, api: 백엔드 호출)
+shared/    어디서나 쓰는 것 (ROUTES, SidebarCard, WikiLink, Logo, api: 백엔드 호출, lib: 쿼리 값 읽기)
 ```
 
 슬라이스 구조는 `<슬라이스>/{ui,model,api}/` + 배럴 `index.ts`. `api`는 백엔드를 호출하는 함수 자리다.
@@ -56,33 +56,43 @@ shared/    어디서나 쓰는 것 (ROUTES, SidebarCard, WikiLink, Logo, api: �
 `@/features/auth/server`처럼 따로 import 한다.
 
 ```tsx
-// src/app/home/page.tsx — 라우트 파일은 이 이상 하지 않는다
+// src/app/page.tsx — 라우트 파일은 이 이상 하지 않는다
 import { HomePage } from "@/views/home";
 export default HomePage;
 ```
 
+주소에서 값을 받는 화면도 같다. Next가 page에 넘기는 `params` / `searchParams`를 view가 그대로 받고,
+탭 제목이 데이터에 달린 화면은 view가 내보낸 함수를 `generateMetadata`로 잇기만 한다
+(`app/document/[articleId]/page.tsx` 참고).
+
 ## 라우팅
 
 경로는 `src/shared/config/routes.ts`의 `ROUTES`로만 참조한다. 문자열 하드코딩 금지.
+주소에 값이 들어가는 경로는 함수다 — `ROUTES.document(articleId)`, `ROUTES.search(query)`.
 
-| 경로 | 화면 |
-|---|---|
-| `/` | 화면 목록 허브 (`views/screen-index`) — 초기 세팅용 임시 진입점 |
-| `/home` | 홈 (최근 변경, 인기 문서, 위키 현황, 분류) |
-| `/document` | 문서 상세 |
-| `/search` | 검색 결과 |
-| `/missing-document` | 미작성 문서 안내 화면 (404 핸들러가 아니다) |
-| `/edit` | 문서 편집 |
-| `/history` | 편집역사 |
-| `/mypage` | 마이페이지 |
-| `/signin` | 로그인. 실패하면 백엔드가 `?error&reason=…`을 붙여 이리로 돌려보낸다 |
-| `/signin/callback` | 로그인 성공 후 착지 지점. 로그인 전에 보던 화면으로 곧바로 넘긴다 |
+| 경로 | `ROUTES` | 화면 |
+|---|---|---|
+| `/` | `home` | 홈 (최근 변경, 인기 문서, 위키 현황, 분류) |
+| `/document/[articleId]` | `document(id)` | 문서 상세 |
+| `/document/[articleId]/edit` | `documentEdit(id)` | 문서 편집 (로그인 필요) |
+| `/document/[articleId]/history` | `documentHistory(id)` | 편집역사 |
+| `/document/new?title=` | `documentNew(title?)` | 새 문서 작성 (로그인 필요). 편집 화면의 본체를 빈 본문으로 연다 |
+| `/search?q=` | `search(query?)` | 검색 결과 |
+| `/missing-document` | `missingDocument` | 미작성 문서 안내 화면 (404 핸들러가 아니다) |
+| `/mypage` | `mypage` | 마이페이지 |
+| `/signin` | `signin` | 로그인. 실패하면 백엔드가 `?error&reason=…`을 붙여 이리로 돌려보낸다 |
+| `/signin/callback` | `signinCallback` | 로그인 성공 후 착지 지점. 로그인 전에 보던 화면으로 곧바로 넘긴다 |
 
-디자인에서 가져온 7개 화면이 모두 포팅되어 있다. 로그인 화면 둘은 시안 없이 만들었다.
-홈이 `/`가 아니라 `/home`에 있는 것은 `/`를 화면 목록이 쓰고 있기 때문이며, 임시 배치다.
+디자인에서 가져온 7개 화면이 모두 포팅되어 있다. 로그인 화면 둘과 새 문서 화면은 시안 없이 만들었다.
 
-문서 라우트가 아직 `/document` 하나로 고정되어 있다는 점에 주의한다. 실제 위키라면
-문서별 동적 경로가 필요하고, 지금 목 데이터의 `href`는 대부분 `#`이거나 이 고정 경로를 가리킨다.
+**문서는 제목이 아니라 숫자 `articleId`로 가리킨다.** 백엔드가 id로만 조회하기 때문이다.
+`[articleId]` 아래의 view와 `generateMetadata`는 `readArticleId(props)`(`@/entities/document`)로 id를 읽는다 —
+문서 id가 될 수 없는 주소(`abc`, `0`, `007`)는 여기서 404가 된다.
+
+경로만 동적이고 데이터는 아직 목이다. 문서·편집·편집역사 화면은 어떤 id로 들어가도 같은 시안 문서를 그리고,
+검색 화면은 `q`를 화면에 싣기만 할 뿐 결과는 시안 그대로다 (`q`가 없으면 시안의 검색어를 쓴다).
+목 데이터에서 시안 문서를 가리킬 때는 `ROUTES.document(SAMPLE_ARTICLE_ID)`를 쓰고, 대상이 정해지지 않은
+링크(다른 시안 문서, 위키 링크, 마이페이지의 기여 목록)는 `#`으로 남아 있다.
 
 `/api/v1/**`와 `/callback`은 Next 라우트가 아니다. `next.config.ts`의 rewrites가 백엔드로 넘기는 프록시 경로다. `/callback`은 DataGSM이 로그인 후 돌려보내는 주소(`OAUTH_REDIRECT_PATH`)로, 백엔드 callback으로 이어진다.
 
@@ -95,8 +105,10 @@ export default HomePage;
 - **실패는 `ApiError`로 온다.** `isApiError(error, 404)`처럼 상태로 갈라 처리한다. 응답 타입은
   `shared/api/types.ts`에 백엔드 DTO와 같은 이름으로 둔다.
 - **401은 화면에서 에러가 아니다.** 세션 조회(`entities/session`)는 401을 '비로그인'(`null`)으로 바꿔 준다.
-- **로그인이 필요한 화면**은 view의 서버 컴포넌트 첫 줄에서 `await requireSession(ROUTES.xxx)`를 부른다
+- **로그인이 필요한 화면**은 view의 서버 컴포넌트 맨 앞에서 `await requireSession(ROUTES.xxx)`를 부른다
   (`views/edit`, `views/mypage` 참고). 레이아웃에서 검사하지 않는다 — 화면 이동 때 다시 실행되지 않는다.
+  넘기는 값은 로그인 후 돌아올 주소라, 주소에 값이 있는 화면은 그 값까지 실어 만든다
+  (`ROUTES.documentEdit(articleId)`, `ROUTES.documentNew(title)`).
 - **헤더처럼 정적인 화면에 섞이는 곳**은 `useSession()`으로 브라우저에서 세션을 읽는다. 서버에서 읽으면
   그 화면 전체가 동적 렌더링이 된다.
 - 로그인 시작은 `fetch`가 아니라 페이지 이동이다 (`SigninButton`). 복귀 주소는 외부 주소로 새지 않도록

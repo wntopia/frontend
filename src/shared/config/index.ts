@@ -1,4 +1,8 @@
-export { ROUTES } from "./routes";
+export {
+  NEW_DOCUMENT_TITLE_PARAM,
+  ROUTES,
+  SEARCH_QUERY_PARAM,
+} from "./routes";
 export {
   DEFAULT_MODE,
   THEME_STORAGE_KEY,

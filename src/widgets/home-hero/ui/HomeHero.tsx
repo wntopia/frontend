@@ -20,7 +20,7 @@ export function HomeHero() {
       </h1>
 
       <Link
-        href={ROUTES.search}
+        href={ROUTES.search()}
         className="flex max-w-[620px] items-center gap-3 rounded-xl bg-surface px-[18px] py-[15px] text-[15px] text-fg-subtle elevate-1 transition hover:elevate-2 hover:text-fg-subtle"
       >
         <span className="inline-block h-4 w-4 flex-shrink-0 rounded-full border-[1.8px] border-fg-subtle" />
