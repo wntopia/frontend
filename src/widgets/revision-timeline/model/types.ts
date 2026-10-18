@@ -1,4 +1,4 @@
-import type { ChangeSummarySegment } from "@/entities/document";
+import type { ChangeSummarySegment, CharDeltaTone } from "@/entities/document";
 
 /** 리비전 종류. 타임라인 마커 색상으로 표현된다 — active(오늘 편집) */
 export type RevisionKind = "active" | "default";
@@ -19,7 +19,7 @@ export type Revision = {
   /** 가벼운 수정(오타 등)으로 표시된 편집인지 */
   minor?: boolean;
   /** 글자 수 변화 (예: "+412자") */
-  delta?: { text: string; tone: "added" | "removed" | "neutral" };
+  delta?: { text: string; tone: CharDeltaTone };
   /**
    * '차이 보기'로 펼쳐 보는 변경 내용. 리비전 목록 응답에는 본문이 없어 아직 채우지 않는다 —
    * 백엔드가 diff를 주지 않으므로 리비전 본문 두 개를 받아 계산해야 한다.

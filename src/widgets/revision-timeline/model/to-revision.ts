@@ -1,4 +1,8 @@
-import { getEditorName } from "@/entities/document";
+import {
+  CREATION_REVISION,
+  describeCharDelta,
+  getEditorName,
+} from "@/entities/document";
 import type { ArticleRevisionSummaryResDto, IsoDateTime } from "@/shared/api";
 import {
   formatDate,
@@ -33,7 +37,7 @@ export function toTimelineRevisions(
     return [creationRevision(context.createdAt, null, context.now)];
   }
   return items.map((item) =>
-    item.revision === 1
+    item.revision === CREATION_REVISION
       ? creationRevision(
           context.createdAt ?? item.editedAt,
           item.charDelta,
@@ -58,7 +62,7 @@ function editRevision(
     ],
     time: timeLabel(item.editedAt, now),
     minor: item.minorEdit,
-    delta: deltaLabel(item.charDelta),
+    delta: describeCharDelta(item.charDelta) ?? undefined,
   };
 }
 
@@ -72,11 +76,11 @@ function creationRevision(
   now: Date,
 ): Revision {
   return {
-    id: "r1",
+    id: `r${CREATION_REVISION}`,
     kind: isToday(createdAt, now) ? "active" : "default",
     summary: [{ text: "문서 생성" }],
     time: timeLabel(createdAt, now),
-    delta: deltaLabel(charDelta),
+    delta: describeCharDelta(charDelta) ?? undefined,
   };
 }
 
@@ -95,15 +99,4 @@ function timeLabel(at: IsoDateTime | null, now: Date): string {
   return recent || isToday(at, now)
     ? relative
     : `${relative} ${formatTime(at)}`;
-}
-
-function deltaLabel(charDelta: number | null): Revision["delta"] {
-  // 글자 수 변화를 기록하기 전에 남은 리비전은 값이 없다. 0과 구분해 아예 표시하지 않는다.
-  if (charDelta === null) return undefined;
-  if (charDelta === 0) return { text: "±0자", tone: "neutral" };
-
-  const amount = Math.abs(charDelta).toLocaleString("ko-KR");
-  return charDelta > 0
-    ? { text: `+${amount}자`, tone: "added" }
-    : { text: `−${amount}자`, tone: "removed" };
 }

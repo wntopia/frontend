@@ -75,7 +75,7 @@ export default HomePage;
 | `/` | `home` | 홈 (최근 변경, 인기 문서, 위키 현황, 분류) |
 | `/document/[articleId]` | `document(id)` | 문서 상세 |
 | `/document/[articleId]/edit` | `documentEdit(id)` | 문서 편집 (로그인 필요) |
-| `/document/[articleId]/history` | `documentHistory(id)` | 편집역사 |
+| `/document/[articleId]/history?page=` | `documentHistory(id, page?)` | 편집역사. 첫 페이지는 쿼리 없이 둔다 |
 | `/document/new?title=` | `documentNew(title?)` | 새 문서 작성 (로그인 필요). 편집 화면의 본체를 빈 본문으로 연다 |
 | `/search?q=` | `search(query?)` | 검색 결과 |
 | `/missing-document` | `missingDocument` | 미작성 문서 안내 화면 (404 핸들러가 아니다) |
@@ -94,7 +94,7 @@ export default HomePage;
 - 문서: 어떤 id로 들어가도 같은 시안 문서를 그린다.
 - 검색: `q`를 화면에 싣기만 할 뿐 결과는 시안 그대로다 (`q`가 없으면 시안의 검색어를 쓴다).
 - 편집: 어떤 id로 들어가도 같은 시안 문서를 그린다.
-- 편집역사: 어떤 id로 들어가도 같은 시안 문서를 그린다.
+- 편집역사: 백엔드의 리비전 목록을 `?page=`로 30개씩 나눠 그린다. '차이 보기'(#18)는 아직 없다.
 
 목 데이터에서 시안 문서를 가리킬 때는 `ROUTES.document(SAMPLE_ARTICLE_ID)`를 쓰고, 대상이 정해지지 않은
 링크(다른 시안 문서, 위키 링크, 마이페이지의 기여 목록)는 `#`으로 남아 있다.

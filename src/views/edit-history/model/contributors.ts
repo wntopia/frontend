@@ -11,7 +11,7 @@ const MAX_PAGES = 10;
 
 /**
  * 문서의 고유 편집자 수. 편집자는 "학번 이름" 문자열로 구분한다 — 이름만으로는 동명이인이 합쳐진다.
- * 생성자는 응답에 없어 세지 못한다.
+ * 생성자는 응답에 없어 따로 세지 못하지만, 문서가 있으면 만든 사람은 있으므로 1보다 작게 보이지 않는다.
  */
 export async function countContributors(
   articleId: number,
@@ -32,7 +32,7 @@ export async function countContributors(
     [first, ...rest].flatMap((page) => page.items.map((item) => item.editor)),
   );
   return {
-    count: editors.size,
+    count: Math.max(editors.size, 1),
     partial: first.totalElements > pageCount * PAGE_SIZE,
   };
 }
