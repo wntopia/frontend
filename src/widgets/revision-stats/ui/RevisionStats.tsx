@@ -1,24 +1,45 @@
-import { REVISION_STATS } from "../model/mock";
+import type { IsoDateTime } from "@/shared/api";
+import { formatDate } from "@/shared/lib";
 
-const TONE = {
-  accent: "text-accent",
-  success: "text-success",
-} as const;
+type RevisionStatsProps = {
+  revisionCount: number;
+  /** 고유 편집자 수. `partial`이면 리비전 일부만 세어 실제로는 더 많을 수 있다. */
+  contributors: { count: number; partial: boolean };
+  createdAt: IsoDateTime | null;
+};
 
 /** 편집 역사 상단의 리비전 통계 카드 3종 */
-export function RevisionStats() {
+export function RevisionStats({
+  revisionCount,
+  contributors,
+  createdAt,
+}: RevisionStatsProps) {
+  const stats = [
+    {
+      label: "전체 리비전",
+      value: revisionCount.toLocaleString("ko-KR"),
+      tone: "text-accent",
+    },
+    {
+      label: "기여자",
+      value: `${contributors.count.toLocaleString("ko-KR")}${contributors.partial ? "+" : ""}`,
+      tone: "text-success",
+    },
+    {
+      label: "최초 생성",
+      value: createdAt ? formatDate(createdAt) : "—",
+      tone: "text-fg",
+    },
+  ];
+
   return (
     <div className="flex gap-3">
-      {REVISION_STATS.map((stat) => (
+      {stats.map((stat) => (
         <div
           key={stat.label}
           className="flex-1 rounded-xl bg-surface px-4 py-[14px] elevate-1"
         >
-          <div
-            className={`font-mono text-xl font-bold ${
-              stat.tone ? TONE[stat.tone] : "text-fg"
-            }`}
-          >
+          <div className={`font-mono text-xl font-bold ${stat.tone}`}>
             {stat.value}
           </div>
           <div className="mt-0.5 text-xs text-fg-subtle">{stat.label}</div>

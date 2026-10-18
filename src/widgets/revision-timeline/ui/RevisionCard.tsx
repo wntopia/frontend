@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { ChangeSummarySegment } from "@/entities/document";
-import type { Revision, RevisionDiffLine } from "../model/mock";
+import type { Revision, RevisionDiffLine } from "../model/types";
 
 const SEGMENT_EMPHASIS: Record<
   NonNullable<ChangeSummarySegment["emphasis"]>,
@@ -14,6 +14,7 @@ const SEGMENT_EMPHASIS: Record<
 
 const DELTA_TONE = {
   added: "text-success",
+  removed: "text-danger",
   neutral: "text-fg-subtle",
 } as const;
 
@@ -33,8 +34,9 @@ export function RevisionCard({ revision }: RevisionCardProps) {
 
   return (
     <div className="rounded-xl bg-surface px-4 py-[14px] elevate-1">
-      <div className="flex items-center justify-between">
-        <div className="text-sm text-fg">
+      {/* 편집 요약은 사용자가 쓴 글이라 길 수 있다. 줄바꿈되더라도 오른쪽의 글자 수 변화를 밀어내지 않게 한다. */}
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0 break-words text-sm text-fg">
           {revision.summary.map((segment, index) => (
             <span
               key={index}
@@ -56,7 +58,9 @@ export function RevisionCard({ revision }: RevisionCardProps) {
           </button>
         )}
         {revision.delta && (
-          <span className={`font-mono text-xs ${DELTA_TONE[revision.delta.tone]}`}>
+          <span
+            className={`flex-shrink-0 font-mono text-xs ${DELTA_TONE[revision.delta.tone]}`}
+          >
             {revision.delta.text}
           </span>
         )}
@@ -64,6 +68,7 @@ export function RevisionCard({ revision }: RevisionCardProps) {
 
       <div className="mt-[5px] font-mono text-[11.5px] text-fg-subtle">
         {revision.time}
+        {revision.minor && " · 가벼운 수정"}
       </div>
 
       {revision.diff && diffOpen && (
