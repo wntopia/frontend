@@ -44,7 +44,7 @@ PR을 올리면 CI(`.github/workflows/ci.yml`)가 `npm ci` → `lint` → `typec
 
 | 환경 변수 | 설명 |
 |---|---|
-| `API_BASE_URL` | 백엔드 오리진 (예: `http://localhost:8080`). 서버 전용 값이며 **빌드 시점에도 필요하다** |
+| `API_BASE_URL` | 백엔드 오리진 (예: `http://localhost:8080`). 서버 전용 값이며 **빌드 시점에 프록시 목적지로 고정된다**. 비우면 `http://localhost:8080`으로 빌드되므로 배포 빌드에서는 반드시 넣는다 |
 
 ### 어느 백엔드에 붙일까
 
