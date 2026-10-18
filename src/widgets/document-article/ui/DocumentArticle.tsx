@@ -6,7 +6,7 @@ type DocumentArticleProps = {
   article: ArticleResDto;
   /** `parseWikiText(article.content)`의 결과. 목차와 같은 파싱 결과를 쓰도록 위에서 받는다 */
   blocks: WikiBlock[];
-  /** 리비전 수 — 리비전 목록의 `totalElements` */
+  /** 생성 뒤로 수정된 횟수 */
   editCount: number;
 };
 
@@ -43,7 +43,7 @@ export function DocumentArticle({
             <span className="text-faint">·</span>
           </>
         )}
-        {/* 시안의 '기여자 수'는 리비전 전체를 받아야 셀 수 있어, 첫 페이지에 함께 오는 리비전 수로 대신한다. */}
+        {/* 시안의 '기여자 수'는 리비전 전체를 받아야 셀 수 있어, 첫 페이지에 함께 오는 리비전 수로 수정 횟수를 보인다. */}
         <span>편집 {editCount.toLocaleString("ko-KR")}회</span>
         <span className="text-faint">·</span>
         <span>조회 {article.viewCount.toLocaleString("ko-KR")}</span>

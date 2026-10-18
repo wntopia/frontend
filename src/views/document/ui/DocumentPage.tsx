@@ -36,7 +36,8 @@ export async function DocumentPage(props: ArticleRouteProps) {
         <DocumentArticle
           article={article}
           blocks={blocks}
-          editCount={revisions.totalElements}
+          // 리비전 1은 생성 시점 내용이라 수정 횟수에서 뺀다.
+          editCount={Math.max(revisions.totalElements - 1, 0)}
         />
 
         {/* 우측 플로팅 사이드바 */}
@@ -46,6 +47,8 @@ export async function DocumentPage(props: ArticleRouteProps) {
             <RecentRevisions
               articleId={articleId}
               revisions={revisions.items}
+              totalRevisions={revisions.totalElements}
+              createdAt={article.createdAt}
             />
           </div>
         </aside>
