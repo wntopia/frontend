@@ -53,7 +53,7 @@ shared/    어디서나 쓰는 것 (ROUTES, SidebarCard, WikiLink, Logo, api: �
 
 배럴의 유일한 예외는 **서버 전용 진입점 `server.ts`** 다. `next/headers`에 의존하는 코드는 클라이언트
 번들에 들어갈 수 없어 배럴에 실을 수 없으므로 `@/shared/api/server`, `@/entities/session/server`,
-`@/features/auth/server`처럼 따로 import 한다.
+`@/entities/document/server`, `@/features/auth/server`처럼 따로 import 한다.
 
 ```tsx
 // src/app/page.tsx — 라우트 파일은 이 이상 하지 않는다

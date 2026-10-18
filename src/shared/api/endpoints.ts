@@ -16,9 +16,11 @@ export const API_PATHS = {
   signout: `${API_PREFIX}/auth/signout`,
 
   article: (articleId: number) => `${API_PREFIX}/articles/${articleId}`,
-  /** 리비전 목록(최신 순) */
-  articleRevisions: (articleId: number) =>
-    `${API_PREFIX}/articles/${articleId}/revisions`,
+  /** 리비전 목록(최신 순). 페이지 단위로 온다 — `page`는 0부터, `size`는 1~100 */
+  articleRevisions: (
+    articleId: number,
+    { page, size }: { page: number; size: number },
+  ) => `${API_PREFIX}/articles/${articleId}/revisions?page=${page}&size=${size}`,
   /** 특정 리비전 시점으로 재구성한 문서 */
   articleRevision: (articleId: number, revision: number) =>
     `${API_PREFIX}/articles/${articleId}/revisions/${revision}`,

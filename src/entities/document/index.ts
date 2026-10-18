@@ -1,3 +1,5 @@
+// 서버 컴포넌트용 `getArticle`·`getArticleRevisions`는 `@/entities/document/server`에서 import 한다.
+export { fetchArticle, fetchArticleRevisions } from "./api/article";
 export { RecentChangeItem } from "./ui/RecentChangeItem";
 export { PopularDocumentCard } from "./ui/PopularDocumentCard";
 export { SearchResultCard } from "./ui/SearchResultCard";
