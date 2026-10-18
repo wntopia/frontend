@@ -9,8 +9,8 @@
 
 **디자인 시안을 화면으로 옮긴 단계에서, 백엔드를 하나씩 붙여 가는 중이다.**
 
-- 백엔드와 연결된 것은 **로그인·세션뿐이다** (DataGSM OAuth). 문서·검색·편집 저장은 아직 없고,
-  화면의 데이터는 여전히 각 슬라이스의 `model/mock.ts`에서 온다.
+- 백엔드와 연결된 범위는 **화면마다 다르다** — '라우팅' 절의 화면별 상태를 볼 것. 로그인·세션은 DataGSM
+  OAuth로 연결되어 있고, 아직 연결되지 않은 화면의 데이터는 각 슬라이스의 `model/mock.ts`에서 온다.
 - 서비스 이름은 **지무위키**다. 화면에 보이는 학교 이름("금성고등학교", "금성고")은
   디자인 시안에 들어있던 **임시 문구**이며 실제 학교가 아니다. 문서 제목
   ("2026 체육대회", "방송부"), 사용자 이름, 조회수, 날짜도 전부 시안용 더미값이다.
@@ -44,7 +44,7 @@ views/     한 화면 전체. 위젯을 배치하고 여백/레이아웃만 담�
 widgets/   화면의 한 덩어리 (최근 변경, 헤더, 리비전 타임라인 …)
 features/  사용자 동작 단위 (theme-switcher: 라이트/다크 전환, auth: 로그인·로그아웃·접근 제어)
 entities/  도메인 단위 UI와 타입 (document: RecentChangeItem …, session: 로그인한 사용자)
-shared/    어디서나 쓰는 것 (ROUTES, SidebarCard, WikiLink, Logo, api: 백엔드 호출, lib: 쿼리 값 읽기)
+shared/    어디서나 쓰는 것 (ROUTES, SidebarCard, WikiLink, Logo, api: 백엔드 호출, lib: 쿼리 값 읽기·날짜 포맷)
 ```
 
 슬라이스 구조는 `<슬라이스>/{ui,model,api}/` + 배럴 `index.ts`. `api`는 백엔드를 호출하는 함수 자리다.
@@ -89,8 +89,13 @@ export default HomePage;
 `[articleId]` 아래의 view와 `generateMetadata`는 `readArticleId(props)`(`@/entities/document`)로 id를 읽는다 —
 문서 id가 될 수 없는 주소(`abc`, `0`, `007`)는 여기서 404가 된다.
 
-경로만 동적이고 데이터는 아직 목이다. 문서·편집·편집역사 화면은 어떤 id로 들어가도 같은 시안 문서를 그리고,
-검색 화면은 `q`를 화면에 싣기만 할 뿐 결과는 시안 그대로다 (`q`가 없으면 시안의 검색어를 쓴다).
+화면마다 백엔드 연결 상태가 다르다. 연결되지 않은 화면은 경로만 동적이고 데이터는 목이다.
+
+- 문서: 어떤 id로 들어가도 같은 시안 문서를 그린다.
+- 검색: `q`를 화면에 싣기만 할 뿐 결과는 시안 그대로다 (`q`가 없으면 시안의 검색어를 쓴다).
+- 편집: 어떤 id로 들어가도 같은 시안 문서를 그린다.
+- 편집역사: 어떤 id로 들어가도 같은 시안 문서를 그린다.
+
 목 데이터에서 시안 문서를 가리킬 때는 `ROUTES.document(SAMPLE_ARTICLE_ID)`를 쓰고, 대상이 정해지지 않은
 링크(다른 시안 문서, 위키 링크, 마이페이지의 기여 목록)는 `#`으로 남아 있다.
 
@@ -104,6 +109,11 @@ export default HomePage;
   현재 사용자로서 호출할 때는 `serverApiFetch`(`@/shared/api/server`). 경로는 `API_PATHS`로만 참조한다.
 - **실패는 `ApiError`로 온다.** `isApiError(error, 404)`처럼 상태로 갈라 처리한다. 응답 타입은
   `shared/api/types.ts`에 백엔드 DTO와 같은 이름으로 둔다.
+- **서버 컴포넌트에서 문서는 `getArticle` · `getArticleRevisions`(`@/entities/document/server`)로 읽는다.**
+  없는 문서는 그 안에서 404로 끝난다. 화면과 `generateMetadata`가 함께 불러도 백엔드는 한 번만 불린다 —
+  문서 조회는 부를 때마다 조회수를 올리기 때문이다. 시각은 `shared/lib`의 날짜 포맷(한국 시간대 고정)으로 적는다.
+- **리비전 1은 '문서 생성'으로, 편집자 이름 없이 문서의 `createdAt`으로 그린다.** 백엔드가 첫 수정 때에야
+  리비전 1을 첫 수정자 이름으로 기록하기 때문이다 (`CREATION_REVISION` 주석 참고).
 - **401은 화면에서 에러가 아니다.** 세션 조회(`entities/session`)는 401을 '비로그인'(`null`)으로 바꿔 준다.
 - **로그인이 필요한 화면**은 view의 서버 컴포넌트 맨 앞에서 `await requireSession(ROUTES.xxx)`를 부른다
   (`views/edit`, `views/mypage` 참고). 레이아웃에서 검사하지 않는다 — 화면 이동 때 다시 실행되지 않는다.
