@@ -309,7 +309,7 @@ function describeFavoriteResult(result: FavoriteToggleResult): Notice {
     case "signed-out":
       return {
         tone: "error",
-        text: "로그인이 끝나 즐겨찾기를 바꾸지 못했습니다. 다시 로그인해 주세요.",
+        text: "로그인이 만료되어 즐겨찾기를 바꾸지 못했습니다. 다시 로그인해 주세요.",
       };
     case "not-found":
       return {

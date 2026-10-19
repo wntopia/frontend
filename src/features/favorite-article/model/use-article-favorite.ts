@@ -73,7 +73,7 @@ export function useArticleFavorite(articleId: number) {
     } catch (error) {
       setState(previous);
       if (isApiError(error, 401)) {
-        // 즐겨찾기는 학생 계정이 아니어도 쓸 수 있어 401은 세션이 끝났다는 뜻이다.
+        // 즐겨찾기는 학생 계정이 아니어도 쓸 수 있어 401은 세션이 만료됐다는 뜻이다.
         // 헤더와 메뉴가 곧바로 로그인 버튼을 보이도록 비로그인으로 돌린다.
         clearSession();
         return { ok: false, reason: "signed-out" };
