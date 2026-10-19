@@ -55,8 +55,9 @@ const LIST_ITEM = /^\*\s+(.+)$/;
 /**
  * 링크 안에는 대괄호를 허용하지 않는다. `[[a [[b]]`처럼 겹쳐 쓴 입력에서 안쪽의
  * 완성된 링크만 잡히고 바깥의 닫히지 않은 `[[`는 글자로 남게 하기 위해서다.
+ * 검색 스니펫(`./search.ts`)도 본문과 같은 글자가 보이도록 이 규칙을 쓴다.
  */
-const INLINE_TOKEN = /\[\[([^[\]]+)\]\]|'''(.+?)'''/g;
+export const INLINE_TOKEN = /\[\[([^[\]]+)\]\]|'''(.+?)'''/g;
 
 export function parseWikiText(source: string): WikiBlock[] {
   const blocks: WikiBlock[] = [];

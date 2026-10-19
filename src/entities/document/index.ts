@@ -2,7 +2,7 @@
 export { fetchArticle, fetchArticleRevisions } from "./api/article";
 export { searchArticles } from "./api/search";
 export { articleTitleExists } from "./api/title-lookup";
-export { SEARCH_QUERY_MAX_LENGTH } from "./model/search";
+export { SEARCH_QUERY_MAX_LENGTH, stripSnippetSyntax } from "./model/search";
 export { RecentChangeItem } from "./ui/RecentChangeItem";
 export { PopularDocumentCard } from "./ui/PopularDocumentCard";
 export { SearchResultCard } from "./ui/SearchResultCard";
