@@ -76,6 +76,7 @@ export default HomePage;
 | `/document/[articleId]` | `document(id)` | 문서 상세 |
 | `/document/[articleId]/edit` | `documentEdit(id)` | 문서 편집 (로그인 필요) |
 | `/document/[articleId]/history?page=` | `documentHistory(id, page?)` | 편집역사. 첫 페이지는 쿼리 없이 둔다 |
+| `/document/[articleId]/history/[revision]` | `documentRevision(id, revision)` | 과거 리비전 읽기. 번호는 `readRevision`으로 읽는다 (`abc`, `0`, `007` → 404) |
 | `/document/new?title=` | `documentNew(title?)` | 새 문서 작성 (로그인 필요). 편집 화면의 본체를 빈 본문으로 연다 |
 | `/search?q=` | `search(query?)` | 검색 결과 |
 | `/missing-document` | `missingDocument` | 미작성 문서 안내 화면 (404 핸들러가 아니다) |
