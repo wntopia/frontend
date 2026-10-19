@@ -23,6 +23,9 @@ export async function serverApiFetch<T>(
   return request<T>(API_BASE_URL, path, { ...options, headers });
 }
 
+/** 공개 조회를 기다리는 시간. 보통 1초 안에 오는 조회들이라, 이보다 늦으면 백엔드가 멈춘 것으로 본다. */
+const PUBLIC_FETCH_TIMEOUT_MS = 5_000;
+
 /**
  * 서버 컴포넌트에서 로그인과 무관한 공개 데이터를 **요청마다 새로** 조회한다. 쿠키는 싣지 않는다.
  *
@@ -32,13 +35,22 @@ export async function serverApiFetch<T>(
  *
  * 빌드 중의 `connection()`은 렌더링을 멈추려고 던진다. 이 호출을 `try/catch`로 감쌀 때는
  * `nullOnFailure`처럼 `unstable_rethrow`로 그 신호를 되던져야 한다.
+ *
+ * 응답을 `PUBLIC_FETCH_TIMEOUT_MS`까지만 기다린다. 부르는 쪽은 Suspense 안에서 화면을 내려보내는 중이라,
+ * 백엔드가 멈추면 그 덩어리가 자리표시로 남은 채 응답이 끝나지 않는다. 넘기면 실패로 던진다.
  */
 export async function publicServerApiFetch<T>(
   path: string,
   options?: ApiRequestOptions,
 ): Promise<T> {
   await connection();
-  return request<T>(API_BASE_URL, path, options);
+  const timeout = AbortSignal.timeout(PUBLIC_FETCH_TIMEOUT_MS);
+  return request<T>(API_BASE_URL, path, {
+    ...options,
+    signal: options?.signal
+      ? AbortSignal.any([options.signal, timeout])
+      : timeout,
+  });
 }
 
 /**
