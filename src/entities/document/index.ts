@@ -5,12 +5,16 @@ export {
   fetchPopularArticles,
   fetchRecentChanges,
 } from "./api/article";
-export { RecentChangeItem } from "./ui/RecentChangeItem";
+export {
+  RecentChangeItem,
+  RecentChangeItemSkeleton,
+} from "./ui/RecentChangeItem";
 export { PopularDocumentCard } from "./ui/PopularDocumentCard";
 export { SearchResultCard } from "./ui/SearchResultCard";
 export { WikiContent } from "./ui/WikiContent";
 export { extractToc, parseWikiText } from "./model/wiki-syntax";
 export { getEditorName } from "./model/editor";
+export { toRecentChange } from "./model/recent-change";
 export {
   CREATION_REVISION,
   describeCharDelta,
