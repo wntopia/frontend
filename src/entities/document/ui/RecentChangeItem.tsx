@@ -32,6 +32,9 @@ export function RecentChangeItem({ change }: RecentChangeItemProps) {
   return (
     <Link
       href={ROUTES.document(change.articleId)}
+      // 문서 화면은 그릴 때마다 문서를 조회하고 백엔드는 그 조회를 조회수로 센다. 미리 가져오기도 화면을 그려
+      // 문서를 조회하므로, 켜 두면 홈을 보기만 해도 목록의 문서들 조회수가 오른다.
+      prefetch={false}
       className={`${ROW} transition-colors hover:bg-row-hover`}
     >
       <span

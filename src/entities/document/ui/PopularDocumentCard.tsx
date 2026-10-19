@@ -16,6 +16,9 @@ export function PopularDocumentCard({ doc, rank }: PopularDocumentCardProps) {
   return (
     <Link
       href={ROUTES.document(doc.id)}
+      // 미리 가져오기도 문서를 조회해 조회수를 올린다 (`RecentChangeItem` 참고). 여기서는 순위에 오른 문서가
+      // 홈에 보인다는 이유만으로 조회수를 더 얻어, 순위가 스스로 굳어지게 된다.
+      prefetch={false}
       className={`${CARD} transition hover:-translate-y-0.5 hover:elevate-2`}
     >
       <div className="mb-1.5 font-mono text-[11px] text-accent">
