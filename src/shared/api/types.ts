@@ -27,18 +27,6 @@ export type CategoryListItemResDto = {
   articleCount: number;
 };
 
-export type ArticleResDto = {
-  id: number;
-  title: string;
-  content: string;
-  imageUrl: string | null;
-  createdAt: IsoDateTime | null;
-  updatedAt: IsoDateTime | null;
-  category: CategoryResDto | null;
-  /** 누적 조회수. 문서 조회(GET) 응답에서만 실시간 값이고, 생성·수정 응답에서는 저장된 값이거나 0이다. */
-  viewCount: number;
-};
-
 /** 최근 변경 목록의 한 항목. 같은 문서를 여러 번 고쳐도 한 줄이고, 마지막 수정 순으로 온다. */
 export type RecentChangeResDto = {
   articleId: number;
@@ -69,6 +57,18 @@ export type WikiStatsResDto = {
   weeklyEdits: number;
   /** 한 번이라도 로그인한 사용자 수 */
   registeredUsers: number;
+};
+
+export type ArticleResDto = {
+  id: number;
+  title: string;
+  content: string;
+  imageUrl: string | null;
+  createdAt: IsoDateTime | null;
+  updatedAt: IsoDateTime | null;
+  category: CategoryResDto | null;
+  /** 누적 조회수. 문서 조회(GET) 응답에서만 실시간 값이고, 생성·수정 응답에서는 저장된 값이거나 0이다. */
+  viewCount: number;
 };
 
 /** 편집 역사 목록의 한 항목. 본문 없이 메타데이터만 담는다. */
