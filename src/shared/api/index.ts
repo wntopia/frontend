@@ -9,6 +9,8 @@ export type {
   ArticleRevisionSummaryResDto,
   AuthStatusResDto,
   CategoryResDto,
+  CreateArticleReqDto,
+  UpdateArticleReqDto,
   DataGsmClubSummaryResDto,
   DataGsmStudentInfoResDto,
   DataGsmUserInfoResDto,
