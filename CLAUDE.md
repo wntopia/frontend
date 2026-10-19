@@ -42,7 +42,7 @@ npm run lint    # eslint
 app/       Next.js 라우트. 페이지 파일은 views의 컴포넌트를 re-export만 한다
 views/     한 화면 전체. 위젯을 배치하고 여백/레이아웃만 담당한다
 widgets/   화면의 한 덩어리 (최근 변경, 헤더, 리비전 타임라인 …)
-features/  사용자 동작 단위 (theme-switcher: 라이트/다크 전환, auth: 로그인·로그아웃·접근 제어)
+features/  사용자 동작 단위 (theme-switcher: 라이트/다크 전환, auth: 로그인·로그아웃·접근 제어, favorite-article: 문서 즐겨찾기)
 entities/  도메인 단위 UI와 타입 (document: RecentChangeItem …, session: 로그인한 사용자)
 shared/    어디서나 쓰는 것 (ROUTES, SidebarCard, WikiLink, Logo, api: 백엔드 호출, lib: 쿼리 값 읽기·날짜 포맷)
 ```

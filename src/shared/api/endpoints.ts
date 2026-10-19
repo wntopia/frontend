@@ -24,4 +24,11 @@ export const API_PATHS = {
   /** 특정 리비전 시점으로 재구성한 문서 */
   articleRevision: (articleId: number, revision: number) =>
     `${API_PREFIX}/articles/${articleId}/revisions/${revision}`,
+  /**
+   * 내 즐겨찾기 여부. GET은 비로그인이면 401 대신 `favorited: false`를 준다.
+   * PUT(추가)·DELETE(해제)는 로그인이 필요하고(401), 같은 요청을 거듭해도 성공하는 멱등 요청이다.
+   * 없는 문서는 PUT만 404다.
+   */
+  articleFavorite: (articleId: number) =>
+    `${API_PREFIX}/articles/${articleId}/favorite`,
 } as const;
