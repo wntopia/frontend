@@ -1,14 +1,12 @@
-"use client";
-
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
 import { AccountButton } from "@/features/auth";
 import { ROUTES } from "@/shared/config";
 import { Logo } from "@/shared/ui";
+import { DocumentMenu } from "./DocumentMenu";
 
 /**
  * 문서 상세 페이지 전용 상단 네비게이션.
- * 검색·편집 진입점과 케밥 메뉴(드롭다운)를 포함하므로 클라이언트 컴포넌트로 둔다.
+ * 상태가 있는 케밥 메뉴만 클라이언트 컴포넌트(`DocumentMenu`)로 떼어 두고 나머지는 서버에서 그린다.
  */
 export function DocumentTopNav({
   articleId,
@@ -20,20 +18,6 @@ export function DocumentTopNav({
   editingName?: string;
   showEditing?: boolean;
 }) {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!menuOpen) return;
-    function onDown(e: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setMenuOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", onDown);
-    return () => document.removeEventListener("mousedown", onDown);
-  }, [menuOpen]);
-
   return (
     <header className="sticky top-0 z-50 bg-bg/85 elevate-header backdrop-blur-[10px]">
       <div className="mx-auto flex h-[58px] max-w-[1120px] items-center gap-[18px] px-8">
@@ -85,41 +69,7 @@ export function DocumentTopNav({
         </Link>
 
         {/* 케밥 메뉴 */}
-        <div ref={menuRef} className="relative flex-shrink-0">
-          <button
-            type="button"
-            onClick={() => setMenuOpen((v) => !v)}
-            aria-label="문서 메뉴"
-            aria-expanded={menuOpen}
-            className="flex h-9 w-9 cursor-pointer flex-col items-center justify-center gap-[3px] rounded-[9px] bg-surface-2 text-fg-soft elevate-control transition hover:elevate-1"
-          >
-            <span className="h-[3.5px] w-[3.5px] rounded-full bg-current" />
-            <span className="h-[3.5px] w-[3.5px] rounded-full bg-current" />
-            <span className="h-[3.5px] w-[3.5px] rounded-full bg-current" />
-          </button>
-
-          {menuOpen && (
-            <div className="absolute right-0 top-11 z-[60] w-[210px] rounded-xl bg-surface-2 p-1.5 elevate-3">
-              <div className="cursor-pointer rounded-[7px] px-[11px] py-[9px] text-[13.5px] text-fg-muted hover:bg-hover">
-                즐겨찾기에 추가
-              </div>
-              <div className="cursor-pointer rounded-[7px] px-[11px] py-[9px] text-[13.5px] text-fg-muted hover:bg-hover">
-                링크 복사
-              </div>
-              <Link
-                href={ROUTES.documentHistory(articleId)}
-                className="block cursor-pointer rounded-[7px] px-[11px] py-[9px] text-[13.5px] text-fg-muted hover:bg-hover"
-              >
-                편집 역사 전체 보기
-              </Link>
-              <div className="mx-2 my-[5px] h-px bg-line" />
-              <div className="flex cursor-pointer items-center gap-2 rounded-[7px] px-[11px] py-[9px] text-[13.5px] text-danger hover:bg-danger/10">
-                <span className="inline-block h-[13px] w-[13px] rounded-[3px] border-[1.5px] border-danger" />
-                문서 신고
-              </div>
-            </div>
-          )}
-        </div>
+        <DocumentMenu articleId={articleId} />
 
         {/* 계정 — 시안에는 없고 로그인 연동 때 더했다. 다른 헤더처럼 오른쪽 끝에 둔다. */}
         <AccountButton />
