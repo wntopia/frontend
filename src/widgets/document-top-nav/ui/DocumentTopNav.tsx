@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { AccountButton } from "@/features/auth";
+import { SearchForm } from "@/features/search";
 import { ROUTES } from "@/shared/config";
 import { Logo } from "@/shared/ui";
 
@@ -56,16 +57,7 @@ export function DocumentTopNav({
         <div className="flex-1" />
 
         {/* 검색 */}
-        <Link
-          href={ROUTES.search()}
-          className="flex w-60 items-center gap-2 rounded-[9px] bg-surface-2 elevate-control px-3 py-2 text-[13px] text-fg-subtle"
-        >
-          <span className="inline-block h-[13px] w-[13px] rounded-full border-[1.5px] border-fg-subtle" />
-          문서 검색
-          <span className="ml-auto rounded bg-elevated px-[5px] py-px font-mono text-[11px]">
-            /
-          </span>
-        </Link>
+        <SearchForm variant="compact" />
 
         {/* 편집 중 표시 */}
         {showEditing && (
