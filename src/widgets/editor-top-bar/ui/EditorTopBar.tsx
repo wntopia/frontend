@@ -14,6 +14,14 @@ type EditorTopBarProps = {
   backLabel: string;
   showPreview: boolean;
   onTogglePreview: () => void;
+  onSave: () => void;
+  /** 저장 요청이 오가는 동안과 저장 뒤 문서로 넘어가는 동안 저장 버튼을 막는다 */
+  saving: boolean;
+  /**
+   * 뒤로 가기·취소 링크로 떠나기 직전에 불린다. `preventDefault()`를 부르면 머문다.
+   * 저장하지 않은 내용이 있을 때 확인을 받는 데 쓴다 (`<Link>`의 `onNavigate`).
+   */
+  onLeave: (event: { preventDefault: () => void }) => void;
 };
 
 /** 편집 화면 상단 바. 다른 화면과 달리 로고 대신 문서 복귀 링크와 편집 액션을 둔다. */
@@ -22,12 +30,16 @@ export function EditorTopBar({
   backLabel,
   showPreview,
   onTogglePreview,
+  onSave,
+  saving,
+  onLeave,
 }: EditorTopBarProps) {
   return (
     <header className="sticky top-0 z-50 bg-bg/[.92] elevate-header backdrop-blur-[10px]">
       <div className="mx-auto flex h-[58px] max-w-[1120px] items-center gap-4 px-8">
         <Link
           href={backHref}
+          onNavigate={onLeave}
           className="flex items-center gap-[7px] text-[13.5px] text-fg-soft hover:text-fg-soft"
         >
           <span className="text-[15px]">←</span> {backLabel}
@@ -41,15 +53,16 @@ export function EditorTopBar({
         <button type="button" onClick={onTogglePreview} className={SECONDARY_BUTTON}>
           {showPreview ? "편집기로 돌아가기" : "미리보기"}
         </button>
-        <Link href={backHref} className={SECONDARY_BUTTON}>
+        <Link href={backHref} onNavigate={onLeave} className={SECONDARY_BUTTON}>
           취소
         </Link>
-        {/* 시안에 저장 동작이 없어 아직 아무 일도 하지 않는다 */}
         <button
           type="button"
-          className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-[13px] font-bold text-on-accent elevate-control transition hover:bg-accent-hover"
+          onClick={onSave}
+          disabled={saving}
+          className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-[13px] font-bold text-on-accent elevate-control transition hover:bg-accent-hover disabled:cursor-default disabled:opacity-60 disabled:hover:bg-accent"
         >
-          저장
+          {saving ? "저장 중…" : "저장"}
         </button>
       </div>
     </header>
