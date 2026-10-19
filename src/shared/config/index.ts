@@ -1,6 +1,7 @@
 export {
   NEW_DOCUMENT_TITLE_PARAM,
   ROUTES,
+  SEARCH_PAGE_PARAM,
   SEARCH_QUERY_PARAM,
 } from "./routes";
 export {

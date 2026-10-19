@@ -77,7 +77,7 @@ export default HomePage;
 | `/document/[articleId]/edit` | `documentEdit(id)` | 문서 편집 (로그인 필요) |
 | `/document/[articleId]/history` | `documentHistory(id)` | 편집역사 |
 | `/document/new?title=` | `documentNew(title?)` | 새 문서 작성 (로그인 필요). 편집 화면의 본체를 빈 본문으로 연다 |
-| `/search?q=` | `search(query?)` | 검색 결과 |
+| `/search?q=&page=` | `search(query?, page?)` | 검색 결과. 첫 페이지는 `page` 없이 둔다 |
 | `/missing-document` | `missingDocument` | 미작성 문서 안내 화면 (404 핸들러가 아니다) |
 | `/mypage` | `mypage` | 마이페이지 |
 | `/signin` | `signin` | 로그인. 실패하면 백엔드가 `?error&reason=…`을 붙여 이리로 돌려보낸다 |
@@ -92,7 +92,7 @@ export default HomePage;
 화면마다 백엔드 연결 상태가 다르다. 연결되지 않은 화면은 경로만 동적이고 데이터는 목이다.
 
 - 문서: 어떤 id로 들어가도 같은 시안 문서를 그린다.
-- 검색: `q`를 화면에 싣기만 할 뿐 결과는 시안 그대로다 (`q`가 없으면 시안의 검색어를 쓴다).
+- 검색: 백엔드 검색 결과를 `?page=`로 20개씩 나눠 그린다. 아직 쓰지 않은 문서는 결과에 나오지 않는다.
 - 편집: 어떤 id로 들어가도 같은 시안 문서를 그린다.
 - 편집역사: 어떤 id로 들어가도 같은 시안 문서를 그린다.
 
