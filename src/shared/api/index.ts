@@ -10,10 +10,10 @@ export type {
   AuthStatusResDto,
   CategoryResDto,
   CreateArticleReqDto,
-  UpdateArticleReqDto,
   DataGsmClubSummaryResDto,
   DataGsmStudentInfoResDto,
   DataGsmUserInfoResDto,
   IsoDateTime,
   PageResDto,
+  UpdateArticleReqDto,
 } from "./types";
