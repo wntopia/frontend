@@ -4,6 +4,8 @@ import {
   type ArticleResDto,
   type ArticleRevisionSummaryResDto,
   type PageResDto,
+  type PopularArticleResDto,
+  type RecentChangeResDto,
 } from "@/shared/api";
 
 /**
@@ -28,4 +30,25 @@ export function fetchArticleRevisions(
   return fetcher<PageResDto<ArticleRevisionSummaryResDto>>(
     API_PATHS.articleRevisions(articleId, page),
   );
+}
+
+/** 최근 수정된 문서를 문서마다 한 줄씩, 마지막 수정 순으로 한 페이지 조회한다. */
+export function fetchRecentChanges(
+  page: { page: number; size: number },
+  fetcher: typeof apiFetch = apiFetch,
+): Promise<PageResDto<RecentChangeResDto>> {
+  return fetcher<PageResDto<RecentChangeResDto>>(
+    API_PATHS.recentChanges(page),
+  );
+}
+
+/**
+ * 누적 조회수가 많은 문서를 조회한다. 목록을 보여 주려고 문서 조회(`fetchArticle`)를 부르면 그 문서들의
+ * 조회수가 올라가므로, 목록에는 이것만 쓴다 — 이 API는 조회수를 세지 않는다.
+ */
+export function fetchPopularArticles(
+  size: number,
+  fetcher: typeof apiFetch = apiFetch,
+): Promise<PopularArticleResDto[]> {
+  return fetcher<PopularArticleResDto[]>(API_PATHS.popularArticles(size));
 }
