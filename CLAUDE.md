@@ -42,7 +42,7 @@ npm run lint    # eslint
 app/       Next.js 라우트. 페이지 파일은 views의 컴포넌트를 re-export만 한다
 views/     한 화면 전체. 위젯을 배치하고 여백/레이아웃만 담당한다
 widgets/   화면의 한 덩어리 (최근 변경, 헤더, 리비전 타임라인 …)
-features/  사용자 동작 단위 (theme-switcher: 라이트/다크 전환, auth: 로그인·로그아웃·접근 제어)
+features/  사용자 동작 단위 (theme-switcher: 라이트/다크 전환, auth: 로그인·로그아웃·접근 제어, save-article: 문서 저장)
 entities/  도메인 단위 UI와 타입 (document: RecentChangeItem …, session: 로그인한 사용자)
 shared/    어디서나 쓰는 것 (ROUTES, SidebarCard, WikiLink, Logo, api: 백엔드 호출, lib: 쿼리 값 읽기·날짜 포맷)
 ```
@@ -93,7 +93,7 @@ export default HomePage;
 
 - 문서: 어떤 id로 들어가도 같은 시안 문서를 그린다.
 - 검색: `q`를 화면에 싣기만 할 뿐 결과는 시안 그대로다 (`q`가 없으면 시안의 검색어를 쓴다).
-- 편집: 어떤 id로 들어가도 같은 시안 문서를 그린다.
+- 편집 · 새 문서: 백엔드에 저장한다. 편집은 문서를 불러와 `PUT`, 새 문서는 `POST`로 보내고 문서 상세로 넘어간다.
 - 편집역사: 어떤 id로 들어가도 같은 시안 문서를 그린다.
 
 목 데이터에서 시안 문서를 가리킬 때는 `ROUTES.document(SAMPLE_ARTICLE_ID)`를 쓰고, 대상이 정해지지 않은
@@ -124,6 +124,7 @@ export default HomePage;
 - 로그인 시작은 `fetch`가 아니라 페이지 이동이다 (`SigninButton`). 복귀 주소는 외부 주소로 새지 않도록
   `sanitizeReturnTo`를 거친 것만 쓴다.
 - `student`가 없는 계정(교사 등)도 로그인한 사용자다. 다만 백엔드의 문서 수정 API는 이런 계정에 401을 준다.
+  문서 생성은 이런 계정도, 비로그인도 받지만 화면은 로그인을 요구한다 — 만든 사람이 기여 통계에 남게 하려고.
 
 ## 로딩 · 에러 · 404
 
@@ -143,6 +144,24 @@ export default HomePage;
   무엇이 실패했는지 읽을 수 있고, 쓰던 내용을 그대로 둔 채 다시 시도할 수 있다.
 - 변경 요청이 401을 받아도 로그인 화면으로 자동으로 보내지 않는다. `Alert`에 `SigninButton`을 함께 둔다.
   자동 이동은 쓰던 내용을 날리고, `student`가 없는 계정은 다시 로그인해도 401이라 같은 자리를 맴돈다.
+
+## 편집 · 저장
+
+- 편집 화면 본체(`views/edit`의 `EditWorkspace`)가 입력 값을 모두 들고, 저장 동작은 `features/save-article`이 맡는다
+  (요청 함수, 검증, 실패 안내 문구, 이탈 경고, 대표 이미지 선택).
+- **새 문서는 `POST`, 기존 문서는 `PUT`이고 둘 다 `multipart/form-data`다.** `FormData`를 `apiFetch`의 `body`로 그대로
+  넘긴다 — Content-Type은 fetch가 boundary와 함께 붙이므로 정하지 않는다. 요청 DTO도 `shared/api/types.ts`에 둔다.
+- 기존 문서의 제목은 `PUT`이 받지 않아 읽기 전용이다. 편집 요약 · 가벼운 수정은 `PUT`에만 있어 새 문서 화면에서는 숨긴다.
+- 검증은 백엔드 제약을 그대로 옮긴다 — 제목 1~255자(자바 `String.length`와 같은 UTF-16 단위), 본문 필수,
+  편집 요약 500자, 대표 이미지 10MB. 이미지는 고르는 순간 거른다. 큰 파일은 서버가 끝까지 받은 뒤에야 거절한다.
+- 편집 화면은 기존 본문을 `getArticle`로 읽어 조회수를 올린다. 조회수를 올리지 않는 최신 본문 조회가 백엔드에 없다.
+  같은 계정의 30분 안 재조회는 세지 않아, 문서를 보다가 넘어오면 더 오르지 않는다. 같은 이유로 편집 링크는
+  미리 가져오지 않는다(`prefetch={false}`) — 탭 제목을 위한 문서 조회가 문서를 열 때마다 일어나기 때문이다.
+- **저장에 성공하면 `router.replace`로 문서 상세로 보낸다.** 편집 화면을 방문 기록에 남기면 뒤로 가기가 Next의
+  뒤로/앞으로 캐시에서 저장 전 본문이 든 편집 화면을 꺼내, 그대로 다시 저장하면 편집이 되돌아간다.
+- 저장하지 않은 내용이 있으면 `useLeaveGuard`로 떠나기 전에 묻는다. 새로고침 · 탭 닫기 · 로그인 버튼은 `beforeunload`가,
+  앱 안 링크는 `<Link onNavigate>`가 받는다. 편집 화면에 링크를 새로 두면 `onNavigate`에 걸어야 한다.
+  브라우저 뒤로 가기는 Next가 취소할 방법을 주지 않아 묻지 못한다.
 
 ## 스타일 규칙
 
