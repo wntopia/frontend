@@ -152,6 +152,8 @@ export default HomePage;
 - **새 문서는 `POST`, 기존 문서는 `PUT`이고 둘 다 `multipart/form-data`다.** `FormData`를 `apiFetch`의 `body`로 그대로
   넘긴다 — Content-Type은 fetch가 boundary와 함께 붙이므로 정하지 않는다. 요청 DTO도 `shared/api/types.ts`에 둔다.
 - 기존 문서의 제목은 `PUT`이 받지 않아 읽기 전용이다. 편집 요약 · 가벼운 수정은 `PUT`에만 있어 새 문서 화면에서는 숨긴다.
+- `student`가 없는 계정이 편집 화면에 들어오면 저장되지 않는다는 안내를 처음부터 보인다(`findAccountProblem`).
+  다 쓴 뒤에야 401로 거절되면 쓴 수고가 헛되기 때문이다. 저장 버튼은 막지 않고 거절은 백엔드에 맡긴다.
 - 검증은 백엔드 제약을 그대로 옮긴다 — 제목 1~255자(자바 `String.length`와 같은 UTF-16 단위), 본문 필수,
   편집 요약 500자, 대표 이미지 10MB. 이미지는 고르는 순간 거른다. 큰 파일은 서버가 끝까지 받은 뒤에야 거절한다.
 - 편집 화면은 기존 본문을 `getArticle`로 읽어 조회수를 올린다. 조회수를 올리지 않는 최신 본문 조회가 백엔드에 없다.

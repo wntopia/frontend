@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { SigninButton } from "@/features/auth";
 import {
   ArticleImagePicker,
+  findAccountProblem,
   useLeaveGuard,
   usePickedImage,
   useSaveArticle,
@@ -83,6 +84,8 @@ export function EditWorkspace({
   }, [problem]);
 
   const locked = status !== "idle";
+  // 저장 실패 안내가 없으면, 저장하기 전부터 거절될 것을 아는 계정에 미리 알린다. 같은 자리에 하나만 보인다.
+  const notice = problem ?? findAccountProblem(target);
 
   return (
     <div className="min-h-screen bg-bg text-fg">
@@ -100,12 +103,12 @@ export function EditWorkspace({
 
       <div className="mx-auto flex max-w-[1120px] gap-7 px-8 pb-[100px] pt-8">
         <div className="min-w-0 flex-1">
-          {problem && (
+          {notice && (
             // 고정된 상단 바(58px)에 가리지 않을 만큼 띄워서 스크롤한다.
             <div ref={alertRef} className="mb-5 scroll-mt-[74px]">
-              <Alert title={problem.title} detail={problem.detail}>
-                {problem.message}
-                {problem.needsSignin && (
+              <Alert title={notice.title} detail={notice.detail}>
+                {notice.message}
+                {notice.needsSignin && (
                   // 전역 `a { color: inherit; text-decoration: none }`이 레이어 밖에 있어 링크에 준 색·밑줄
                   // 유틸리티를 덮는다. 그래서 버튼 모양 대신 안내 글자색을 물려받고, 밑줄은 안쪽 span에 건다.
                   <div className="mt-1.5">

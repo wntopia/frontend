@@ -16,6 +16,22 @@ export type SaveProblem = {
 };
 
 /**
+ * 보내 보지 않아도 거절될 것을 아는 계정이면 그 안내를, 아니면 `null`을 돌려준다.
+ *
+ * 백엔드는 `student`가 없는 계정(교사 등)의 문서 수정을 401로 거절한다. 다 쓰고 나서야 저장이 거절되면
+ * 쓴 수고가 헛되므로 화면은 들어오자마자 이 안내를 보인다. 저장 버튼은 막지 않는다 — 거절은 백엔드가
+ * 판단할 일이라, 정책이 바뀌면 화면을 고치지 않아도 저장되게 둔다.
+ */
+export function findAccountProblem(target: SaveTarget): SaveProblem | null {
+  if (target.kind !== "update" || target.studentAccount) return null;
+  return {
+    title: "학생 계정만 문서를 고칠 수 있습니다.",
+    message:
+      "지금 계정으로는 저장되지 않습니다. 쓴 내용이 필요하면 복사해 두세요.",
+  };
+}
+
+/**
  * 저장 요청의 실패를 사용자가 할 일로 바꾼다. 상태 코드와 응답 사유는 백엔드 develop의
  * ArticleController · CreateArticleServiceImpl · AuthenticationReader를 보고 맞췄다.
  *
@@ -42,22 +58,18 @@ export function describeSaveError(
         message: "서버가 입력을 받아들이지 않았습니다. 제목과 본문을 확인해 주세요.",
         detail: error.message,
       };
-    case 401:
+    case 401: {
       // 백엔드는 비로그인과 `student`가 없는 계정을 같은 401로 돌려준다. 후자는 다시 로그인해도
       // 같은 계정으로 돌아와 다시 401이므로 로그인 버튼 대신 사정을 알린다.
-      if (target.kind === "update" && !target.studentAccount) {
-        return {
-          title: "학생 계정만 문서를 고칠 수 있습니다.",
-          message:
-            "지금 계정으로는 저장되지 않습니다. 쓴 내용이 필요하면 복사해 두세요.",
-        };
-      }
+      const accountProblem = findAccountProblem(target);
+      if (accountProblem) return accountProblem;
       return {
         title: "로그인이 풀렸습니다.",
         message:
           "다시 로그인한 뒤 저장해 주세요. 로그인하면 이 화면을 새로 불러오므로 쓴 내용은 먼저 복사해 두세요.",
         needsSignin: true,
       };
+    }
     case 404:
       return {
         title: "문서를 찾을 수 없습니다.",
