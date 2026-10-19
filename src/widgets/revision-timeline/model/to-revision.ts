@@ -4,6 +4,7 @@ import {
   getEditorName,
 } from "@/entities/document";
 import type { ArticleRevisionSummaryResDto, IsoDateTime } from "@/shared/api";
+import { ROUTES } from "@/shared/config";
 import {
   formatDate,
   formatRelativeTime,
@@ -15,6 +16,8 @@ import type { Revision } from "./types";
 const HOUR = 60 * 60 * 1000;
 
 type TimelineContext = {
+  /** 역사를 보고 있는 문서. 리비전 화면 주소와 차이 보기에 쓴다. */
+  articleId: number;
   /** 문서 생성 시각. 리비전 1은 생성이 아니라 첫 수정 때 기록되므로 생성 항목의 시각은 이 값을 쓴다. */
   createdAt: IsoDateTime | null;
   /** 상대 시간과 '오늘' 판정의 기준. 한 화면 안에서 항목마다 기준이 달라지지 않게 한 번만 잡아 넘긴다. */
@@ -34,22 +37,27 @@ export function toTimelineRevisions(
   context: TimelineContext,
 ): Revision[] {
   if (totalRevisions === 0) {
+    // 백엔드에 기록이 없어 열어 볼 리비전 화면도, 비교할 리비전도 없다. 생성 시점 본문은 지금 문서와 같다.
     return [creationRevision(context.createdAt, null, context.now)];
   }
   return items.map((item) =>
     item.revision === CREATION_REVISION
-      ? creationRevision(
-          context.createdAt ?? item.editedAt,
-          item.charDelta,
-          context.now,
-        )
-      : editRevision(item, context.now),
+      ? {
+          ...creationRevision(
+            context.createdAt ?? item.editedAt,
+            item.charDelta,
+            context.now,
+          ),
+          // 직전 리비전이 없어 차이 보기 대신, 문서를 만들 때의 본문을 리비전 화면으로 연다.
+          href: ROUTES.documentRevision(context.articleId, item.revision),
+        }
+      : editRevision(item, context),
   );
 }
 
 function editRevision(
   item: ArticleRevisionSummaryResDto,
-  now: Date,
+  { articleId, now }: TimelineContext,
 ): Revision {
   const name = getEditorName(item.editor);
   return {
@@ -63,6 +71,9 @@ function editRevision(
     time: timeLabel(item.editedAt, now),
     minor: item.minorEdit,
     delta: describeCharDelta(item.charDelta) ?? undefined,
+    href: ROUTES.documentRevision(articleId, item.revision),
+    // 리비전 번호는 1부터 빈틈없이 이어지므로 직전 리비전은 언제나 바로 앞 번호다.
+    compare: { articleId, from: item.revision - 1, to: item.revision },
   };
 }
 

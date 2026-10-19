@@ -56,7 +56,7 @@ export async function EditHistoryPage(props: EditHistoryPageProps) {
           revisions={toTimelineRevisions(
             revisions.items,
             revisions.totalElements,
-            { createdAt: article.createdAt, now: new Date() },
+            { articleId, createdAt: article.createdAt, now: new Date() },
           )}
         />
         <RevisionPager
