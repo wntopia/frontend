@@ -9,7 +9,10 @@ export {
   RecentChangeItem,
   RecentChangeItemSkeleton,
 } from "./ui/RecentChangeItem";
-export { PopularDocumentCard } from "./ui/PopularDocumentCard";
+export {
+  PopularDocumentCard,
+  PopularDocumentCardSkeleton,
+} from "./ui/PopularDocumentCard";
 export { SearchResultCard } from "./ui/SearchResultCard";
 export { WikiContent } from "./ui/WikiContent";
 export { extractToc, parseWikiText } from "./model/wiki-syntax";
@@ -26,7 +29,6 @@ export type {
   Backlink,
   ChangeSummarySegment,
   DocumentActivity,
-  PopularDocument,
   RecentChange,
   SearchResult,
   SnippetSegment,

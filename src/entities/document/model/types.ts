@@ -24,14 +24,6 @@ export type RecentChange = {
   time: string;
 };
 
-/** 인기 문서 목록의 한 항목 */
-export type PopularDocument = {
-  id: string;
-  title: string;
-  href: string;
-  views: number;
-};
-
 /** 이 문서를 링크하고 있는 다른 문서 */
 export type Backlink = {
   id: string;
