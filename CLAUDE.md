@@ -45,7 +45,7 @@ PR마다 CI(`.github/workflows/ci.yml`)가 `lint` → `typecheck` → `build`를
 app/       Next.js 라우트. 페이지 파일은 views의 컴포넌트를 re-export만 한다
 views/     한 화면 전체. 위젯을 배치하고 여백/레이아웃만 담당한다
 widgets/   화면의 한 덩어리 (최근 변경, 헤더, 리비전 타임라인 …)
-features/  사용자 동작 단위 (theme-switcher: 라이트/다크 전환, auth: 로그인·로그아웃·접근 제어)
+features/  사용자 동작 단위 (theme-switcher: 라이트/다크 전환, auth: 로그인·로그아웃·접근 제어, favorite-article: 문서 즐겨찾기)
 entities/  도메인 단위 UI와 타입 (document: RecentChangeItem …, session: 로그인한 사용자)
 shared/    어디서나 쓰는 것 (ROUTES, SidebarCard, WikiLink, Logo, api: 백엔드 호출, lib: 쿼리 값 읽기·날짜 포맷)
 ```
@@ -167,7 +167,7 @@ export default HomePage;
 ## 컴포넌트 관례
 
 - **기본은 서버 컴포넌트.** `"use client"`는 실제 상태가 있는 파일에만 있다 (편집 화면 본체,
-  문서 상단 내비, 문서 목차의 링크 목록, 리비전 카드, 테마 전환, 계정 버튼). 새로 붙일 때는 트리 최하단 컴포넌트에만 붙인다.
+  문서 메뉴, 문서 목차의 링크 목록, 리비전 카드, 테마 전환, 계정 버튼). 새로 붙일 때는 트리 최하단 컴포넌트에만 붙인다.
 - **목 데이터는 슬라이스의 `model/mock.ts`에 격리한다.** 백엔드가 붙을 때 이 파일만 갈아끼우면
   되도록, UI 컴포넌트에 데이터 리터럴을 박지 않는다.
 - **강조 위치는 데이터가 정한다.** 변경 요약(`ChangeSummarySegment`)과 검색 스니펫

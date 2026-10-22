@@ -12,6 +12,7 @@ export type {
   DataGsmClubSummaryResDto,
   DataGsmStudentInfoResDto,
   DataGsmUserInfoResDto,
+  FavoriteStatusResDto,
   IsoDateTime,
   PageResDto,
 } from "./types";
