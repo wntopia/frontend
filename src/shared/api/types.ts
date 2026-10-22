@@ -105,6 +105,11 @@ export type ArticleRevisionResDto = {
   charDelta: number | null;
 };
 
+export type FavoriteStatusResDto = {
+  /** 내 즐겨찾기에 들어 있는지. 비로그인이면 항상 `false`다. */
+  favorited: boolean;
+};
+
 export type AuthStatusResDto = {
   authenticated: boolean;
   user: DataGsmUserInfoResDto | null;

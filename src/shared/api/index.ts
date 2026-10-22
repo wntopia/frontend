@@ -14,6 +14,7 @@ export type {
   DataGsmClubSummaryResDto,
   DataGsmStudentInfoResDto,
   DataGsmUserInfoResDto,
+  FavoriteStatusResDto,
   IsoDateTime,
   LookupArticleTitlesReqDto,
   LookupArticleTitlesResDto,
