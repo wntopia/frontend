@@ -41,12 +41,11 @@ export type SnippetSegment = {
 
 /** 검색 결과 목록의 한 항목 */
 export type SearchResult = {
-  id: string;
+  id: number;
   title: string;
   href: string;
+  /** 본문이 빈 문서는 빈 배열이다 */
   snippet: SnippetSegment[];
-  /** 아직 작성되지 않은 문서. 붉은 제목과 '미작성' 뱃지로 표시된다. */
-  missing?: boolean;
-  /** 미작성 문서에는 수정 이력이 없다 */
-  lastModified?: string;
+  /** 화면에 적을 최종 수정 시각 */
+  lastModified: string;
 };

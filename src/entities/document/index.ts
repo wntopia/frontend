@@ -5,6 +5,9 @@ export {
   fetchPopularArticles,
   fetchRecentChanges,
 } from "./api/article";
+export { searchArticles } from "./api/search";
+export { articleTitleExists } from "./api/title-lookup";
+export { SEARCH_QUERY_MAX_LENGTH, stripSnippetSyntax } from "./model/search";
 export {
   RecentChangeItem,
   RecentChangeItemSkeleton,
