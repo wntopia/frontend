@@ -6,6 +6,20 @@
 /** 백엔드의 `Instant` — ISO 8601 문자열로 온다. (예: `2026-09-16T01:04:05Z`) */
 export type IsoDateTime = string;
 
+/** 목록 API의 공통 페이지 응답. `page`는 0부터 센다. */
+export type PageResDto<T> = {
+  items: T[];
+  page: number;
+  size: number;
+  totalElements: number;
+  hasNext: boolean;
+};
+
+export type CategoryResDto = {
+  id: number;
+  name: string;
+};
+
 export type ArticleResDto = {
   id: number;
   title: string;
@@ -13,6 +27,9 @@ export type ArticleResDto = {
   imageUrl: string | null;
   createdAt: IsoDateTime | null;
   updatedAt: IsoDateTime | null;
+  category: CategoryResDto | null;
+  /** 누적 조회수. 문서 조회(GET) 응답에서만 실시간 값이고, 생성·수정 응답에서는 저장된 값이거나 0이다. */
+  viewCount: number;
 };
 
 /** 편집 역사 목록의 한 항목. 본문 없이 메타데이터만 담는다. */
@@ -21,6 +38,10 @@ export type ArticleRevisionSummaryResDto = {
   /** 수정자 식별 문자열 — "학번 이름" (예: "2412 홍길동") */
   editor: string;
   editedAt: IsoDateTime | null;
+  summary: string | null;
+  minorEdit: boolean;
+  /** 직전 리비전 대비 글자 수 변화. 이 필드가 생기기 전의 리비전은 `null`이다. */
+  charDelta: number | null;
 };
 
 /** 특정 리비전 시점으로 재구성한 문서 */
@@ -34,6 +55,9 @@ export type ArticleRevisionResDto = {
   editedAt: IsoDateTime | null;
   /** 이 리비전이 문서의 현재 최신인지 */
   latest: boolean;
+  summary: string | null;
+  minorEdit: boolean;
+  charDelta: number | null;
 };
 
 export type AuthStatusResDto = {
