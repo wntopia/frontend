@@ -16,8 +16,10 @@ export function HistoryTopBar({
   return (
     <header className="sticky top-0 z-50 bg-bg/85 elevate-header backdrop-blur-[10px]">
       <div className="mx-auto flex h-[58px] max-w-[1000px] items-center gap-4 px-8">
+        {/* 미리 가져오면 문서 조회가 일어나 조회수가 오른다. 과거 리비전만 보러 온 사람도 문서를 본 것으로 세게 된다. */}
         <Link
           href={ROUTES.document(articleId)}
+          prefetch={false}
           className="flex items-center gap-[7px] text-[13.5px] text-fg-soft hover:text-fg-soft"
         >
           <span className="text-[15px]">←</span> {documentTitle}

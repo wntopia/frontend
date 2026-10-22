@@ -78,7 +78,8 @@ export default HomePage;
 | `/` | `home` | 홈 (최근 변경, 인기 문서, 위키 현황, 분류) |
 | `/document/[articleId]` | `document(id)` | 문서 상세 |
 | `/document/[articleId]/edit` | `documentEdit(id)` | 문서 편집 (로그인 필요) |
-| `/document/[articleId]/history` | `documentHistory(id)` | 편집역사 |
+| `/document/[articleId]/history?page=` | `documentHistory(id, page?)` | 편집역사. 첫 페이지는 쿼리 없이 둔다 |
+| `/document/[articleId]/history/[revision]` | `documentRevision(id, revision)` | 과거 리비전 읽기. 번호는 `readRevision`으로 읽는다 (`abc`, `0`, `007` → 404) |
 | `/document/new?title=` | `documentNew(title?)` | 새 문서 작성 (로그인 필요). 편집 화면의 본체를 빈 본문으로 연다 |
 | `/search?q=&page=` | `search(query?, page?)` | 검색 결과. 첫 페이지는 `page` 없이 둔다 |
 | `/missing-document` | `missingDocument` | 미작성 문서 안내 화면 (404 핸들러가 아니다) |
@@ -97,7 +98,8 @@ export default HomePage;
 - 문서: 백엔드의 문서와 최근 리비전을 그린다. 본문의 위키 링크는 아직 `#`이다.
 - 검색: 백엔드 검색 결과를 `?page=`로 20개씩 나눠 그린다. 아직 쓰지 않은 문서는 결과에 나오지 않는다.
 - 편집: 어떤 id로 들어가도 같은 시안 문서를 그린다.
-- 편집역사: 어떤 id로 들어가도 같은 시안 문서를 그린다.
+- 편집역사: 백엔드의 리비전 목록을 `?page=`로 30개씩 나눠 그린다. '차이 보기'는 펼칠 때 직전 리비전과 그 리비전을
+  받아 브라우저에서 줄 단위로 비교하고, '이 버전 보기'는 과거 리비전 화면으로 그 시점의 본문을 연다.
 
 목 데이터에서 시안 문서를 가리킬 때는 `ROUTES.document(SAMPLE_ARTICLE_ID)`를 쓰고, 대상이 정해지지 않은
 링크(다른 시안 문서, 위키 링크, 마이페이지의 기여 목록)는 `#`으로 남아 있다.
@@ -117,6 +119,12 @@ export default HomePage;
   문서 조회는 부를 때마다 조회수를 올리기 때문이다. 시각은 `shared/lib`의 날짜 포맷(한국 시간대 고정)으로 적는다.
 - **리비전 1은 '문서 생성'으로, 편집자 이름 없이 문서의 `createdAt`으로 그린다.** 백엔드가 첫 수정 때에야
   리비전 1을 첫 수정자 이름으로 기록하기 때문이다 (`CREATION_REVISION` 주석 참고).
+- **리비전 N의 본문은 N번째 수정 직후의 본문이고, 리비전 1은 문서를 만들 때의 본문이다.** 차이 보기는 N−1 → N을
+  비교하고, 직전이 없는 생성 항목에는 두지 않는다. 리비전 조회는 조회수를 세지 않으므로 과거 리비전 화면은
+  문서 조회(`getArticle`) 대신 `getArticleRevision`만 쓴다. 브라우저에서는 `loadArticleRevision`으로 읽는다 —
+  과거 리비전은 바뀌지 않아 담아 두고, `latest: true`인 것은 담지 않는다.
+- **줄 비교(`diffLines`, `shared/lib`)는 메인 스레드에서 돌아 계산량 상한이 있다.** 넘으면 바뀐 구간 전체를 지우고
+  더한 것으로 돌려준다(`exact: false`). 차이 보기는 한 번에 200행씩만 그린다. 둘 다 근거는 각 상수의 주석에 있다.
 - **401은 화면에서 에러가 아니다.** 세션 조회(`entities/session`)는 401을 '비로그인'(`null`)으로 바꿔 준다.
 - **로그인이 필요한 화면**은 view의 서버 컴포넌트 맨 앞에서 `await requireSession(ROUTES.xxx)`를 부른다
   (`views/edit`, `views/mypage` 참고). 레이아웃에서 검사하지 않는다 — 화면 이동 때 다시 실행되지 않는다.
