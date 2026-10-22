@@ -1,14 +1,26 @@
 // 서버 컴포넌트용 `getArticle`·`getArticleRevisions`는 `@/entities/document/server`에서 import 한다.
-export { fetchArticle, fetchArticleRevisions } from "./api/article";
+export {
+  fetchArticle,
+  fetchArticleRevisions,
+  fetchPopularArticles,
+  fetchRecentChanges,
+} from "./api/article";
 export { searchArticles } from "./api/search";
 export { articleTitleExists } from "./api/title-lookup";
 export { SEARCH_QUERY_MAX_LENGTH, stripSnippetSyntax } from "./model/search";
-export { RecentChangeItem } from "./ui/RecentChangeItem";
-export { PopularDocumentCard } from "./ui/PopularDocumentCard";
+export {
+  RecentChangeItem,
+  RecentChangeItemSkeleton,
+} from "./ui/RecentChangeItem";
+export {
+  PopularDocumentCard,
+  PopularDocumentCardSkeleton,
+} from "./ui/PopularDocumentCard";
 export { SearchResultCard } from "./ui/SearchResultCard";
 export { WikiContent } from "./ui/WikiContent";
 export { extractToc, parseWikiText } from "./model/wiki-syntax";
 export { getEditorName } from "./model/editor";
+export { toRecentChange } from "./model/recent-change";
 export {
   CREATION_REVISION,
   describeCharDelta,
@@ -20,7 +32,6 @@ export type {
   Backlink,
   ChangeSummarySegment,
   DocumentActivity,
-  PopularDocument,
   RecentChange,
   SearchResult,
   SnippetSegment,

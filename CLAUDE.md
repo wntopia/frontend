@@ -109,7 +109,8 @@ export default HomePage;
 배경과 백엔드 쪽 설정값은 README에 있다. 코드를 쓸 때 지킬 것만 적는다.
 
 - **백엔드 호출은 `shared/api`로만 한다.** 브라우저에서는 `apiFetch`(`@/shared/api`), 서버 컴포넌트에서
-  현재 사용자로서 호출할 때는 `serverApiFetch`(`@/shared/api/server`). 경로는 `API_PATHS`로만 참조한다.
+  현재 사용자로서 호출할 때는 `serverApiFetch`(`@/shared/api/server`), 로그인과 무관한 공개 데이터를 요청마다
+  새로 읽을 때는 `publicServerApiFetch`(`@/shared/api/server`, 홈 위젯). 경로는 `API_PATHS`로만 참조한다.
 - **실패는 `ApiError`로 온다.** `isApiError(error, 404)`처럼 상태로 갈라 처리한다. 응답 타입은
   `shared/api/types.ts`에 백엔드 DTO와 같은 이름으로 둔다.
 - **서버 컴포넌트에서 문서는 `getArticle` · `getArticleRevisions`(`@/entities/document/server`)로 읽는다.**

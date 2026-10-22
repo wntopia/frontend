@@ -69,14 +69,18 @@ PR을 올리면 CI(`.github/workflows/ci.yml`)가 `npm ci` → `lint` → `typec
 - 직접 호출 방식은 프론트와 백엔드의 도메인이 다르면 Next 서버가 쿠키를 볼 수 없어 접근 제어를
   브라우저에서만 할 수 있고, 서드파티 쿠키 제한의 영향도 받는다.
 
-호출 함수는 실행 위치에 따라 둘로 나뉜다.
+호출 함수는 실행 위치와 쓰임에 따라 셋으로 나뉜다.
 
 | 함수 | import | 용도 |
 |---|---|---|
 | `apiFetch` | `@/shared/api` | 브라우저(프록시 경유, 쿠키 포함), 그리고 서버에서 로그인과 무관한 조회 |
 | `serverApiFetch` | `@/shared/api/server` | 서버 컴포넌트에서 현재 사용자로서 호출 (요청 쿠키를 옮겨 싣는다) |
+| `publicServerApiFetch` | `@/shared/api/server` | 서버 컴포넌트에서 로그인과 무관한 공개 데이터를 요청마다 새로 조회 (쿠키를 싣지 않고, 빌드 때는 부르지 않는다) |
 
-둘 다 the-sdk의 응답 봉투(`{ status, code, message, data }`)를 벗겨 `data`만 돌려주고,
+서버 컴포넌트에서 `apiFetch`를 그대로 부르면 정적인 화면은 빌드 때 한 번 조회한 값으로 굳는다. 홈의 최근 변경처럼
+바로 반영되어야 하는 값은 `publicServerApiFetch`로 부른다.
+
+셋 다 the-sdk의 응답 봉투(`{ status, code, message, data }`)를 벗겨 `data`만 돌려주고,
 2xx가 아니면 HTTP 상태를 담은 `ApiError`를 던진다. `isApiError(error, 404)`처럼 갈라 쓴다.
 
 ### 로그인이 동작하려면 백엔드 설정이 맞아야 한다
