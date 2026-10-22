@@ -8,8 +8,12 @@ export type {
   ArticleRevisionResDto,
   ArticleRevisionSummaryResDto,
   AuthStatusResDto,
+  CategoryResDto,
+  CreateArticleReqDto,
   DataGsmClubSummaryResDto,
   DataGsmStudentInfoResDto,
   DataGsmUserInfoResDto,
   IsoDateTime,
+  PageResDto,
+  UpdateArticleReqDto,
 } from "./types";

@@ -1,56 +1,100 @@
+import type { Ref } from "react";
+import { MAX_SUMMARY_LENGTH } from "@/features/save-article";
 import { EditorPreview } from "./EditorPreview";
 
 const TEXTAREA_PLACEHOLDER =
   "== 문단 제목 ==\n본문 내용을 입력하세요. [[존재하는 문서]]는 자동으로 링크됩니다.";
 
+/** 편집 역사에 남는 편집 요약과 가벼운 수정 여부 */
+type RevisionNote = {
+  summary: string;
+  minorEdit: boolean;
+  onSummaryChange: (summary: string) => void;
+  onMinorEditChange: (minorEdit: boolean) => void;
+};
+
 type DocumentEditorProps = {
   title: string;
+  /** 없으면 제목을 고칠 수 없다. 기존 문서는 백엔드가 제목 수정을 받지 않는다. */
+  onTitleChange?: (title: string) => void;
   /** 위키 문법으로 된 본문 */
   content: string;
   onContentChange: (content: string) => void;
   showPreview: boolean;
+  /** 편집 요약 입력. 기존 문서를 고칠 때만 준다 — 문서 생성 요청에는 이 필드가 없다. */
+  revisionNote?: RevisionNote;
+  /** 저장하는 동안 입력을 잠근다. 요청을 보낸 뒤에 고친 글자는 저장되지 않기 때문이다. */
+  locked: boolean;
+  /** 저장이 막혔을 때 고칠 칸으로 포커스를 옮기기 위한 ref */
+  titleRef?: Ref<HTMLInputElement>;
+  contentRef?: Ref<HTMLTextAreaElement>;
 };
 
 /** 제목·본문 편집기와 편집 요약 입력 */
 export function DocumentEditor({
   title,
+  onTitleChange,
   content,
   onContentChange,
   showPreview,
+  revisionNote,
+  locked,
+  titleRef,
+  contentRef,
 }: DocumentEditorProps) {
   return (
     <div>
       <input
+        ref={titleRef}
         aria-label="문서 제목"
-        defaultValue={title}
+        value={title}
+        onChange={(event) => onTitleChange?.(event.target.value)}
+        readOnly={!onTitleChange || locked}
+        title={onTitleChange ? undefined : "만든 뒤에는 제목을 바꿀 수 없습니다"}
         // 새 문서는 제목 없이 열릴 수 있어, 빈 줄만 보이지 않게 자리를 알려 준다.
         placeholder="문서 제목"
-        className="mb-[18px] w-full border-b border-divider bg-transparent pb-[14px] text-[30px] font-extrabold tracking-[-.02em] text-fg outline-none placeholder:text-faint"
+        className="mb-[18px] w-full border-b border-divider bg-transparent pb-[14px] text-[30px] font-extrabold tracking-[-.02em] text-fg outline-none placeholder:text-faint read-only:cursor-default"
       />
 
       {showPreview ? (
         <EditorPreview content={content} />
       ) : (
         <textarea
+          ref={contentRef}
           aria-label="본문"
           value={content}
           onChange={(event) => onContentChange(event.target.value)}
+          readOnly={locked}
           placeholder={TEXTAREA_PLACEHOLDER}
           className="h-[480px] w-full resize-y rounded-xl bg-sunken p-[22px] elevate-inset font-mono text-sm leading-[1.9] text-fg-muted outline-none placeholder:text-faint"
         />
       )}
 
-      <div className="mt-4 flex items-center gap-2.5">
-        <input
-          aria-label="편집 요약"
-          placeholder="편집 요약 (예: 연혁 문단에 2026년 내용 추가)"
-          className="min-w-0 flex-1 rounded-[9px] bg-surface elevate-control px-[14px] py-2.5 text-[13.5px] text-fg outline-none"
-        />
-        <label className="flex flex-shrink-0 items-center gap-[7px] text-[13px] text-fg-soft">
-          <input type="checkbox" className="h-[15px] w-[15px] accent-accent" />
-          가벼운 수정
-        </label>
-      </div>
+      {revisionNote && (
+        <div className="mt-4 flex items-center gap-2.5">
+          <input
+            aria-label="편집 요약"
+            value={revisionNote.summary}
+            onChange={(event) => revisionNote.onSummaryChange(event.target.value)}
+            readOnly={locked}
+            maxLength={MAX_SUMMARY_LENGTH}
+            placeholder="편집 요약 (예: 연혁 문단에 2026년 내용 추가)"
+            className="min-w-0 flex-1 rounded-[9px] bg-surface elevate-control px-[14px] py-2.5 text-[13.5px] text-fg outline-none"
+          />
+          <label className="flex flex-shrink-0 items-center gap-[7px] text-[13px] text-fg-soft">
+            <input
+              type="checkbox"
+              checked={revisionNote.minorEdit}
+              onChange={(event) =>
+                revisionNote.onMinorEditChange(event.target.checked)
+              }
+              disabled={locked}
+              className="h-[15px] w-[15px] accent-accent"
+            />
+            가벼운 수정
+          </label>
+        </div>
+      )}
     </div>
   );
 }

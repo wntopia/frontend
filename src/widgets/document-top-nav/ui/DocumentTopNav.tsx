@@ -78,6 +78,9 @@ export function DocumentTopNav({
         {/* 편집 버튼 */}
         <Link
           href={ROUTES.documentEdit(articleId)}
+          // 편집 화면은 탭 제목에 쓸 문서를 조회한다. 미리 가져오면 문서를 열 때마다 그 조회가 한 번 더 일어나
+          // 백엔드를 부르고 조회수를 셀 수 있어, 누른 뒤에만 가져온다.
+          prefetch={false}
           className="flex flex-shrink-0 items-center gap-[7px] rounded-[9px] bg-surface-2 elevate-control px-[15px] py-2 transition hover:elevate-1 text-[13.5px] font-semibold text-fg"
         >
           <span className="inline-block h-3 w-3 rounded-[3px] border-[1.6px] border-fg-soft" />

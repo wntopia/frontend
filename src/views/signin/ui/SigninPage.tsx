@@ -1,6 +1,6 @@
 import { RETURN_TO_PARAM, SigninButton } from "@/features/auth";
 import { firstParam, type SearchParams } from "@/shared/lib";
-import { Logo } from "@/shared/ui";
+import { Alert, Logo } from "@/shared/ui";
 import { Header } from "@/widgets/header";
 
 /** 사유는 주소에 실려 오는 임의의 문자열이라 화면을 덮지 않을 만큼만 보여 준다. */
@@ -39,18 +39,13 @@ export async function SigninPage({
           </p>
 
           {failed && (
-            <div
-              role="alert"
-              className="mb-[18px] rounded-[9px] bg-danger/10 px-[14px] py-3 text-left text-[13px] leading-[1.6] text-danger-fg"
+            <Alert
+              title="로그인하지 못했습니다."
+              detail={reason}
+              className="mb-[18px]"
             >
-              <b className="font-bold">로그인하지 못했습니다.</b> 다시 시도해
-              주세요.
-              {reason && (
-                <div className="mt-1 break-words text-xs opacity-80">
-                  {reason}
-                </div>
-              )}
-            </div>
+              다시 시도해 주세요.
+            </Alert>
           )}
 
           <SigninButton
