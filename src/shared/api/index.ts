@@ -7,6 +7,8 @@ export type {
   ArticleResDto,
   ArticleRevisionResDto,
   ArticleRevisionSummaryResDto,
+  ArticleSearchItemResDto,
+  ArticleSearchResDto,
   AuthStatusResDto,
   CategoryResDto,
   DataGsmClubSummaryResDto,
@@ -14,5 +16,8 @@ export type {
   DataGsmUserInfoResDto,
   FavoriteStatusResDto,
   IsoDateTime,
+  LookupArticleTitlesReqDto,
+  LookupArticleTitlesResDto,
   PageResDto,
+  SnippetSegmentResDto,
 } from "./types";

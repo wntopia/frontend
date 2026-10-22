@@ -16,6 +16,17 @@ export const API_PATHS = {
   signout: `${API_PREFIX}/auth/signout`,
 
   article: (articleId: number) => `${API_PREFIX}/articles/${articleId}`,
+  /**
+   * 문서 검색. 제목과 본문에서 검색어를 띄어쓰기까지 그대로 찾는다(영문 대소문자만 무시).
+   * 검색어는 양끝 공백을 뺀 1~100자, `page`는 0부터, `size`는 1~50이며 어기면 400이다.
+   */
+  articleSearch: (
+    query: string,
+    { page, size }: { page: number; size: number },
+  ) =>
+    `${API_PREFIX}/articles?q=${encodeURIComponent(query)}&page=${page}&size=${size}`,
+  /** 제목들이 실제 문서인지 한 번에 확인한다. 읽기만 하지만 제목 목록을 본문에 실어야 해서 POST다. */
+  articleTitlesLookup: `${API_PREFIX}/articles/titles/lookup`,
   /** 리비전 목록(최신 순). 페이지 단위로 온다 — `page`는 0부터, `size`는 1~100 */
   articleRevisions: (
     articleId: number,

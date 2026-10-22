@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AccountButton } from "@/features/auth";
+import { SearchForm } from "@/features/search";
 import { ROUTES } from "@/shared/config";
 import { Logo } from "@/shared/ui";
 
@@ -26,6 +27,7 @@ type HeaderProps =
   | {
       /** search: 검색어가 채워진 입력창과 계정 버튼을 노출 */
       variant: "search";
+      /** 지금 검색어. 없으면 빈 입력창이 열린다. */
       query: string;
     };
 
@@ -51,38 +53,23 @@ export function Header(props: HeaderProps) {
         {variant === "home" && (
           <>
             <div className="flex-1" />
-            <Link
-              href={ROUTES.search()}
-              className="flex w-60 items-center gap-2 rounded-[9px] bg-surface-2 elevate-control px-3 py-2 text-[13px] text-fg-subtle hover:text-fg-subtle"
-            >
-              <SearchIcon />
-              문서 검색
-              <span className="ml-auto rounded bg-elevated px-[5px] py-px font-mono text-[11px]">
-                /
-              </span>
-            </Link>
+            <SearchForm variant="compact" />
             <AccountButton />
           </>
         )}
 
         {props.variant === "search" && (
           <>
-            {/* 디자인상 검색어를 보여주기만 하는 상자다. 입력 기능은 아직 없다. */}
-            <div className="flex flex-1 items-center gap-2 rounded-[9px] bg-surface-2 elevate-control px-3 py-2 text-[13.5px] text-fg">
-              <SearchIcon />
-              {props.query}
-            </div>
+            {/* 검색어 없이 검색 화면에 오면 곧바로 입력할 수 있게 한다 */}
+            <SearchForm
+              variant="wide"
+              defaultQuery={props.query}
+              autoFocus={!props.query}
+            />
             <AccountButton />
           </>
         )}
       </div>
     </header>
-  );
-}
-
-/** 디자인의 돋보기 자리를 채우는 원형 아이콘 */
-function SearchIcon() {
-  return (
-    <span className="inline-block h-[13px] w-[13px] flex-shrink-0 rounded-full border-[1.5px] border-fg-subtle" />
   );
 }
