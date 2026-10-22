@@ -23,6 +23,9 @@ export const ROUTES = {
     page > 1
       ? `/document/${articleId}/history?${HISTORY_PAGE_PARAM}=${page}`
       : `/document/${articleId}/history`,
+  /** 과거 리비전 읽기. 편집 역사 아래에 두어 주소가 화면을 찾아가는 길(문서 → 편집 역사 → 리비전)을 따른다. */
+  documentRevision: (articleId: number, revision: number) =>
+    `/document/${articleId}/history/${revision}`,
   /** 새 문서 작성. 제목을 주면 그 제목이 채워진 채로 열린다. */
   documentNew: (title?: string) =>
     title

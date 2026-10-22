@@ -15,7 +15,13 @@ export {
   type CharDeltaTone,
 } from "./model/revision";
 export { SAMPLE_ARTICLE_ID } from "./model/mock";
-export { readArticleId, type ArticleRouteProps } from "./model/route-params";
+export {
+  readArticleId,
+  readRevision,
+  type ArticleRouteProps,
+  type RevisionRouteProps,
+} from "./model/route-params";
+export { fetchArticleRevision, loadArticleRevision } from "./api/revision";
 export type {
   Backlink,
   ChangeSummarySegment,

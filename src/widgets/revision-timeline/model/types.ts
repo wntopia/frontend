@@ -9,6 +9,21 @@ export type RevisionDiffLine = {
   change?: "added" | "removed";
 };
 
+/**
+ * '차이 보기'에 그리는 한 행. 바뀌지 않은 긴 구간은 접어서 줄 수만 남긴다(`fold`).
+ * 어느 줄을 어떤 색으로 그릴지는 이 데이터가 정한다 — 컴포넌트가 본문 글자를 보고 판단하지 않는다.
+ */
+export type RevisionDiffRow =
+  | ({ type: "line" } & RevisionDiffLine)
+  | { type: "fold"; count: number };
+
+/** '차이 보기'가 비교할 두 리비전 — 직전 리비전(from)에서 이 리비전(to)으로 */
+export type RevisionCompare = {
+  articleId: number;
+  from: number;
+  to: number;
+};
+
 /** 편집 역사 타임라인의 한 항목 */
 export type Revision = {
   id: string;
@@ -20,9 +35,11 @@ export type Revision = {
   minor?: boolean;
   /** 글자 수 변화 (예: "+412자") */
   delta?: { text: string; tone: CharDeltaTone };
+  /** '이 버전 보기'로 여는 과거 리비전 화면. 백엔드에 기록이 없는 항목(수정된 적 없는 문서의 생성)에는 없다. */
+  href?: string;
   /**
-   * '차이 보기'로 펼쳐 보는 변경 내용. 리비전 목록 응답에는 본문이 없어 아직 채우지 않는다 —
-   * 백엔드가 diff를 주지 않으므로 리비전 본문 두 개를 받아 계산해야 한다.
+   * '차이 보기'로 비교할 리비전. 목록 응답에는 본문이 없고 차이를 주는 API도 없어, 펼칠 때 두 리비전의 본문을
+   * 받아 브라우저에서 비교한다. 직전 리비전이 없는 생성 항목에는 없다.
    */
-  diff?: RevisionDiffLine[];
+  compare?: RevisionCompare;
 };
