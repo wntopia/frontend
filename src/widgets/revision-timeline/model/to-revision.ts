@@ -63,10 +63,10 @@ function editRevision(
   return {
     id: `r${item.revision}`,
     kind: isToday(item.editedAt, now) ? "active" : "default",
-    // 편집 요약은 시안의 "'연혁' 문단 추가"처럼 이름 뒤에 이어 붙는 문장이다. 없으면 '수정'으로 맺는다.
+    // 편집 요약은 시안의 "'연혁' 문단 추가"처럼 이름 뒤에 이어 붙는 문장이다. 없거나 비었으면 '수정'으로 맺는다.
     summary: [
       { text: name, emphasis: "strong" },
-      { text: `${subjectParticle(name)} ${item.summary ?? "수정"}` },
+      { text: `${subjectParticle(name)} ${item.summary?.trim() || "수정"}` },
     ],
     time: timeLabel(item.editedAt, now),
     minor: item.minorEdit,

@@ -2,6 +2,7 @@ export {
   HISTORY_PAGE_PARAM,
   NEW_DOCUMENT_TITLE_PARAM,
   ROUTES,
+  SEARCH_PAGE_PARAM,
   SEARCH_QUERY_PARAM,
 } from "./routes";
 export {

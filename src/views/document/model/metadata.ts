@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 import { readArticleId, type ArticleRouteProps } from "@/entities/document";
-import { DOCUMENT_TITLE } from "./mock";
+import { getArticle } from "@/entities/document/server";
 
-/** 탭 제목에 문서 제목을 싣는다. */
+/** 탭 제목에 문서 제목을 싣는다. 화면과 같은 조회라 백엔드는 한 번만 불린다. */
 export async function generateDocumentMetadata(
   props: ArticleRouteProps,
 ): Promise<Metadata> {
-  // 아직은 어떤 id든 같은 시안 문서라 id를 쓰지 않지만, 문서가 될 수 없는 주소는 화면과 똑같이 404로 끝낸다.
-  await readArticleId(props);
+  const article = await getArticle(await readArticleId(props));
 
-  return { title: `${DOCUMENT_TITLE} · 지무위키` };
+  return { title: `${article.title} · 지무위키` };
 }
