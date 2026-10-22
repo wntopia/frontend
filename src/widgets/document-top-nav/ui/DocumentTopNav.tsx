@@ -10,13 +10,18 @@ import { DocumentMenu } from "./DocumentMenu";
  */
 export function DocumentTopNav({
   articleId,
-  editingName = "이서연",
-  showEditing = true,
+  title,
+  categoryName,
+  editingName,
 }: {
   /** 보고 있는 문서. 편집·편집 역사 링크가 같은 문서로 이어지게 한다. */
   articleId: number;
+  /** 위치 경로의 끝에 보이는 문서 제목 */
+  title: string;
+  /** 위치 경로의 앞에 보이는 분류. 분류가 없는 문서는 제목만 보인다. */
+  categoryName?: string;
+  /** 지금 이 문서를 편집 중인 사람. 주지 않으면 '편집 중' 표시를 그리지 않는다. */
   editingName?: string;
-  showEditing?: boolean;
 }) {
   return (
     <header className="sticky top-0 z-50 bg-bg/85 elevate-header backdrop-blur-[10px]">
@@ -30,11 +35,15 @@ export function DocumentTopNav({
           지무위키
         </Link>
 
-        {/* 위치 경로 */}
-        <div className="flex flex-shrink-0 items-center gap-1.5 text-[13px] text-fg-subtle">
-          <span>학교</span>
-          <span>›</span>
-          <span className="text-fg-soft">금성고등학교</span>
+        {/* 위치 경로 — 제목이 길면 검색·편집 버튼을 밀어내지 않고 말줄임된다 */}
+        <div className="flex min-w-0 items-center gap-1.5 text-[13px] text-fg-subtle">
+          {categoryName && (
+            <>
+              <span className="flex-shrink-0">{categoryName}</span>
+              <span className="flex-shrink-0">›</span>
+            </>
+          )}
+          <span className="truncate text-fg-soft">{title}</span>
         </div>
 
         <div className="flex-1" />
@@ -42,7 +51,7 @@ export function DocumentTopNav({
         {/* 검색 */}
         <Link
           href={ROUTES.search()}
-          className="flex w-60 items-center gap-2 rounded-[9px] bg-surface-2 elevate-control px-3 py-2 text-[13px] text-fg-subtle"
+          className="flex w-60 flex-shrink-0 items-center gap-2 rounded-[9px] bg-surface-2 elevate-control px-3 py-2 text-[13px] text-fg-subtle"
         >
           <span className="inline-block h-[13px] w-[13px] rounded-full border-[1.5px] border-fg-subtle" />
           문서 검색
@@ -52,7 +61,7 @@ export function DocumentTopNav({
         </Link>
 
         {/* 편집 중 표시 */}
-        {showEditing && (
+        {editingName && (
           <div className="flex flex-shrink-0 items-center gap-2 rounded-[20px] bg-success/12 py-1.5 pl-2.5 pr-[13px] text-[12.5px] text-success-fg">
             <span className="h-[7px] w-[7px] animate-[livepulse_2s_infinite] rounded-full bg-success" />
             <b className="text-success-strong">{editingName}</b> 편집 중

@@ -1,0 +1,51 @@
+name: ToDo
+description: 기능 구현, 개선, 리팩터링 같은 할 일을 등록합니다.
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        제목은 `[영역] 할 일` 형식으로 씁니다. 영역은 바뀌는 화면이나 슬라이스 이름입니다.
+        예: `document` · `history` · `edit` · `search` · `home` · `mypage` · `auth` · `api`, 여러 곳에 걸치면 `global`, CI·배포는 `ci/cd`
+  - type: textarea
+    id: objective
+    attributes:
+      label: 목표
+      description: 이 작업이 끝나면 무엇이 가능해지나요?
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: 현재 상태
+      description: 지금은 어떻게 되어 있나요? 관련 파일이나 목 데이터 위치를 적어 두면 바로 시작할 수 있습니다.
+    validations:
+      required: false
+  - type: textarea
+    id: scope
+    attributes:
+      label: 작업 범위
+      description: 할 일을 체크리스트로 나눕니다. 백엔드 API가 필요하면 엔드포인트와 응답 모양도 적습니다.
+      placeholder: |
+        - [ ] ...
+        - [ ] ...
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: 완료 조건
+      description: 무엇이 확인되면 이 이슈를 닫을 수 있나요? 화면에서 확인할 수 있는 문장으로 씁니다.
+      placeholder: |
+        - [ ] ...
+        - [ ] ...
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: 참고
+      description: 선행 이슈, 관련 이슈, 시안, 백엔드 스펙, 정해야 할 것
+    validations:
+      required: false

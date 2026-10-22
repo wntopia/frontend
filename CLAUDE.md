@@ -27,12 +27,15 @@
 - 라이트/다크 모드 — 기본은 다크. `<html>`의 `data-mode`로 전환하고 선택값은 `localStorage`에 저장한다
 
 ```
-npm run dev     # 개발 서버
-npm run build   # 프로덕션 빌드
-npm run lint    # eslint
+npm run dev        # 개발 서버
+npm run build      # 프로덕션 빌드
+npm run lint       # eslint
+npm run typecheck  # 라우트 타입 생성(next typegen) 후 tsc --noEmit
 ```
 
-백엔드 주소는 `.env.local`의 `API_BASE_URL`로 준다 (`.env.example` 참고). 빌드할 때도 필요하다.
+PR마다 CI(`.github/workflows/ci.yml`)가 `lint` → `typecheck` → `build`를 돌린다. 커밋 전에 같은 명령으로 확인한다.
+
+백엔드 주소는 `.env.local`의 `API_BASE_URL`로 준다 (`.env.example` 참고). 프록시 목적지가 빌드할 때 고정되므로 배포 빌드에서는 반드시 넣는다 (비우면 `http://localhost:8080`).
 
 ## 아키텍처 — FSD (Feature-Sliced Design)
 
@@ -91,7 +94,7 @@ export default HomePage;
 
 화면마다 백엔드 연결 상태가 다르다. 연결되지 않은 화면은 경로만 동적이고 데이터는 목이다.
 
-- 문서: 어떤 id로 들어가도 같은 시안 문서를 그린다.
+- 문서: 백엔드의 문서와 최근 리비전을 그린다. 본문의 위키 링크는 아직 `#`이다.
 - 검색: `q`를 화면에 싣기만 할 뿐 결과는 시안 그대로다 (`q`가 없으면 시안의 검색어를 쓴다).
 - 편집: 어떤 id로 들어가도 같은 시안 문서를 그린다.
 - 편집역사: 어떤 id로 들어가도 같은 시안 문서를 그린다.
@@ -125,6 +128,25 @@ export default HomePage;
   `sanitizeReturnTo`를 거친 것만 쓴다.
 - `student`가 없는 계정(교사 등)도 로그인한 사용자다. 다만 백엔드의 문서 수정 API는 이런 계정에 401을 준다.
 
+## 로딩 · 에러 · 404
+
+- 루트에 `loading.tsx` · `error.tsx` · `not-found.tsx`를 하나씩 두고 모든 화면이 함께 쓴다
+  (`views/loading`, `views/error`, `views/not-found`). 화면마다 상단 바가 달라 로딩 자리표시는 바의
+  높이와 양 끝 자리만 잡는다. 공통 조각은 `shared/ui`의 `Skeleton` · `StatusNotice` · `Alert`.
+- `app/error.tsx`만은 re-export 위에 `"use client"`를 둔다. Next가 이 파일의 지시문으로 클라이언트 여부를
+  판단해, 가져오는 컴포넌트가 클라이언트여도 없으면 빌드가 실패한다.
+- **화면을 그리다 난 실패는 잡지 말고 던진다.** 루트 `error.tsx`가 받아 '다시 시도'와 함께 안내한다.
+  화면마다 에러 화면을 따로 만들지 않는다.
+- **없는 대상은 `notFound()`로 끝낸다.** 없는 경로, `readArticleId`가 거른 주소, 백엔드가 404를 준 문서가
+  모두 같은 404 화면으로 간다. `/missing-document`(아직 쓰지 않은 문서)와 섞지 않는다.
+- 루트 `loading.tsx` 때문에 백엔드를 기다리는 화면은 응답이 스트리밍된다. 그래서 렌더링 중에 부른
+  `notFound()` · `redirect()`(`requireSession` 포함)는 404 · 307이 아니라 200으로 나가고 브라우저에서
+  처리된다(404 화면에는 `noindex`가 붙는다). 화면을 옮기자마자 자리표시가 뜨는 대가로 받아들였다.
+- **변경 요청(저장 등)의 실패는 토스트가 아니라 그 동작을 한 자리에 `Alert`로 남긴다.** 사라지지 않아야
+  무엇이 실패했는지 읽을 수 있고, 쓰던 내용을 그대로 둔 채 다시 시도할 수 있다.
+- 변경 요청이 401을 받아도 로그인 화면으로 자동으로 보내지 않는다. `Alert`에 `SigninButton`을 함께 둔다.
+  자동 이동은 쓰던 내용을 날리고, `student`가 없는 계정은 다시 로그인해도 401이라 같은 자리를 맴돈다.
+
 ## 스타일 규칙
 
 색은 `globals.css`의 토큰을 Tailwind 유틸로 쓴다 — `bg-bg`, `bg-surface`, `bg-surface-2`,
@@ -145,7 +167,7 @@ export default HomePage;
 ## 컴포넌트 관례
 
 - **기본은 서버 컴포넌트.** `"use client"`는 실제 상태가 있는 파일에만 있다 (편집 화면 본체,
-  문서 메뉴, 리비전 카드, 테마 전환, 계정 버튼). 새로 붙일 때는 트리 최하단 컴포넌트에만 붙인다.
+  문서 메뉴, 문서 목차의 링크 목록, 리비전 카드, 테마 전환, 계정 버튼). 새로 붙일 때는 트리 최하단 컴포넌트에만 붙인다.
 - **목 데이터는 슬라이스의 `model/mock.ts`에 격리한다.** 백엔드가 붙을 때 이 파일만 갈아끼우면
   되도록, UI 컴포넌트에 데이터 리터럴을 박지 않는다.
 - **강조 위치는 데이터가 정한다.** 변경 요약(`ChangeSummarySegment`)과 검색 스니펫
