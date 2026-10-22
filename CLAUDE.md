@@ -27,12 +27,15 @@
 - 라이트/다크 모드 — 기본은 다크. `<html>`의 `data-mode`로 전환하고 선택값은 `localStorage`에 저장한다
 
 ```
-npm run dev     # 개발 서버
-npm run build   # 프로덕션 빌드
-npm run lint    # eslint
+npm run dev        # 개발 서버
+npm run build      # 프로덕션 빌드
+npm run lint       # eslint
+npm run typecheck  # 라우트 타입 생성(next typegen) 후 tsc --noEmit
 ```
 
-백엔드 주소는 `.env.local`의 `API_BASE_URL`로 준다 (`.env.example` 참고). 빌드할 때도 필요하다.
+PR마다 CI(`.github/workflows/ci.yml`)가 `lint` → `typecheck` → `build`를 돌린다. 커밋 전에 같은 명령으로 확인한다.
+
+백엔드 주소는 `.env.local`의 `API_BASE_URL`로 준다 (`.env.example` 참고). 프록시 목적지가 빌드할 때 고정되므로 배포 빌드에서는 반드시 넣는다 (비우면 `http://localhost:8080`).
 
 ## 아키텍처 — FSD (Feature-Sliced Design)
 
