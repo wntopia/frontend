@@ -1,5 +1,9 @@
 // 서버 컴포넌트용 `getArticle`·`getArticleRevisions`는 `@/entities/document/server`에서 import 한다.
-export { fetchArticle, fetchArticleRevisions } from "./api/article";
+export {
+  fetchArticle,
+  fetchArticleEditors,
+  fetchArticleRevisions,
+} from "./api/article";
 export { fetchBacklinks } from "./api/backlinks";
 export { searchArticles } from "./api/search";
 export {

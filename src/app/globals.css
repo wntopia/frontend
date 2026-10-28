@@ -66,6 +66,21 @@
   --elevation-inset:
     inset 0 1px 3px rgb(0 0 0 / 0.45), inset 0 0 0 1px rgb(255 255 255 / 0.03);
   --elevation-header: 0 1px 0 rgb(255 255 255 / 0.04), 0 8px 24px -16px rgb(0 0 0 / 0.8);
+
+  /*
+   * 공동편집 접속자 색 — 커서 · 선택 구간 · 이름표 · 아바타. 사람마다 한 칸을 결정적으로 고른다
+   * (features/collaboration의 pickPresenceColor). 칸 번호로 골라 쓰는 값이라 @theme이 아니라 여기에 둔다 —
+   * @theme은 유틸리티 클래스로 쓰이지 않은 변수를 출력에서 빼 버린다. --presence-fg는 이름표 · 아바타의 글자색이다.
+   */
+  --presence-1: #ff8a65;
+  --presence-2: #ffc94d;
+  --presence-3: #a3d977;
+  --presence-4: #4fd1c5;
+  --presence-5: #5cb8ff;
+  --presence-6: #a495ff;
+  --presence-7: #e58cf0;
+  --presence-8: #ff7aa8;
+  --presence-fg: #0e0f12;
 }
 
 :root[data-mode="light"] {
@@ -113,6 +128,17 @@
   --elevation-inset:
     inset 0 1px 2px rgb(16 24 40 / 0.06), inset 0 0 0 1px rgb(16 24 40 / 0.06);
   --elevation-header: 0 1px 0 rgb(16 24 40 / 0.05), 0 8px 24px -16px rgb(16 24 40 / 0.18);
+
+  /* 밝은 바탕에서도 가는 커서 막대가 보이고 흰 글자가 읽히도록 다크 모드보다 짙게 둔다 */
+  --presence-1: #d9480f;
+  --presence-2: #b35c00;
+  --presence-3: #2b8a3e;
+  --presence-4: #0b7285;
+  --presence-5: #1971c2;
+  --presence-6: #6741d9;
+  --presence-7: #ae3ec9;
+  --presence-8: #c2255c;
+  --presence-fg: #ffffff;
 }
 
 /* 컨트롤(입력창·보조 버튼·아바타)용 얕은 그림자 */
@@ -167,5 +193,16 @@ a:hover {
   }
   100% {
     box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-success) 0%, transparent);
+  }
+}
+
+/* 공동편집 커서의 이름표 — 아래 글을 가리지 않도록 그 사람이 움직이거나 쓸 때 잠깐 보였다가 사라진다 */
+@keyframes presence-label {
+  0%,
+  75% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
   }
 }

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 
 /** 미리보기·취소가 같은 모양이라 공유한다 */
 const SECONDARY_BUTTON =
@@ -14,6 +15,20 @@ type EditorTopBarProps = {
   backLabel: string;
   showPreview: boolean;
   onTogglePreview: () => void;
+  onSave: () => void;
+  /** 저장 요청이 오가는 동안과 저장 뒤 문서로 넘어가는 동안 저장 버튼을 막는다 */
+  saving: boolean;
+  /** 저장할 수 없는 동안의 이유. 주면 저장 버튼을 막고 이유를 버튼의 설명으로 보인다 */
+  saveBlockedReason?: string;
+  /** '편집 중' 표시 옆에 둘 상태 (공동편집 연결 상태 등) */
+  status?: ReactNode;
+  /** 오른쪽 버튼들 앞에 둘 것 (함께 편집 중인 사람들) */
+  participants?: ReactNode;
+  /**
+   * 뒤로 가기·취소 링크로 떠나기 직전에 불린다. `preventDefault()`를 부르면 머문다.
+   * 저장하지 않은 내용이 있을 때 확인을 받는 데 쓴다 (`<Link>`의 `onNavigate`).
+   */
+  onLeave: (event: { preventDefault: () => void }) => void;
 };
 
 /** 편집 화면 상단 바. 다른 화면과 달리 로고 대신 문서 복귀 링크와 편집 액션을 둔다. */
@@ -22,6 +37,12 @@ export function EditorTopBar({
   backLabel,
   showPreview,
   onTogglePreview,
+  onSave,
+  saving,
+  saveBlockedReason,
+  status,
+  participants,
+  onLeave,
 }: EditorTopBarProps) {
   return (
     <header className="sticky top-0 z-50 bg-bg/[.92] elevate-header backdrop-blur-[10px]">
@@ -30,6 +51,7 @@ export function EditorTopBar({
         <Link
           href={backHref}
           prefetch={false}
+          onNavigate={onLeave}
           className="flex items-center gap-[7px] text-[13.5px] text-fg-soft hover:text-fg-soft"
         >
           <span className="text-[15px]">←</span> {backLabel}
@@ -37,21 +59,30 @@ export function EditorTopBar({
         <span className="rounded-[5px] bg-accent/[.12] px-[9px] py-[3px] font-mono text-[11px] text-accent-hover">
           편집 중
         </span>
+        {status}
 
         <div className="flex-1" />
+        {participants}
 
         <button type="button" onClick={onTogglePreview} className={SECONDARY_BUTTON}>
           {showPreview ? "편집기로 돌아가기" : "미리보기"}
         </button>
-        <Link href={backHref} prefetch={false} className={SECONDARY_BUTTON}>
+        <Link
+          href={backHref}
+          prefetch={false}
+          onNavigate={onLeave}
+          className={SECONDARY_BUTTON}
+        >
           취소
         </Link>
-        {/* 시안에 저장 동작이 없어 아직 아무 일도 하지 않는다 */}
         <button
           type="button"
-          className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-[13px] font-bold text-on-accent elevate-control transition hover:bg-accent-hover"
+          onClick={onSave}
+          disabled={saving || saveBlockedReason !== undefined}
+          title={saveBlockedReason}
+          className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-[13px] font-bold text-on-accent elevate-control transition hover:bg-accent-hover disabled:cursor-default disabled:opacity-60 disabled:hover:bg-accent"
         >
-          저장
+          {saving ? "저장 중…" : "저장"}
         </button>
       </div>
     </header>
