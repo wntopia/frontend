@@ -15,6 +15,18 @@ export const API_PATHS = {
   authMe: `${API_PREFIX}/auth/me`,
   signout: `${API_PREFIX}/auth/signout`,
 
+  /** 내 기여 통계. 비로그인 시 401 */
+  myContributionStats: `${API_PREFIX}/users/me/contributions/stats`,
+  /**
+   * 내가 만들거나 고친 기록(최신 순). 같은 문서를 여러 번 고치면 고칠 때마다 한 줄이다.
+   * 페이지가 없고 `limit`(1~100)개만 온다. 비로그인 시 401
+   */
+  myContributions: (limit: number) =>
+    `${API_PREFIX}/users/me/contributions?limit=${limit}`,
+  /** 내 즐겨찾기(최근 추가 순). `page`는 0부터, `size`는 1~100. 비로그인 시 401 */
+  myFavorites: ({ page, size }: { page: number; size: number }) =>
+    `${API_PREFIX}/users/me/favorites?page=${page}&size=${size}`,
+
   /** 최근 수정된 문서(문서당 한 줄, 최신 순). `page`는 0부터, `size`는 1~100 */
   recentChanges: ({ page, size }: { page: number; size: number }) =>
     `${API_PREFIX}/articles/recent-changes?page=${page}&size=${size}`,
@@ -54,7 +66,8 @@ export const API_PATHS = {
   articleRevisions: (
     articleId: number,
     { page, size }: { page: number; size: number },
-  ) => `${API_PREFIX}/articles/${articleId}/revisions?page=${page}&size=${size}`,
+  ) =>
+    `${API_PREFIX}/articles/${articleId}/revisions?page=${page}&size=${size}`,
   /**
    * 문서 생성(POST, `multipart/form-data`). 기존 문서의 본문은 공동편집 WebSocket의 `save`로 저장한다.
    * 백엔드의 `PUT article(id)`는 편집 화면 밖의 비대화형 클라이언트용이라 프론트는 쓰지 않는다.
