@@ -37,6 +37,8 @@ export function RecentRevisions({
         <div className="text-[13px] font-bold text-fg">편집 역사</div>
         <Link
           href={ROUTES.documentHistory(articleId)}
+          // 편집 역사 화면은 제목 · 생성 시각을 얻으려고 문서를 조회해, 미리 가져오면 조회수가 오른다
+          prefetch={false}
           className="text-[11.5px] text-accent"
         >
           전체

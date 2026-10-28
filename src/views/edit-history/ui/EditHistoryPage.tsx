@@ -28,6 +28,9 @@ export async function EditHistoryPage(props: EditHistoryPageProps) {
   const page = readHistoryPage(await props.searchParams);
 
   const [article, revisions, contributors] = await Promise.all([
+    // 알려진 한계: 이 조회는 조회수를 올린다. 제목과 생성 시각(`createdAt`)이 문서 조회(`ArticleResDto`)에만 있고,
+    // 백엔드에 조회수를 세지 않는 메타데이터 조회가 없어서다. 그래서 편집 역사로 가는 링크는 모두 미리 가져오지 않는다.
+    // 백엔드가 리비전 목록에 제목 · 생성 시각을 싣거나 세지 않는 조회를 주면 이 호출을 뺀다.
     getArticle(articleId),
     getArticleRevisions(articleId, page - 1, PAGE_SIZE),
     countContributors(articleId),

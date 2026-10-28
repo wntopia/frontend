@@ -65,6 +65,8 @@ function PagerLink({
   return (
     <Link
       href={href}
+      // 옆 페이지를 미리 그리면 문서 조회(조회수)와 기여자 집계(리비전 목록 여러 번)가 화면을 볼 때마다 한 번 더 돈다
+      prefetch={false}
       className={`${BUTTON} text-fg transition hover:elevate-1 hover:text-fg`}
     >
       {children}

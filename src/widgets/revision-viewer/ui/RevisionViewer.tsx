@@ -73,7 +73,13 @@ function RevisionNotice({ revision }: RevisionViewerProps) {
         <Link href={ROUTES.document(revision.articleId)} prefetch={false}>
           현재 문서 보기
         </Link>
-        <Link href={ROUTES.documentHistory(revision.articleId)}>편집 역사</Link>
+        {/* 편집 역사 화면도 문서를 조회한다. 미리 가져오면 지난 본문만 읽어도 조회수가 오른다. */}
+        <Link
+          href={ROUTES.documentHistory(revision.articleId)}
+          prefetch={false}
+        >
+          편집 역사
+        </Link>
       </nav>
     </div>
   );

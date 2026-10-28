@@ -263,6 +263,8 @@ export function DocumentMenu({ articleId }: { articleId: number }) {
           role="menuitem"
           tabIndex={-1}
           href={ROUTES.documentHistory(articleId)}
+          // 편집 역사 화면은 제목 · 생성 시각을 얻으려고 문서를 조회해, 미리 가져오면 조회수가 오른다
+          prefetch={false}
           onClick={() => closeMenu({ restoreFocus: false })}
           className={`${ITEM} block`}
         >
