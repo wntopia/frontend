@@ -2,6 +2,7 @@
 export { apiFetch } from "./client";
 export { ApiError, isApiError } from "./error";
 export { API_PATHS } from "./endpoints";
+export { toWebSocketUrl } from "./websocket";
 export type { ApiRequestOptions } from "./request";
 export type {
   ArticleResDto,
@@ -11,6 +12,8 @@ export type {
   ArticleSearchResDto,
   AuthStatusResDto,
   CategoryResDto,
+  CollaborationMessage,
+  CollaborationMessageType,
   CreateArticleReqDto,
   DataGsmClubSummaryResDto,
   DataGsmStudentInfoResDto,
@@ -21,5 +24,6 @@ export type {
   LookupArticleTitlesResDto,
   PageResDto,
   SnippetSegmentResDto,
+  UpdateArticleImageReqDto,
   UpdateArticleReqDto,
 } from "./types";
