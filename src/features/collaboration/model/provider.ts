@@ -386,7 +386,7 @@ export class CollaborationProvider {
     };
     socket.onmessage = (event) => {
       if (this.socket === socket && typeof event.data === "string") {
-        this.handleMessage(event.data);
+        this.handleMessage(event.data, socket);
       }
     };
     socket.onclose = (event) => {
@@ -537,7 +537,7 @@ export class CollaborationProvider {
 
   // ── 받은 메시지 ─────────────────────────────────────────
 
-  private handleMessage(raw: string) {
+  private handleMessage(raw: string, socket: WebSocket) {
     let message: CollaborationMessage;
     try {
       message = JSON.parse(raw) as CollaborationMessage;
@@ -547,7 +547,11 @@ export class CollaborationProvider {
 
     switch (message.type) {
       case "bootstrap":
-        this.runRemote(() => this.applyBootstrap(message));
+        // 한글 조합 때문에 미룬 사이 그 연결이 끊겼으면 버린다. 적용하면 연결이 없는데도 '연결됨'이 되고, 새 연결이
+        // 이미 붙어 있으면 그 연결의 시작 상태보다 먼저 낡은 상태가 들어간다. 늦게 온 `update`는 CRDT라 그대로 둔다.
+        this.runRemote(() => {
+          if (this.socket === socket) this.applyBootstrap(message);
+        });
         break;
       case "update": {
         const update = decode(message.dataB64);
