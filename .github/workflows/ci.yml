@@ -1,0 +1,61 @@
+# .github/workflows/ci.yml
+# PR마다 린트 · 타입 검사 · 빌드를 돌려, 하나라도 깨지면 실패로 표시합니다.
+# main에 들어온 커밋에도 돌립니다. main에서 만든 캐시는 모든 PR이 이어 쓸 수 있기 때문입니다.
+
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+# 같은 PR에 새 커밋이 오면 앞의 실행은 결과가 의미 없으므로 취소합니다.
+# main 푸시는 커밋마다 결과가 남아야 해서 취소하지 않습니다.
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  check:
+    name: Lint · Typecheck · Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # rewrites 목적지가 빌드 시점에 고정되어 값이 필요합니다. CI는 백엔드 없이 빌드가 되는지만
+      # 확인하고 산출물을 배포하지 않으므로, 실제 주소가 아닌 자리 값을 둡니다.
+      API_BASE_URL: http://localhost:8080
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v7
+
+      # 로컬과 같은 Node 버전을 쓰도록 .nvmrc를 읽습니다.
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      # Next가 권장하는 빌드 캐시. 소스가 바뀌어도 의존성이 같으면 이전 캐시에서 이어 빌드합니다.
+      - name: Next 빌드 캐시
+        uses: actions/cache@v6
+        with:
+          path: .next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('package-lock.json') }}-${{ hashFiles('src/**', 'next.config.ts', 'tsconfig.json', 'postcss.config.mjs') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('package-lock.json') }}-
+
+      - name: 의존성 설치
+        run: npm ci
+
+      - name: 린트
+        run: npm run lint
+
+      # 빌드도 타입을 검사하지만, 따로 두면 빌드까지 가지 않고 어느 단계에서 깨졌는지 바로 보입니다.
+      - name: 타입 검사
+        run: npm run typecheck
+
+      - name: 빌드
+        run: npm run build

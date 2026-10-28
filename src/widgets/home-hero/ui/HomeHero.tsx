@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ROUTES } from "@/shared/config";
+import { SearchForm } from "@/features/search";
 import { QUICK_LINKS, type QuickLink } from "../model/quick-links";
 
 const TAG_TONE: Record<NonNullable<QuickLink["tone"]>, string> = {
@@ -19,13 +19,10 @@ export function HomeHero() {
         금성고 학생·교사가 함께 쓰는 기록
       </h1>
 
-      <Link
-        href={ROUTES.search()}
-        className="flex max-w-[620px] items-center gap-3 rounded-xl bg-surface px-[18px] py-[15px] text-[15px] text-fg-subtle elevate-1 transition hover:elevate-2 hover:text-fg-subtle"
-      >
-        <span className="inline-block h-4 w-4 flex-shrink-0 rounded-full border-[1.8px] border-fg-subtle" />
-        문서, 동아리, 인물, 행사를 검색해보세요
-      </Link>
+      <SearchForm
+        variant="hero"
+        placeholder="문서, 동아리, 인물, 행사를 검색해보세요"
+      />
 
       <div className="mt-4 flex flex-wrap gap-2.5">
         {QUICK_LINKS.map((link) => (

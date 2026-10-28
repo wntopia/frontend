@@ -1,9 +1,9 @@
-import { SEARCH_QUERY_PARAM } from "@/shared/config";
-import { firstParam, type SearchParams } from "@/shared/lib";
-import { CreateDocumentCta } from "@/widgets/create-document-cta";
+import { Suspense } from "react";
+import type { SearchParams } from "@/shared/lib";
 import { Header } from "@/widgets/header";
-import { SearchResults } from "@/widgets/search-results";
-import { SEARCH_QUERY, SEARCH_RESULTS } from "../model/mock";
+import { SearchNotice, SearchResultsSkeleton } from "@/widgets/search-results";
+import { readSearchPage, readSearchQuery } from "../model/search-params";
+import { SearchOutcome } from "./SearchOutcome";
 
 /** 검색 결과 화면 */
 export async function SearchPage({
@@ -12,16 +12,29 @@ export async function SearchPage({
   searchParams: Promise<SearchParams>;
 }) {
   const params = await searchParams;
-  // 검색어를 입력할 곳이 아직 없어 대부분 검색어 없이 들어온다. 그때는 시안의 검색어로 화면을 채운다.
-  const query = firstParam(params[SEARCH_QUERY_PARAM])?.trim() || SEARCH_QUERY;
+  const query = readSearchQuery(params);
+  const page = readSearchPage(params);
 
   return (
     <div className="min-h-screen bg-bg text-fg">
       <Header variant="search" query={query} />
 
       <div className="mx-auto max-w-[900px] px-8 pb-[120px] pt-10">
-        <SearchResults query={query} results={SEARCH_RESULTS} />
-        <CreateDocumentCta query={query} />
+        {query ? (
+          // 같은 화면 안에서 검색어·페이지만 바뀌면 이전 결과가 그대로 떠 있다가 바뀐다.
+          // key로 새 경계를 만들어, 새 검색마다 자리표시부터 보이게 한다.
+          <Suspense
+            key={`${page}:${query}`}
+            fallback={<SearchResultsSkeleton />}
+          >
+            <SearchOutcome query={query} page={page} />
+          </Suspense>
+        ) : (
+          <SearchNotice
+            title="검색어를 입력해 주세요"
+            description="문서 제목과 본문에서 찾습니다."
+          />
+        )}
       </div>
     </div>
   );

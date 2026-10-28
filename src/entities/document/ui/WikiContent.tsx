@@ -33,9 +33,10 @@ const VARIANT_STYLES: Record<WikiContentVariant, VariantStyle> = {
   article: {
     heading: {
       // scroll-mt: 목차로 넘어왔을 때 제목이 고정 상단 바에 가려지지 않게 한다
-      2: "scroll-mt-20 mt-[46px] mb-4 text-2xl font-bold tracking-[-0.015em]",
-      3: "scroll-mt-20 mt-8 mb-3 text-xl font-bold tracking-[-0.01em]",
-      4: "scroll-mt-20 mt-6 mb-2.5 text-[17px] font-bold",
+      // first:mt-0: 본문 위 여백은 문서 화면이 정한다. 본문이 제목으로 시작하든 문단으로 시작하든 같은 간격이 되게 한다
+      2: "scroll-mt-20 mt-[46px] mb-4 text-2xl font-bold tracking-[-0.015em] first:mt-0",
+      3: "scroll-mt-20 mt-8 mb-3 text-xl font-bold tracking-[-0.01em] first:mt-0",
+      4: "scroll-mt-20 mt-6 mb-2.5 text-[17px] font-bold first:mt-0",
     },
     paragraph: "mb-5 text-base leading-[1.9] text-fg-muted last:mb-0",
     list: "mb-5 list-disc pl-[22px] text-base leading-[1.9] text-fg-muted marker:text-fg-subtle last:mb-0",

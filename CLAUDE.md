@@ -15,7 +15,7 @@
   디자인 시안에 들어있던 **임시 문구**이며 실제 학교가 아니다. 문서 제목
   ("2026 체육대회", "방송부"), 사용자 이름, 조회수, 날짜도 전부 시안용 더미값이다.
   이걸 근거로 도메인 규칙을 추론하지 말 것.
-- 상호작용도 대부분 시각적 상태만 있다 (예: 헤더 검색창은 입력이 되지 않는 표시용 상자).
+- 상호작용도 대부분 시각적 상태만 있다 (예: 편집 화면의 저장 버튼은 눌러도 아무 일도 하지 않는다).
 
 즉 **구조와 스타일은 지켜야 할 것, 문자열과 데이터는 갈아끼울 것**으로 취급한다.
 
@@ -27,12 +27,15 @@
 - 라이트/다크 모드 — 기본은 다크. `<html>`의 `data-mode`로 전환하고 선택값은 `localStorage`에 저장한다
 
 ```
-npm run dev     # 개발 서버
-npm run build   # 프로덕션 빌드
-npm run lint    # eslint
+npm run dev        # 개발 서버
+npm run build      # 프로덕션 빌드
+npm run lint       # eslint
+npm run typecheck  # 라우트 타입 생성(next typegen) 후 tsc --noEmit
 ```
 
-백엔드 주소는 `.env.local`의 `API_BASE_URL`로 준다 (`.env.example` 참고). 빌드할 때도 필요하다.
+PR마다 CI(`.github/workflows/ci.yml`)가 `lint` → `typecheck` → `build`를 돌린다. 커밋 전에 같은 명령으로 확인한다.
+
+백엔드 주소는 `.env.local`의 `API_BASE_URL`로 준다 (`.env.example` 참고). 프록시 목적지가 빌드할 때 고정되므로 배포 빌드에서는 반드시 넣는다 (비우면 `http://localhost:8080`).
 
 ## 아키텍처 — FSD (Feature-Sliced Design)
 
@@ -42,7 +45,7 @@ npm run lint    # eslint
 app/       Next.js 라우트. 페이지 파일은 views의 컴포넌트를 re-export만 한다
 views/     한 화면 전체. 위젯을 배치하고 여백/레이아웃만 담당한다
 widgets/   화면의 한 덩어리 (최근 변경, 헤더, 리비전 타임라인 …)
-features/  사용자 동작 단위 (theme-switcher: 라이트/다크 전환, auth: 로그인·로그아웃·접근 제어, save-article: 문서 저장)
+features/  사용자 동작 단위 (theme-switcher: 라이트/다크 전환, auth: 로그인·로그아웃·접근 제어, favorite-article: 문서 즐겨찾기, save-article: 문서 저장)
 entities/  도메인 단위 UI와 타입 (document: RecentChangeItem …, session: 로그인한 사용자)
 shared/    어디서나 쓰는 것 (ROUTES, SidebarCard, WikiLink, Logo, api: 백엔드 호출, lib: 쿼리 값 읽기·날짜 포맷)
 ```
@@ -77,7 +80,7 @@ export default HomePage;
 | `/document/[articleId]/edit` | `documentEdit(id)` | 문서 편집 (로그인 필요) |
 | `/document/[articleId]/history` | `documentHistory(id)` | 편집역사 |
 | `/document/new?title=` | `documentNew(title?)` | 새 문서 작성 (로그인 필요). 편집 화면의 본체를 빈 본문으로 연다 |
-| `/search?q=` | `search(query?)` | 검색 결과 |
+| `/search?q=&page=` | `search(query?, page?)` | 검색 결과. 첫 페이지는 `page` 없이 둔다 |
 | `/missing-document` | `missingDocument` | 미작성 문서 안내 화면 (404 핸들러가 아니다) |
 | `/mypage` | `mypage` | 마이페이지 |
 | `/signin` | `signin` | 로그인. 실패하면 백엔드가 `?error&reason=…`을 붙여 이리로 돌려보낸다 |
@@ -91,8 +94,8 @@ export default HomePage;
 
 화면마다 백엔드 연결 상태가 다르다. 연결되지 않은 화면은 경로만 동적이고 데이터는 목이다.
 
-- 문서: 어떤 id로 들어가도 같은 시안 문서를 그린다.
-- 검색: `q`를 화면에 싣기만 할 뿐 결과는 시안 그대로다 (`q`가 없으면 시안의 검색어를 쓴다).
+- 문서: 백엔드의 문서와 최근 리비전을 그린다. 본문의 위키 링크는 아직 `#`이다.
+- 검색: 백엔드 검색 결과를 `?page=`로 20개씩 나눠 그린다. 아직 쓰지 않은 문서는 결과에 나오지 않는다.
 - 편집 · 새 문서: 백엔드에 저장한다. 편집은 문서를 불러와 `PUT`, 새 문서는 `POST`로 보내고 문서 상세로 넘어간다.
 - 편집역사: 어떤 id로 들어가도 같은 시안 문서를 그린다.
 
@@ -185,7 +188,7 @@ export default HomePage;
 ## 컴포넌트 관례
 
 - **기본은 서버 컴포넌트.** `"use client"`는 실제 상태가 있는 파일에만 있다 (편집 화면 본체,
-  문서 상단 내비, 리비전 카드, 테마 전환, 계정 버튼). 새로 붙일 때는 트리 최하단 컴포넌트에만 붙인다.
+  문서 메뉴, 문서 목차의 링크 목록, 리비전 카드, 테마 전환, 계정 버튼). 새로 붙일 때는 트리 최하단 컴포넌트에만 붙인다.
 - **목 데이터는 슬라이스의 `model/mock.ts`에 격리한다.** 백엔드가 붙을 때 이 파일만 갈아끼우면
   되도록, UI 컴포넌트에 데이터 리터럴을 박지 않는다.
 - **강조 위치는 데이터가 정한다.** 변경 요약(`ChangeSummarySegment`)과 검색 스니펫
