@@ -6,6 +6,7 @@ import {
   toRecentChange,
 } from "@/entities/document";
 import { nullOnFailure, publicServerApiFetch } from "@/shared/api/server";
+import { SidebarCard } from "@/shared/ui";
 
 /** 홈에 보이는 줄 수. 시안이 다섯 줄이다. */
 const RECENT_CHANGE_COUNT = 5;
@@ -20,14 +21,11 @@ const LIST = "divide-y divide-divider";
  */
 export function RecentChanges() {
   return (
-    <section className="overflow-hidden rounded-[14px] bg-surface elevate-1">
-      <h2 className="px-[18px] pb-1.5 pt-[18px] font-mono text-[10.5px] font-normal uppercase tracking-[.1em] text-fg-subtle">
-        최근 변경
-      </h2>
+    <SidebarCard title="최근 변경" flush>
       <Suspense fallback={<RecentChangesSkeleton />}>
         <RecentChangeList />
       </Suspense>
-    </section>
+    </SidebarCard>
   );
 }
 
