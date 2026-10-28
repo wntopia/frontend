@@ -26,7 +26,6 @@ export {
 export { SAMPLE_ARTICLE_ID } from "./model/mock";
 export { readArticleId, type ArticleRouteProps } from "./model/route-params";
 export type {
-  Backlink,
   ChangeSummarySegment,
   DocumentActivity,
   PopularDocument,

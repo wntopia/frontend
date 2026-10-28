@@ -1,8 +1,8 @@
-import type { Metadata } from "next";
-import { MissingDocumentPage } from "@/views/missing-document";
+import {
+  generateMissingDocumentMetadata,
+  MissingDocumentPage,
+} from "@/views/missing-document";
 
-export const metadata: Metadata = {
-  title: "문서 없음 · 지무위키",
-};
+export const generateMetadata = generateMissingDocumentMetadata;
 
 export default MissingDocumentPage;
