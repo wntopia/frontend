@@ -148,9 +148,12 @@ export async function MyPage() {
                     <span
                       className={`h-[7px] w-[7px] flex-shrink-0 rounded-full ${ACTIVITY_DOT[c.activity]}`}
                     />
-                    <div className="min-w-0 flex-1 truncate text-[13.5px] text-fg-muted">
-                      <span className="font-semibold text-fg">{c.title}</span>{" "}
-                      {c.action}
+                    {/* 제목이 길어도 생성인지 수정인지는 보이도록 말줄임은 제목에만 건다. */}
+                    <div className="flex min-w-0 flex-1 gap-1 text-[13.5px] text-fg-muted">
+                      <span className="truncate font-semibold text-fg">
+                        {c.title}
+                      </span>
+                      <span className="flex-shrink-0">{c.action}</span>
                     </div>
                     <span className="font-mono text-[11px] text-fg-subtle">
                       {c.time}
