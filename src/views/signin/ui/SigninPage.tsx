@@ -64,7 +64,8 @@ export async function SigninPage({
               Members only
             </div>
             <h2 className="mb-7 text-[19px] font-extrabold leading-[1.4] tracking-[-.01em]">
-              학생·교사가 함께 쓰는
+              {/* 학생 계정이 아니면 백엔드가 문서 수정과 공동편집을 막으므로 교사를 따로 부르지 않는다. */}
+              함께 쓰는 교내 위키
               <br />
               기록에 참여하세요
             </h2>
