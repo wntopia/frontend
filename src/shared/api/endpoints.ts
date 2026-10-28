@@ -15,6 +15,17 @@ export const API_PATHS = {
   authMe: `${API_PREFIX}/auth/me`,
   signout: `${API_PREFIX}/auth/signout`,
 
+  /** 최근 수정된 문서(문서당 한 줄, 최신 순). `page`는 0부터, `size`는 1~100 */
+  recentChanges: ({ page, size }: { page: number; size: number }) =>
+    `${API_PREFIX}/articles/recent-changes?page=${page}&size=${size}`,
+  /** 누적 조회수 순 문서. `size`는 1~50. 문서 조회와 달리 조회수를 올리지 않는다 */
+  popularArticles: (size: number) =>
+    `${API_PREFIX}/articles/popular?size=${size}`,
+  /** 위키 현황(문서 수 · 이번 주 편집 수 · 가입 사용자 수) */
+  wikiStats: `${API_PREFIX}/stats`,
+  /** 분류 전체와 분류별 문서 수 */
+  categories: `${API_PREFIX}/categories`,
+
   article: (articleId: number) => `${API_PREFIX}/articles/${articleId}`,
   /**
    * 문서 검색. 제목과 본문에서 검색어를 띄어쓰기까지 그대로 찾는다(영문 대소문자만 무시).

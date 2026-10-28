@@ -94,6 +94,7 @@ export default HomePage;
 
 화면마다 백엔드 연결 상태가 다르다. 연결되지 않은 화면은 경로만 동적이고 데이터는 목이다.
 
+- 홈: 백엔드의 최근 변경 · 인기 문서 · 위키 현황 · 분류를 그린다. 위젯마다 따로 불러 하나가 실패해도 나머지는 보인다.
 - 문서: 백엔드의 문서와 최근 리비전, 지금 편집 중인 사람을 그린다. 본문의 위키 링크는 아직 `#`이다.
 - 검색: 백엔드 검색 결과를 `?page=`로 20개씩 나눠 그린다. 아직 쓰지 않은 문서는 결과에 나오지 않는다.
 - 편집 · 새 문서: 백엔드에 저장한다. 편집은 실시간 공동편집(WebSocket)으로 고치고 저장한 뒤 편집 화면에 남고,
@@ -110,7 +111,8 @@ export default HomePage;
 배경과 백엔드 쪽 설정값은 README에 있다. 코드를 쓸 때 지킬 것만 적는다.
 
 - **백엔드 호출은 `shared/api`로만 한다.** 브라우저에서는 `apiFetch`(`@/shared/api`), 서버 컴포넌트에서
-  현재 사용자로서 호출할 때는 `serverApiFetch`(`@/shared/api/server`). 경로는 `API_PATHS`로만 참조한다.
+  현재 사용자로서 호출할 때는 `serverApiFetch`(`@/shared/api/server`), 로그인과 무관한 공개 데이터를 요청마다
+  새로 읽을 때는 `publicServerApiFetch`(`@/shared/api/server`, 홈 위젯). 경로는 `API_PATHS`로만 참조한다.
 - **실패는 `ApiError`로 온다.** `isApiError(error, 404)`처럼 상태로 갈라 처리한다. 응답 타입은
   `shared/api/types.ts`에 백엔드 DTO와 같은 이름으로 둔다.
 - **서버 컴포넌트에서 문서는 `getArticle` · `getArticleRevisions`(`@/entities/document/server`)로 읽는다.**

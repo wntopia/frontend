@@ -12,7 +12,7 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: "지무위키",
-  description: "금성고등학교 교내 위키",
+  description: "학생·교사가 함께 쓰는 교내 위키",
 };
 
 export default function RootLayout({

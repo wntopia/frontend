@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ROUTES } from "@/shared/config";
 import type {
   ChangeSummarySegment,
   DocumentActivity,
@@ -19,6 +20,9 @@ const SEGMENT_EMPHASIS: Record<
   count: "font-bold text-success",
 };
 
+/** 줄의 여백과 배치. 자리표시도 같은 값을 써야 불러온 뒤 목록 높이가 바뀌지 않는다. */
+const ROW = "flex items-center gap-[14px] px-[18px] py-[15px]";
+
 type RecentChangeItemProps = {
   change: RecentChange;
 };
@@ -27,15 +31,21 @@ type RecentChangeItemProps = {
 export function RecentChangeItem({ change }: RecentChangeItemProps) {
   return (
     <Link
-      href={change.href}
-      className="flex items-center gap-[14px] px-[18px] py-[15px] transition-colors hover:bg-row-hover"
+      href={ROUTES.document(change.articleId)}
+      // 문서 화면은 그릴 때마다 문서를 조회하고 백엔드는 그 조회를 조회수로 센다. 미리 가져오기도 화면을 그려
+      // 문서를 조회하므로, 켜 두면 홈을 보기만 해도 목록의 문서들 조회수가 오른다.
+      prefetch={false}
+      className={`${ROW} transition-colors hover:bg-row-hover`}
     >
       <span
         className={`h-2 w-2 flex-shrink-0 rounded-full ${ACTIVITY_DOT[change.activity]}`}
       />
       <div className="min-w-0 flex-1">
-        <div className="text-[14.5px] font-semibold text-fg">{change.title}</div>
-        <div className="mt-0.5 text-[12.5px] text-fg-dim">
+        {/* 제목이 길어도 줄 높이가 같도록 한 줄로 자른다. */}
+        <div className="truncate text-[14.5px] font-semibold text-fg">
+          {change.title}
+        </div>
+        <div className="mt-0.5 truncate text-[12.5px] text-fg-dim">
           {change.summary.map((segment, index) => (
             <span
               key={index}
@@ -52,5 +62,26 @@ export function RecentChangeItem({ change }: RecentChangeItemProps) {
         {change.time}
       </span>
     </Link>
+  );
+}
+
+/**
+ * 최근 변경 한 줄이 들어올 자리. 글줄마다 실제 글자 크기의 줄 높이(1.5em)를 잡아 두어,
+ * 불러온 줄로 바뀔 때 목록이 출렁이지 않게 한다.
+ */
+export function RecentChangeItemSkeleton() {
+  return (
+    <div aria-hidden className={`${ROW} motion-safe:animate-pulse`}>
+      <span className="h-2 w-2 flex-shrink-0 rounded-full bg-elevated" />
+      <div className="min-w-0 flex-1">
+        <div className="flex h-[1.5em] items-center text-[14.5px]">
+          <span className="h-[0.9em] w-2/5 rounded-md bg-elevated" />
+        </div>
+        <div className="mt-0.5 flex h-[1.5em] items-center text-[12.5px]">
+          <span className="h-[0.9em] w-3/5 rounded-md bg-elevated" />
+        </div>
+      </div>
+      <span className="h-[11px] w-10 flex-shrink-0 rounded-md bg-elevated" />
+    </div>
   );
 }
