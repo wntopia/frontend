@@ -105,6 +105,17 @@ export type ArticleRevisionResDto = {
   charDelta: number | null;
 };
 
+/**
+ * 지금 문서의 공동편집 방에 들어와 있는 사람들. 방이 없거나 비었으면 `editing: false`의 빈 값이다.
+ * 같은 계정의 여러 탭은 한 명으로 센다.
+ */
+export type ArticleEditorsResDto = {
+  editing: boolean;
+  editorCount: number;
+  /** 학번을 뺀 이름. "○○ 외 N명"은 첫 이름과 `editorCount - 1`로 만든다 */
+  editorNames: string[];
+};
+
 export type FavoriteStatusResDto = {
   /** 내 즐겨찾기에 들어 있는지. 비로그인이면 항상 `false`다. */
   favorited: boolean;

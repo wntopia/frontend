@@ -22,6 +22,8 @@ type EditorTopBarProps = {
   saveBlockedReason?: string;
   /** '편집 중' 표시 옆에 둘 상태 (공동편집 연결 상태 등) */
   status?: ReactNode;
+  /** 오른쪽 버튼들 앞에 둘 것 (함께 편집 중인 사람들) */
+  participants?: ReactNode;
   /**
    * 뒤로 가기·취소 링크로 떠나기 직전에 불린다. `preventDefault()`를 부르면 머문다.
    * 저장하지 않은 내용이 있을 때 확인을 받는 데 쓴다 (`<Link>`의 `onNavigate`).
@@ -39,6 +41,7 @@ export function EditorTopBar({
   saving,
   saveBlockedReason,
   status,
+  participants,
   onLeave,
 }: EditorTopBarProps) {
   return (
@@ -57,6 +60,7 @@ export function EditorTopBar({
         {status}
 
         <div className="flex-1" />
+        {participants}
 
         <button type="button" onClick={onTogglePreview} className={SECONDARY_BUTTON}>
           {showPreview ? "편집기로 돌아가기" : "미리보기"}

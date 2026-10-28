@@ -1,13 +1,18 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { SigninButton } from "@/features/auth";
 import {
   CollaborationNotices,
   CollaborationStatus,
   describeConnectionProblem,
+  groupParticipants,
+  PresenceAvatars,
+  PresenceCursors,
   useCollaboration,
   useCollaborativeText,
+  usePresence,
+  type PresenceUser,
 } from "@/features/collaboration";
 import {
   ArticleImagePicker,
@@ -36,6 +41,8 @@ type EditWorkspaceProps = {
   backLabel: string;
   /** 저장이 로그인 만료로 실패해 다시 로그인했을 때 돌아올 주소 */
   returnTo: string;
+  /** 공동편집에서 다른 사람에게 보일 나. 공동편집을 쓰지 않는 새 문서에는 주지 않는다 */
+  presenceUser?: PresenceUser;
 };
 
 /**
@@ -57,6 +64,7 @@ export function EditWorkspace({
   backHref,
   backLabel,
   returnTo,
+  presenceUser,
 }: EditWorkspaceProps) {
   const [showPreview, setShowPreview] = useState(false);
   const [title, setTitle] = useState(initialTitle);
@@ -87,6 +95,15 @@ export function EditWorkspace({
     onCompositionEnd,
   } = useCollaborativeText(provider, snapshot, initialContent, contentRef);
   const { status, problem, save } = useSaveArticle(target, provider?.save);
+  // 화면이 서버에서 다시 그려지면 같은 사람이어도 새 객체가 온다. 그때마다 방에 다시 알리지 않게 값으로 고정한다.
+  const presenceKey = presenceUser?.key ?? null;
+  const presenceName = presenceUser?.name ?? null;
+  const me = useMemo(
+    () =>
+      presenceName === null ? null : { key: presenceKey, name: presenceName },
+    [presenceKey, presenceName],
+  );
+  const peers = usePresence(snapshot, me);
 
   const collaborative = provider !== null;
   const changed = collaborative
@@ -155,6 +172,11 @@ export function EditWorkspace({
             : undefined
         }
         status={collaborative && <CollaborationStatus snapshot={snapshot} />}
+        participants={
+          collaborative && (
+            <PresenceAvatars participants={groupParticipants(peers)} />
+          )
+        }
         onLeave={confirmLeave}
       />
 
@@ -208,6 +230,18 @@ export function EditWorkspace({
             locked={locked}
             titleRef={titleRef}
             contentRef={contentInputRef}
+            contentOverlay={
+              provider && (
+                <PresenceCursors
+                  provider={provider}
+                  awareness={snapshot.awareness}
+                  ready={snapshot.ready}
+                  peers={peers}
+                  text={content}
+                  textareaRef={contentRef}
+                />
+              )
+            }
           />
         </div>
         <aside className="w-[260px] flex-shrink-0">

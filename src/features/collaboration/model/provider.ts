@@ -239,7 +239,7 @@ export class CollaborationProvider {
 
     window.addEventListener("online", this.reconnectNow);
     window.addEventListener("offline", this.dropSocket);
-    window.addEventListener("pagehide", this.flushSync);
+    window.addEventListener("pagehide", this.handlePageHide);
     document.addEventListener("visibilitychange", this.handleVisibility);
     this.watchdog = setInterval(this.checkConnection, WATCHDOG_INTERVAL_MS);
 
@@ -252,7 +252,7 @@ export class CollaborationProvider {
 
     window.removeEventListener("online", this.reconnectNow);
     window.removeEventListener("offline", this.dropSocket);
-    window.removeEventListener("pagehide", this.flushSync);
+    window.removeEventListener("pagehide", this.handlePageHide);
     document.removeEventListener("visibilitychange", this.handleVisibility);
     if (this.watchdog) clearInterval(this.watchdog);
     this.watchdog = null;
@@ -792,6 +792,26 @@ export class CollaborationProvider {
       content,
     });
     if (sent === "sent") this.lastPushedContent = content;
+  };
+
+  /**
+   * 탭을 닫거나 다른 사이트로 떠날 때. 화면이 정리될 틈이 없어 `stop`이 불리지 않으므로 여기서 마지막 상태를 남기고,
+   * 다른 사람 화면에서 내 커서와 아바타가 곧바로 사라지도록 떠난다고 알린다. 알리지 않으면 awareness의 타임아웃(30초)이
+   * 지나야 사라진다 — 백엔드는 awareness를 해석하지 않아 접속이 끊겨도 대신 알려 주지 않는다.
+   *
+   * 로컬 상태는 지우지 않고 지운 상태만 보낸다(같은 시계의 빈 상태는 받는 쪽에서 삭제로 처리된다). 뒤로 가기 캐시로
+   * 페이지가 돌아와도 로컬 상태가 남아 있어야 다음 갱신이나 재접속 신호(`connection`)를 실을 수 있다.
+   */
+  private handlePageHide = () => {
+    this.flushSync();
+    const awareness = this.snapshot.awareness;
+    if (!awareness || !this.socketBootstrapped) return;
+    this.send({
+      type: "awareness",
+      dataB64: bytesToBase64(
+        encodeAwarenessUpdate(awareness, [this.doc.clientID], new Map()),
+      ),
+    });
   };
 
   private handleAwarenessUpdate = (

@@ -12,8 +12,16 @@ export function getDisplayName(user: SessionUser): string {
 
 /** 아바타에 넣을 한 글자 */
 export function getInitial(user: SessionUser): string {
+  return getNameInitial(getDisplayName(user));
+}
+
+/**
+ * 이름의 첫 글자. 세션이 아니라 이름만 아는 곳(공동편집의 다른 접속자)도 같은 모양의 아바타를 그리도록 따로 둔다.
+ * 빈 이름이면 빈 문자열이다.
+ */
+export function getNameInitial(name: string): string {
   // 서로게이트 쌍(이모지 등)이 반으로 잘리지 않도록 코드 포인트 단위로 자른다.
-  return Array.from(getDisplayName(user))[0].toUpperCase();
+  return (Array.from(name.trim())[0] ?? "").toUpperCase();
 }
 
 /**

@@ -5,6 +5,7 @@ export { API_PATHS } from "./endpoints";
 export { toWebSocketUrl } from "./websocket";
 export type { ApiRequestOptions } from "./request";
 export type {
+  ArticleEditorsResDto,
   ArticleResDto,
   ArticleRevisionResDto,
   ArticleRevisionSummaryResDto,
