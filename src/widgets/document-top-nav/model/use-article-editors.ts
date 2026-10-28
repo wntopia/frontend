@@ -61,6 +61,9 @@ export function useArticleEditors(
       document.removeEventListener("visibilitychange", onVisibilityChange);
       stopTimer();
       controller?.abort();
+      // 비우지 않으면 진행 중이던 `poll`이 중단된 뒤에도 '아직 내 차례'로 보고 다음 타이머를 건다. 그 타이머는 끌 방법이
+      // 없어 화면을 떠난 문서마다 폴링이 계속 돈다.
+      controller = null;
     };
   }, [articleId]);
 
