@@ -157,3 +157,35 @@ export type DataGsmClubSummaryResDto = {
   foundedYear: number | null;
   abolishedYear: number | null;
 };
+
+/**
+ * 문서 생성 요청(`POST /articles`). `multipart/form-data`로 보내며 키가 곧 폼 필드 이름이다.
+ * 백엔드는 제목의 앞뒤 공백을 지우고 연속 공백을 한 칸으로 줄여 저장하고, 대소문자·전각/반각만 다른
+ * 제목도 같은 문서로 보아 409를 준다.
+ */
+export type CreateArticleReqDto = {
+  /** 공백만으로는 안 되고 255자까지. 만든 뒤에는 바꿀 수 없다. */
+  title: string;
+  /** 공백만으로는 안 된다. */
+  content: string;
+  /** 대표 이미지. 10MB까지 */
+  image?: File;
+  /** 분류. 분류를 고르는 화면이 아직 없어 보내지 않는다. */
+  categoryId?: number;
+};
+
+/**
+ * 문서 수정 요청(`PUT /articles/{id}`). 제목은 받지 않는다.
+ * 본문이 그대로면 새 리비전을 만들지 않으며, 이때 편집 요약·가벼운 수정도 남지 않는다.
+ */
+export type UpdateArticleReqDto = {
+  /** 본문 전체를 이 값으로 바꾼다. 공백만으로는 안 된다. */
+  content: string;
+  /** 보내면 대표 이미지를 바꾸고, 빼면 지금 이미지를 둔다. 이미지를 지우는 방법은 없다. 10MB까지 */
+  image?: File;
+  /** 편집 요약. 500자까지 */
+  summary?: string;
+  minorEdit?: boolean;
+  /** 바꿀 분류. 빼면 지금 분류를 둔다. */
+  categoryId?: number;
+};

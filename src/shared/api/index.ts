@@ -11,6 +11,7 @@ export type {
   ArticleSearchResDto,
   AuthStatusResDto,
   CategoryResDto,
+  CreateArticleReqDto,
   DataGsmClubSummaryResDto,
   DataGsmStudentInfoResDto,
   DataGsmUserInfoResDto,
@@ -20,4 +21,5 @@ export type {
   LookupArticleTitlesResDto,
   PageResDto,
   SnippetSegmentResDto,
+  UpdateArticleReqDto,
 } from "./types";
