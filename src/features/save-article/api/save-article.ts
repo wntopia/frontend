@@ -3,7 +3,7 @@ import {
   apiFetch,
   type ArticleResDto,
   type CreateArticleReqDto,
-  type UpdateArticleReqDto,
+  type UpdateArticleImageReqDto,
 } from "@/shared/api";
 
 /**
@@ -21,15 +21,15 @@ export function createArticle(
 }
 
 /**
- * 문서 본문을 바꾸고, 이미지를 주면 대표 이미지도 바꾼다.
- * 비로그인이거나 `student`가 없는 계정이면 401, 없는 문서면 404 `ApiError`를 던진다.
+ * 기존 문서의 대표 이미지만 바꾼다. 본문은 공동편집 WebSocket으로 따로 저장한다.
+ * 비로그인이거나 `student`가 없는 계정이면 401, 없는 문서면 404, 이미지 저장소에 올리지 못하면 502 `ApiError`를 던진다.
  */
-export function updateArticle(
+export function updateArticleImage(
   articleId: number,
-  req: UpdateArticleReqDto,
+  req: UpdateArticleImageReqDto,
 ): Promise<ArticleResDto> {
-  return apiFetch<ArticleResDto>(API_PATHS.article(articleId), {
-    method: "PUT",
+  return apiFetch<ArticleResDto>(API_PATHS.articleImage(articleId), {
+    method: "PATCH",
     body: toFormData(req),
   });
 }

@@ -25,5 +25,4 @@ export type {
   PageResDto,
   SnippetSegmentResDto,
   UpdateArticleImageReqDto,
-  UpdateArticleReqDto,
 } from "./types";

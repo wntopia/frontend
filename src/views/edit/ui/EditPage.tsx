@@ -20,6 +20,9 @@ export async function EditPage(props: ArticleRouteProps) {
 
   return (
     <EditWorkspace
+      // 다른 문서의 편집 화면으로 옮겨도 Next가 이 컴포넌트를 재사용해 상태가 남는다. 공동편집 연결은 처음 그릴 때
+      // 한 문서로 만들어지므로, 문서가 바뀌면 화면을 새로 만든다.
+      key={articleId}
       target={{
         kind: "update",
         articleId,

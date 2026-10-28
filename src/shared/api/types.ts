@@ -175,22 +175,6 @@ export type CreateArticleReqDto = {
 };
 
 /**
- * 문서 수정 요청(`PUT /articles/{id}`). 제목은 받지 않는다.
- * 본문이 그대로면 새 리비전을 만들지 않으며, 이때 편집 요약·가벼운 수정도 남지 않는다.
- */
-export type UpdateArticleReqDto = {
-  /** 본문 전체를 이 값으로 바꾼다. 공백만으로는 안 된다. */
-  content: string;
-  /** 보내면 대표 이미지를 바꾸고, 빼면 지금 이미지를 둔다. 이미지를 지우는 방법은 없다. 10MB까지 */
-  image?: File;
-  /** 편집 요약. 500자까지 */
-  summary?: string;
-  minorEdit?: boolean;
-  /** 바꿀 분류. 빼면 지금 분류를 둔다. */
-  categoryId?: number;
-};
-
-/**
  * 대표 이미지 교체 요청(`PATCH /articles/{id}/image`). `multipart/form-data`로 보낸다.
  * 본문은 받지 않는다 — 본문 저장은 공동편집 WebSocket의 `save` 메시지로 한다.
  */
