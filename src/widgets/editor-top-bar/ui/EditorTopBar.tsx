@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 
 /** 미리보기·취소가 같은 모양이라 공유한다 */
 const SECONDARY_BUTTON =
@@ -17,6 +18,10 @@ type EditorTopBarProps = {
   onSave: () => void;
   /** 저장 요청이 오가는 동안과 저장 뒤 문서로 넘어가는 동안 저장 버튼을 막는다 */
   saving: boolean;
+  /** 저장할 수 없는 동안의 이유. 주면 저장 버튼을 막고 이유를 버튼의 설명으로 보인다 */
+  saveBlockedReason?: string;
+  /** '편집 중' 표시 옆에 둘 상태 (공동편집 연결 상태 등) */
+  status?: ReactNode;
   /**
    * 뒤로 가기·취소 링크로 떠나기 직전에 불린다. `preventDefault()`를 부르면 머문다.
    * 저장하지 않은 내용이 있을 때 확인을 받는 데 쓴다 (`<Link>`의 `onNavigate`).
@@ -32,6 +37,8 @@ export function EditorTopBar({
   onTogglePreview,
   onSave,
   saving,
+  saveBlockedReason,
+  status,
   onLeave,
 }: EditorTopBarProps) {
   return (
@@ -47,6 +54,7 @@ export function EditorTopBar({
         <span className="rounded-[5px] bg-accent/[.12] px-[9px] py-[3px] font-mono text-[11px] text-accent-hover">
           편집 중
         </span>
+        {status}
 
         <div className="flex-1" />
 
@@ -59,7 +67,8 @@ export function EditorTopBar({
         <button
           type="button"
           onClick={onSave}
-          disabled={saving}
+          disabled={saving || saveBlockedReason !== undefined}
+          title={saveBlockedReason}
           className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-[13px] font-bold text-on-accent elevate-control transition hover:bg-accent-hover disabled:cursor-default disabled:opacity-60 disabled:hover:bg-accent"
         >
           {saving ? "저장 중…" : "저장"}

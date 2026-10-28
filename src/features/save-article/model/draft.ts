@@ -26,15 +26,18 @@ export type ArticleDraft = {
   minorEdit: boolean;
 };
 
-/** 무엇을 저장하는지. 새 문서는 POST, 기존 문서는 PUT으로 간다 */
+/**
+ * 무엇을 저장하는지. 새 문서는 POST로 만들고, 기존 문서는 본문을 공동편집 WebSocket으로(`RevisionSaver`),
+ * 바꾼 대표 이미지를 PATCH로 저장한다.
+ */
 export type SaveTarget =
   | { kind: "create" }
   | {
       kind: "update";
       articleId: number;
       /**
-       * 백엔드는 `student`가 있는 계정만 문서를 고치게 하고 나머지는 401을 준다.
-       * 401을 받았을 때 '다시 로그인'과 '이 계정으로는 안 됨'을 가르는 데만 쓴다.
+       * 백엔드는 `student`가 있는 계정만 문서를 고치게 하고 나머지는 401을 준다(공동편집은 방에 들이지 않는다).
+       * 거절을 받았을 때 '다시 로그인'과 '이 계정으로는 안 됨'을 가르는 데만 쓴다.
        */
       studentAccount: boolean;
     };
@@ -109,3 +112,37 @@ export function formatFileSize(bytes: number): string {
   if (megabytes >= 1) return `${Math.ceil(megabytes * 10) / 10}MB`;
   return `${Math.max(1, Math.ceil(bytes / 1024))}KB`;
 }
+
+/** 기존 문서의 본문을 새 리비전으로 저장해 달라는 요청 */
+export type RevisionSaveRequest = {
+  content: string;
+  summary?: string;
+  minorEdit: boolean;
+};
+
+/**
+ * 본문 저장의 결과. 실패 사유는 공동편집 연결(`features/collaboration`)의 것과 같다.
+ * - `disconnected` · `too-large`: 보내지 못했다
+ * - `timeout` · `connection-lost`: 보냈지만 결과를 받지 못했다. 저장됐을 수도 있다
+ * - `server-error`: 서버가 오류로 답했다
+ */
+export type RevisionSaveResult =
+  | { ok: true; revision: number | null }
+  | {
+      ok: false;
+      reason:
+        | "disconnected"
+        | "too-large"
+        | "timeout"
+        | "connection-lost"
+        | "server-error";
+      message?: string;
+    };
+
+/**
+ * 기존 문서의 본문을 저장하는 통로. 수정 모드에서는 화면이 공동편집 연결의 `save`를 넘긴다.
+ * 같은 레이어의 기능끼리는 서로 import 하지 않으므로, 저장 동작이 필요한 모양만 여기 적고 화면이 둘을 잇는다.
+ */
+export type RevisionSaver = (
+  request: RevisionSaveRequest,
+) => Promise<RevisionSaveResult>;

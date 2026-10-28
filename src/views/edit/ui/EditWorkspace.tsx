@@ -3,6 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 import { SigninButton } from "@/features/auth";
 import {
+  CollaborationNotices,
+  CollaborationStatus,
+  describeConnectionProblem,
+  useCollaboration,
+  useCollaborativeText,
+} from "@/features/collaboration";
+import {
   ArticleImagePicker,
   findAccountProblem,
   useLeaveGuard,
@@ -36,7 +43,10 @@ type EditWorkspaceProps = {
  * 저장 버튼(상단 바), 입력 칸(편집기), 대표 이미지(사이드바)가 서로 다른 위젯이라
  * 세 위젯의 공통 조상인 이 화면이 입력 값을 모두 갖고, 저장 동작은 `features/save-article`에 맡긴다.
  *
- * 본문도 이 화면이 갖는다. 미리보기로 전환하면 textarea가 언마운트되는데,
+ * 기존 문서는 본문을 실시간 공동편집 문서(`features/collaboration`)에 두고, 저장도 그 연결로 한다. 두 기능은 같은
+ * 레이어라 서로 모르므로 이 화면이 공동편집의 `save`를 저장 동작에 넘겨 잇는다.
+ *
+ * 본문은 textarea 밖(이 화면의 상태나 공동편집 문서)에 둔다. 미리보기로 전환하면 textarea가 언마운트되는데,
  * 본문을 textarea 안에만 두면 그때 입력한 내용이 사라지기 때문이다.
  */
 export function EditWorkspace({
@@ -50,24 +60,46 @@ export function EditWorkspace({
 }: EditWorkspaceProps) {
   const [showPreview, setShowPreview] = useState(false);
   const [title, setTitle] = useState(initialTitle);
-  const [content, setContent] = useState(initialContent);
   const [summary, setSummary] = useState("");
   const [minorEdit, setMinorEdit] = useState(false);
   const [image, pickImage] = usePickedImage();
-  const { status, problem, save } = useSaveArticle(target);
-
-  const changed =
-    title !== initialTitle ||
-    content !== initialContent ||
-    image !== null ||
-    summary !== "" ||
-    minorEdit;
-  // 저장에 성공해 문서로 넘어가는 중에는 묻지 않는다.
-  const confirmLeave = useLeaveGuard(changed && status !== "saved");
 
   const alertRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLInputElement>(null);
   const contentRef = useRef<HTMLTextAreaElement>(null);
+
+  const { provider, snapshot } = useCollaboration(
+    target.kind === "update"
+      ? {
+          articleId: target.articleId,
+          initialContent,
+          initialImageUrl: imageUrl,
+          studentAccount: target.studentAccount,
+        }
+      : null,
+  );
+  const {
+    content,
+    readOnly: contentReadOnly,
+    ref: contentInputRef,
+    onChange: onContentChange,
+    onCompositionStart,
+    onCompositionEnd,
+  } = useCollaborativeText(provider, snapshot, initialContent, contentRef);
+  const { status, problem, save } = useSaveArticle(target, provider?.save);
+
+  const collaborative = provider !== null;
+  const changed = collaborative
+    ? // 연결된 동안의 편집은 바로 다른 사람과 서버에 가고, 방이 비면 백엔드가 자동으로 저장한다. 떠나서 잃는 것은
+      // 끊긴 동안 쓴 내용(아직 못 보냈거나, 합치지 못해 화면에서 빠진 것)과 아직 저장하지 않은 이미지 · 편집 요약뿐이다.
+      snapshot.undelivered ||
+      snapshot.unmergedDraft !== null ||
+      image !== null ||
+      summary !== "" ||
+      minorEdit
+    : title !== initialTitle || content !== initialContent || image !== null;
+  // 저장에 성공해 문서로 넘어가는 중에는 묻지 않는다.
+  const confirmLeave = useLeaveGuard(changed && status !== "saved");
 
   // 저장이 막히면 고칠 칸으로 포커스를 옮기고, 칸과 상관없는 실패는 안내가 화면에 들어오게 스크롤한다.
   // 미리보기 중이라 본문 칸이 없으면 옮기지 않는다 — 안내는 그대로 보인다.
@@ -83,9 +115,29 @@ export function EditWorkspace({
     else alertRef.current?.scrollIntoView({ block: "nearest" });
   }, [problem]);
 
+  async function handleSave() {
+    const outcome = await save({
+      title,
+      content,
+      image: image?.file ?? null,
+      summary,
+      minorEdit,
+    });
+    // 올린 이미지는 이제 문서의 지금 이미지다. 편집 요약과 가벼운 수정은 방금 저장한 리비전의 것이라 비운다.
+    if (outcome.imageSaved) pickImage(null);
+    if (outcome.saved && collaborative) {
+      setSummary("");
+      setMinorEdit(false);
+    }
+  }
+
   const locked = status !== "idle";
-  // 저장 실패 안내가 없으면, 저장하기 전부터 거절될 것을 아는 계정에 미리 알린다. 같은 자리에 하나만 보인다.
-  const notice = problem ?? findAccountProblem(target);
+  // 저장 실패 안내가 없으면, 다시 연결해도 풀리지 않는 연결 실패나 저장하기 전부터 거절될 것을 아는 계정을 알린다.
+  // 같은 자리에 하나만 보인다.
+  const notice =
+    problem ??
+    (collaborative ? describeConnectionProblem(snapshot) : null) ??
+    findAccountProblem(target);
 
   return (
     <div className="min-h-screen bg-bg text-fg">
@@ -94,10 +146,15 @@ export function EditWorkspace({
         backLabel={backLabel}
         showPreview={showPreview}
         onTogglePreview={() => setShowPreview((prev) => !prev)}
-        onSave={() =>
-          save({ title, content, image: image?.file ?? null, summary, minorEdit })
-        }
+        onSave={handleSave}
         saving={locked}
+        // 본문 저장은 공동편집 연결로만 하므로 연결되어 있지 않으면 누를 수 없다. 쓰던 내용은 그대로 남는다.
+        saveBlockedReason={
+          collaborative && snapshot.status !== "connected"
+            ? "공동편집 서버에 연결되면 저장할 수 있습니다"
+            : undefined
+        }
+        status={collaborative && <CollaborationStatus snapshot={snapshot} />}
         onLeave={confirmLeave}
       />
 
@@ -122,15 +179,22 @@ export function EditWorkspace({
               </Alert>
             </div>
           )}
+          {provider && (
+            <CollaborationNotices provider={provider} snapshot={snapshot} />
+          )}
 
           <DocumentEditor
             title={title}
             // 기존 문서의 제목은 백엔드가 수정 요청에서 받지 않아 고칠 수 없게 둔다.
             onTitleChange={target.kind === "create" ? setTitle : undefined}
             content={content}
-            onContentChange={setContent}
+            onContentChange={onContentChange}
+            onContentCompositionStart={onCompositionStart}
+            onContentCompositionEnd={onCompositionEnd}
+            // 공동편집은 저장 중에도 본문을 잠그지 않는다. 다른 사람도 계속 고치고, 저장은 보낸 순간의 본문을 담는다.
+            contentReadOnly={collaborative ? contentReadOnly : undefined}
             showPreview={showPreview}
-            // 편집 요약·가벼운 수정은 수정 요청에만 있는 필드라 새 문서에서는 숨긴다.
+            // 편집 요약·가벼운 수정은 기존 문서의 저장에만 있는 필드라 새 문서에서는 숨긴다.
             revisionNote={
               target.kind === "update"
                 ? {
@@ -143,13 +207,13 @@ export function EditWorkspace({
             }
             locked={locked}
             titleRef={titleRef}
-            contentRef={contentRef}
+            contentRef={contentInputRef}
           />
         </div>
         <aside className="w-[260px] flex-shrink-0">
           <div className="mb-4">
             <ArticleImagePicker
-              currentUrl={imageUrl}
+              currentUrl={collaborative ? snapshot.imageUrl : imageUrl}
               picked={image}
               onPick={pickImage}
               disabled={locked}

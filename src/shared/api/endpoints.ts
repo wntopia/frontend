@@ -1,4 +1,4 @@
-import { API_PREFIX } from "./base-url";
+import { API_PREFIX, WS_PREFIX } from "./base-url";
 
 /** 백엔드 엔드포인트 경로. `ROUTES`와 마찬가지로 문자열을 직접 쓰지 않고 여기로만 참조한다. */
 export const API_PATHS = {
@@ -33,8 +33,8 @@ export const API_PATHS = {
     { page, size }: { page: number; size: number },
   ) => `${API_PREFIX}/articles/${articleId}/revisions?page=${page}&size=${size}`,
   /**
-   * 문서 생성(POST). 기존 문서 수정(PUT)은 `article(id)`로 보낸다. 둘 다 `multipart/form-data`다.
-   * 대표 이미지만 바꾸는 `PATCH …/image`는 실시간 공동편집(#15)용이라 아직 두지 않았다.
+   * 문서 생성(POST, `multipart/form-data`). 기존 문서의 본문은 공동편집 WebSocket의 `save`로 저장한다.
+   * 백엔드의 `PUT article(id)`는 편집 화면 밖의 비대화형 클라이언트용이라 프론트는 쓰지 않는다.
    */
   articles: `${API_PREFIX}/articles`,
   /** 특정 리비전 시점으로 재구성한 문서 */
@@ -47,4 +47,17 @@ export const API_PATHS = {
    */
   articleFavorite: (articleId: number) =>
     `${API_PREFIX}/articles/${articleId}/favorite`,
+  /**
+   * 대표 이미지만 바꾼다(PATCH, `multipart/form-data`). 본문을 건드리지 않아 리비전이 생기지 않고,
+   * 백엔드가 공동편집 중인 모두에게 `external-update`로 새 이미지를 알린다.
+   * 비로그인이거나 `student`가 없는 계정이면 401이다.
+   */
+  articleImage: (articleId: number) =>
+    `${API_PREFIX}/articles/${articleId}/image`,
+  /**
+   * 실시간 공동편집 WebSocket. `fetch`가 아니라 `toWebSocketUrl`로 주소를 만들어 연다.
+   * 세션 쿠키가 없으면 핸드셰이크가 401이다(브라우저에는 상태 코드 없이 연결 실패로만 보인다).
+   */
+  articleCollaboration: (articleId: number) =>
+    `${WS_PREFIX}/articles/${articleId}/collaboration`,
 } as const;

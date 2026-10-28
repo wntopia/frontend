@@ -19,13 +19,22 @@ type DocumentEditorProps = {
   onTitleChange?: (title: string) => void;
   /** 위키 문법으로 된 본문 */
   content: string;
-  onContentChange: (content: string) => void;
+  /** `cursor`는 입력 직후의 커서 위치. 공동편집이 어디를 고쳤는지 가르는 데 쓴다 */
+  onContentChange: (content: string, cursor: number) => void;
+  /** 본문의 한글 조합(IME) 시작·끝. 공동편집이 조합 중에 다른 사람의 변경을 미루는 데 쓴다 */
+  onContentCompositionStart?: () => void;
+  onContentCompositionEnd?: (content: string, cursor: number) => void;
+  /**
+   * 주면 `locked` 대신 이 값으로 본문 잠금을 정한다. 공동편집은 저장 중에도 본문을 고칠 수 있고(남들도 계속 고친다),
+   * 대신 지금 편집 상태를 받기 전에는 고칠 수 없다.
+   */
+  contentReadOnly?: boolean;
   showPreview: boolean;
   /** 편집 요약 입력. 기존 문서를 고칠 때만 준다 — 문서 생성 요청에는 이 필드가 없다. */
   revisionNote?: RevisionNote;
   /** 저장하는 동안 입력을 잠근다. 요청을 보낸 뒤에 고친 글자는 저장되지 않기 때문이다. */
   locked: boolean;
-  /** 저장이 막혔을 때 고칠 칸으로 포커스를 옮기기 위한 ref */
+  /** 저장이 막혔을 때 고칠 칸으로 포커스를 옮기기 위한 ref. 공동편집은 본문 칸을 직접 고치려고도 쓴다 */
   titleRef?: Ref<HTMLInputElement>;
   contentRef?: Ref<HTMLTextAreaElement>;
 };
@@ -36,6 +45,9 @@ export function DocumentEditor({
   onTitleChange,
   content,
   onContentChange,
+  onContentCompositionStart,
+  onContentCompositionEnd,
+  contentReadOnly,
   showPreview,
   revisionNote,
   locked,
@@ -63,8 +75,17 @@ export function DocumentEditor({
           ref={contentRef}
           aria-label="본문"
           value={content}
-          onChange={(event) => onContentChange(event.target.value)}
-          readOnly={locked}
+          onChange={(event) =>
+            onContentChange(event.target.value, event.target.selectionEnd)
+          }
+          onCompositionStart={onContentCompositionStart}
+          onCompositionEnd={(event) =>
+            onContentCompositionEnd?.(
+              event.currentTarget.value,
+              event.currentTarget.selectionEnd,
+            )
+          }
+          readOnly={contentReadOnly ?? locked}
           placeholder={TEXTAREA_PLACEHOLDER}
           className="h-[480px] w-full resize-y rounded-xl bg-sunken p-[22px] elevate-inset font-mono text-sm leading-[1.9] text-fg-muted outline-none placeholder:text-faint"
         />

@@ -15,7 +15,7 @@ const BUTTON =
 type ArticleImagePickerProps = {
   /** 지금 저장되어 있는 대표 이미지. 새 문서이거나 이미지가 없는 문서는 `null` */
   currentUrl: string | null;
-  /** 새로 고른 이미지. 저장할 때 함께 보낸다 */
+  /** 새로 고른 이미지. 저장할 때 올린다 */
   picked: PickedImage | null;
   /** 파일을 고르면 `File`, 선택을 취소하면 `null` */
   onPick: (file: File | null) => void;
@@ -26,8 +26,9 @@ type ArticleImagePickerProps = {
 /**
  * 편집 화면 사이드바의 '대표 이미지' 카드. 시안이 없어 사이드바 카드 골격과 보조 버튼 모양을 빌렸다.
  *
- * 고른 파일은 바로 올리지 않고 저장할 때 본문과 함께 보낸다. 고르기만 하고 저장하지 않으면
- * 아무것도 바뀌지 않아야 하기 때문이다. 백엔드에 이미지를 지우는 요청이 없어 '이미지 빼기'는 두지 않았다.
+ * 고른 파일은 바로 올리지 않고 저장할 때 올린다. 고르기만 하고 저장하지 않으면 아무것도 바뀌지 않아야 하기 때문이다.
+ * 백엔드에 이미지를 지우는 요청이 없어 '이미지 빼기'는 두지 않았다. 기존 문서의 지금 이미지(`currentUrl`)는 공동편집
+ * 중 다른 사람이 바꾸면 그 자리에서 바뀐다.
  */
 export function ArticleImagePicker({
   currentUrl,

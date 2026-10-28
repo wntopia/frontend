@@ -10,6 +10,12 @@ export const API_BASE_URL = (
 export const API_PREFIX = "/api/v1";
 
 /**
+ * 백엔드 WebSocket 경로의 공통 접두사. `API_PREFIX`처럼 프록시(next.config.ts)가 백엔드로 넘긴다.
+ * 브라우저가 핸드셰이크에 세션 쿠키를 실으려면 프론트와 같은 오리진이어야 해서, 백엔드에 직접 붙지 않는다.
+ */
+export const WS_PREFIX = "/ws";
+
+/**
  * DataGSM이 로그인 후 브라우저를 돌려보내는 프론트 경로. 화면이 아니라, 받은 `code`·`state`를
  * 백엔드 callback으로 넘기는 프록시 경로다 (next.config.ts).
  * 백엔드의 `DATAGSM_OAUTH_REDIRECT_URI`가 `<프론트 오리진>` + 이 경로여야 한다.
