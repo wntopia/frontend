@@ -4,16 +4,17 @@ import { SearchForm } from "@/features/search";
 import { ROUTES } from "@/shared/config";
 import { Logo } from "@/shared/ui";
 import { DocumentMenu } from "./DocumentMenu";
+import { EditingBadge } from "./EditingBadge";
 
 /**
  * 문서 상세 페이지 전용 상단 네비게이션.
- * 상태가 있는 케밥 메뉴만 클라이언트 컴포넌트(`DocumentMenu`)로 떼어 두고 나머지는 서버에서 그린다.
+ * 상태가 있는 케밥 메뉴와 '편집 중' 표시만 클라이언트 컴포넌트(`DocumentMenu`, `EditingBadge`)로 떼어 두고
+ * 나머지는 서버에서 그린다.
  */
 export function DocumentTopNav({
   articleId,
   title,
   categoryName,
-  editingName,
 }: {
   /** 보고 있는 문서. 편집·편집 역사 링크가 같은 문서로 이어지게 한다. */
   articleId: number;
@@ -21,8 +22,6 @@ export function DocumentTopNav({
   title: string;
   /** 위치 경로의 앞에 보이는 분류. 분류가 없는 문서는 제목만 보인다. */
   categoryName?: string;
-  /** 지금 이 문서를 편집 중인 사람. 주지 않으면 '편집 중' 표시를 그리지 않는다. */
-  editingName?: string;
 }) {
   return (
     <header className="sticky top-0 z-50 bg-bg/85 elevate-header backdrop-blur-[10px]">
@@ -53,12 +52,7 @@ export function DocumentTopNav({
         <SearchForm variant="compact" />
 
         {/* 편집 중 표시 */}
-        {editingName && (
-          <div className="flex flex-shrink-0 items-center gap-2 rounded-[20px] bg-success/12 py-1.5 pl-2.5 pr-[13px] text-[12.5px] text-success-fg">
-            <span className="h-[7px] w-[7px] animate-[livepulse_2s_infinite] rounded-full bg-success" />
-            <b className="text-success-strong">{editingName}</b> 편집 중
-          </div>
-        )}
+        <EditingBadge articleId={articleId} />
 
         {/* 편집 버튼 */}
         <Link

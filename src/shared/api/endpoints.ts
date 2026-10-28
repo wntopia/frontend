@@ -55,6 +55,12 @@ export const API_PATHS = {
   articleImage: (articleId: number) =>
     `${API_PREFIX}/articles/${articleId}/image`,
   /**
+   * 지금 공동편집 방에 들어와 있는 편집자. 로그인 없이 부를 수 있고, 방이 없거나 없는 문서여도 오류 없이 빈 결과다.
+   * 구독 방법이 없어 보이는 동안 폴링한다(백엔드 권장 10~30초).
+   */
+  articleEditors: (articleId: number) =>
+    `${API_PREFIX}/articles/${articleId}/editors`,
+  /**
    * 실시간 공동편집 WebSocket. `fetch`가 아니라 `toWebSocketUrl`로 주소를 만들어 연다.
    * 세션 쿠키가 없으면 핸드셰이크가 401이다(브라우저에는 상태 코드 없이 연결 실패로만 보인다).
    */
