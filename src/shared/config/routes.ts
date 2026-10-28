@@ -8,6 +8,9 @@ export const NEW_DOCUMENT_TITLE_PARAM = "title";
 /** '문서 없음' 화면에 그 문서의 제목을 실어 보내는 쿼리 이름 */
 export const MISSING_DOCUMENT_TITLE_PARAM = "title";
 
+/** 편집 역사 화면의 페이지 번호(1부터)를 실어 보내는 쿼리 이름 */
+export const HISTORY_PAGE_PARAM = "page";
+
 /**
  * 앱 전역 라우트 경로. 주소에 값이 들어가는 화면은 경로를 만들어 주는 함수로 둔다.
  *
@@ -19,7 +22,14 @@ export const ROUTES = {
   home: "/",
   document: (articleId: number) => `/document/${articleId}`,
   documentEdit: (articleId: number) => `/document/${articleId}/edit`,
-  documentHistory: (articleId: number) => `/document/${articleId}/history`,
+  /** 편집 역사. 첫 페이지는 쿼리 없이 두어 한 화면에 주소가 둘 생기지 않게 한다. */
+  documentHistory: (articleId: number, page = 1) =>
+    page > 1
+      ? `/document/${articleId}/history?${HISTORY_PAGE_PARAM}=${page}`
+      : `/document/${articleId}/history`,
+  /** 과거 리비전 읽기. 편집 역사 아래에 두어 주소가 화면을 찾아가는 길(문서 → 편집 역사 → 리비전)을 따른다. */
+  documentRevision: (articleId: number, revision: number) =>
+    `/document/${articleId}/history/${revision}`,
   /** 새 문서 작성. 제목을 주면 그 제목이 채워진 채로 열린다. */
   documentNew: (title?: string) =>
     title
