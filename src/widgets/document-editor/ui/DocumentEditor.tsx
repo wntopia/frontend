@@ -1,4 +1,4 @@
-import type { Ref } from "react";
+import type { ReactNode, Ref } from "react";
 import { MAX_SUMMARY_LENGTH } from "@/features/save-article";
 import { EditorPreview } from "./EditorPreview";
 
@@ -37,6 +37,11 @@ type DocumentEditorProps = {
   /** 저장이 막혔을 때 고칠 칸으로 포커스를 옮기기 위한 ref. 공동편집은 본문 칸을 직접 고치려고도 쓴다 */
   titleRef?: Ref<HTMLInputElement>;
   contentRef?: Ref<HTMLTextAreaElement>;
+  /**
+   * 본문 칸 위에 겹쳐 그릴 것(공동편집의 다른 사람 커서). textarea와 같은 자리에 두고 미리보기에서는 textarea와 함께 뺀다.
+   * 입력을 가로막지 않도록 포인터 이벤트를 받지 않아야 한다.
+   */
+  contentOverlay?: ReactNode;
 };
 
 /** 제목·본문 편집기와 편집 요약 입력 */
@@ -53,6 +58,7 @@ export function DocumentEditor({
   locked,
   titleRef,
   contentRef,
+  contentOverlay,
 }: DocumentEditorProps) {
   return (
     <div>
@@ -71,24 +77,27 @@ export function DocumentEditor({
       {showPreview ? (
         <EditorPreview content={content} />
       ) : (
-        <textarea
-          ref={contentRef}
-          aria-label="본문"
-          value={content}
-          onChange={(event) =>
-            onContentChange(event.target.value, event.target.selectionEnd)
-          }
-          onCompositionStart={onContentCompositionStart}
-          onCompositionEnd={(event) =>
-            onContentCompositionEnd?.(
-              event.currentTarget.value,
-              event.currentTarget.selectionEnd,
-            )
-          }
-          readOnly={contentReadOnly ?? locked}
-          placeholder={TEXTAREA_PLACEHOLDER}
-          className="h-[480px] w-full resize-y rounded-xl bg-sunken p-[22px] elevate-inset font-mono text-sm leading-[1.9] text-fg-muted outline-none placeholder:text-faint"
-        />
+        <div className="relative">
+          <textarea
+            ref={contentRef}
+            aria-label="본문"
+            value={content}
+            onChange={(event) =>
+              onContentChange(event.target.value, event.target.selectionEnd)
+            }
+            onCompositionStart={onContentCompositionStart}
+            onCompositionEnd={(event) =>
+              onContentCompositionEnd?.(
+                event.currentTarget.value,
+                event.currentTarget.selectionEnd,
+              )
+            }
+            readOnly={contentReadOnly ?? locked}
+            placeholder={TEXTAREA_PLACEHOLDER}
+            className="h-[480px] w-full resize-y rounded-xl bg-sunken p-[22px] elevate-inset font-mono text-sm leading-[1.9] text-fg-muted outline-none placeholder:text-faint"
+          />
+          {contentOverlay}
+        </div>
       )}
 
       {revisionNote && (

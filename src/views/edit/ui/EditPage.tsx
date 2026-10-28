@@ -1,5 +1,6 @@
 import { readArticleId, type ArticleRouteProps } from "@/entities/document";
 import { getArticle } from "@/entities/document/server";
+import { getDisplayName } from "@/entities/session";
 import { requireSession } from "@/features/auth/server";
 import { ROUTES } from "@/shared/config";
 import { EditWorkspace } from "./EditWorkspace";
@@ -34,6 +35,11 @@ export async function EditPage(props: ArticleRouteProps) {
       backHref={ROUTES.document(articleId)}
       backLabel={article.title}
       returnTo={ROUTES.documentEdit(articleId)}
+      // 백엔드의 현재 편집자 API와 같은 기준으로 맞춘다 — 같은 계정(id)의 탭은 한 명, 이름은 학번 없이.
+      presenceUser={{
+        key: user.id === null ? null : String(user.id),
+        name: getDisplayName(user),
+      }}
     />
   );
 }
