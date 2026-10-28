@@ -180,81 +180,81 @@ export function EditWorkspace({
         onLeave={confirmLeave}
       />
 
-      <div className="mx-auto flex max-w-[1120px] gap-7 px-8 pb-[100px] pt-8">
-        <div className="min-w-0 flex-1">
-          {notice && (
-            // 고정된 상단 바(58px)에 가리지 않을 만큼 띄워서 스크롤한다.
-            <div ref={alertRef} className="mb-5 scroll-mt-[74px]">
-              <Alert title={notice.title} detail={notice.detail}>
-                {notice.message}
-                {notice.needsSignin && (
-                  // 전역 `a { color: inherit; text-decoration: none }`이 레이어 밖에 있어 링크에 준 색·밑줄
-                  // 유틸리티를 덮는다. 그래서 버튼 모양 대신 안내 글자색을 물려받고, 밑줄은 안쪽 span에 건다.
-                  <div className="mt-1.5">
-                    <SigninButton returnTo={returnTo} className="font-bold">
-                      <span className="underline underline-offset-2">
-                        다시 로그인
-                      </span>
-                    </SigninButton>
-                  </div>
-                )}
-              </Alert>
-            </div>
-          )}
-          {provider && (
-            <CollaborationNotices provider={provider} snapshot={snapshot} />
-          )}
-
-          <DocumentEditor
-            title={title}
-            // 기존 문서의 제목은 백엔드가 수정 요청에서 받지 않아 고칠 수 없게 둔다.
-            onTitleChange={target.kind === "create" ? setTitle : undefined}
-            content={content}
-            onContentChange={onContentChange}
-            onContentCompositionStart={onCompositionStart}
-            onContentCompositionEnd={onCompositionEnd}
-            // 공동편집은 저장 중에도 본문을 잠그지 않는다. 다른 사람도 계속 고치고, 저장은 보낸 순간의 본문을 담는다.
-            contentReadOnly={collaborative ? contentReadOnly : undefined}
-            showPreview={showPreview}
-            // 편집 요약·가벼운 수정은 기존 문서의 저장에만 있는 필드라 새 문서에서는 숨긴다.
-            revisionNote={
-              target.kind === "update"
-                ? {
-                    summary,
-                    minorEdit,
-                    onSummaryChange: setSummary,
-                    onMinorEditChange: setMinorEdit,
-                  }
-                : undefined
-            }
-            locked={locked}
-            titleRef={titleRef}
-            contentRef={contentInputRef}
-            contentOverlay={
-              provider && (
-                <PresenceCursors
-                  provider={provider}
-                  awareness={snapshot.awareness}
-                  ready={snapshot.ready}
-                  peers={peers}
-                  text={content}
-                  textareaRef={contentRef}
-                />
-              )
-            }
-          />
-        </div>
-        <aside className="w-[260px] flex-shrink-0">
-          <div className="mb-4">
-            <ArticleImagePicker
-              currentUrl={collaborative ? snapshot.imageUrl : imageUrl}
-              picked={image}
-              onPick={pickImage}
-              disabled={locked}
-            />
+      <div className="mx-auto max-w-[1120px] px-8 pb-[100px] pt-8">
+        {notice && (
+          // 고정된 상단 바(58px)에 가리지 않을 만큼 띄워서 스크롤한다.
+          <div ref={alertRef} className="mb-5 scroll-mt-[74px]">
+            <Alert title={notice.title} detail={notice.detail}>
+              {notice.message}
+              {notice.needsSignin && (
+                // 전역 `a { color: inherit; text-decoration: none }`이 레이어 밖에 있어 링크에 준 색·밑줄
+                // 유틸리티를 덮는다. 그래서 버튼 모양 대신 안내 글자색을 물려받고, 밑줄은 안쪽 span에 건다.
+                <div className="mt-1.5">
+                  <SigninButton returnTo={returnTo} className="font-bold">
+                    <span className="underline underline-offset-2">
+                      다시 로그인
+                    </span>
+                  </SigninButton>
+                </div>
+              )}
+            </Alert>
           </div>
-          <EditGuide />
-        </aside>
+        )}
+        {provider && (
+          <CollaborationNotices provider={provider} snapshot={snapshot} />
+        )}
+
+        <DocumentEditor
+          title={title}
+          // 기존 문서의 제목은 백엔드가 수정 요청에서 받지 않아 고칠 수 없게 둔다.
+          onTitleChange={target.kind === "create" ? setTitle : undefined}
+          content={content}
+          onContentChange={onContentChange}
+          onContentCompositionStart={onCompositionStart}
+          onContentCompositionEnd={onCompositionEnd}
+          // 공동편집은 저장 중에도 본문을 잠그지 않는다. 다른 사람도 계속 고치고, 저장은 보낸 순간의 본문을 담는다.
+          contentReadOnly={collaborative ? contentReadOnly : undefined}
+          showPreview={showPreview}
+          // 편집 요약·가벼운 수정은 기존 문서의 저장에만 있는 필드라 새 문서에서는 숨긴다.
+          revisionNote={
+            target.kind === "update"
+              ? {
+                  summary,
+                  minorEdit,
+                  onSummaryChange: setSummary,
+                  onMinorEditChange: setMinorEdit,
+                }
+              : undefined
+          }
+          locked={locked}
+          titleRef={titleRef}
+          contentRef={contentInputRef}
+          contentOverlay={
+            provider && (
+              <PresenceCursors
+                provider={provider}
+                awareness={snapshot.awareness}
+                ready={snapshot.ready}
+                peers={peers}
+                text={content}
+                textareaRef={contentRef}
+              />
+            )
+          }
+          aside={
+            <>
+              <div className="mb-4">
+                <ArticleImagePicker
+                  currentUrl={collaborative ? snapshot.imageUrl : imageUrl}
+                  picked={image}
+                  onPick={pickImage}
+                  disabled={locked}
+                />
+              </div>
+              <EditGuide />
+            </>
+          }
+        />
       </div>
     </div>
   );
