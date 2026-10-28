@@ -118,8 +118,10 @@ id로 받고, 제목은 정규화 규칙(공백·유니코드·대소문자) 때
 - **서버 컴포넌트에서 문서는 `getArticle` · `getArticleRevisions`(`@/entities/document/server`)로 읽는다.**
   없는 문서는 그 안에서 404로 끝난다. 화면과 `generateMetadata`가 함께 불러도 백엔드는 한 번만 불린다 —
   문서 조회는 부를 때마다 조회수를 올리기 때문이다. 시각은 `shared/lib`의 날짜 포맷(한국 시간대 고정)으로 적는다.
-- **문서로 가는 `<Link>`에는 `prefetch={false}`를 준다.** 미리 가져오기도 문서 화면을 그려 문서를 조회하고,
-  백엔드는 그 조회를 조회수로 센다. 목록 카드·위키 링크·역링크 모두 해당한다.
+- **문서로 가는 `<Link>`에는 모두 `prefetch={false}`를 준다** — 목록 카드·위키 링크·역링크·상단 바의 돌아가기 링크까지.
+  백엔드는 문서 조회를 조회수로 세는데, 미리 가져오기가 문서를 조회한다. Next 문서는 동적 화면의 기본 미리 가져오기가
+  `loading.tsx` 경계까지만이라고 하지만, 루트 `loading.tsx`가 있는 상태에서 홈을 열기만 해도 목록 문서들의 조회수가
+  오르는 것을 실제로 쟀다(#40, 리비전 조회는 없어 `generateMetadata` 쪽으로 보인다).
 - **위키 링크는 본문의 대상을 모아 한 번에 확인한다** — `resolveLinkTargets(collectLinkTargets(blocks))`의 결과를
   `WikiContent`의 `linkTargets`로 넘긴다. 있으면 파란 링크(`ROUTES.document(id)`), 없으면 붉은 링크
   (`ROUTES.missingDocument(title)`)다. 조회가 실패한 대상은 '판정 불가'로 남아 붉게 칠하지 않고 '문서 없음' 화면으로
