@@ -16,7 +16,7 @@ export const QUICK_LINKS: QuickLink[] = [
   { label: "방송부", href: "#" },
   {
     label: "급식 메뉴 (작성 필요)",
-    href: ROUTES.missingDocument,
+    href: ROUTES.missingDocument("급식 메뉴"),
     tone: "missing",
   },
 ];

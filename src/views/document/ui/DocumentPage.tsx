@@ -1,7 +1,9 @@
 import {
+  collectLinkTargets,
   extractToc,
   parseWikiText,
   readArticleId,
+  resolveLinkTargets,
   type ArticleRouteProps,
 } from "@/entities/document";
 import { getArticle, getArticleRevisions } from "@/entities/document/server";
@@ -23,6 +25,8 @@ export async function DocumentPage(props: ArticleRouteProps) {
 
   // 본문과 목차가 같은 파싱 결과를 써야 목차의 앵커가 본문 제목의 id와 어긋나지 않는다.
   const blocks = parseWikiText(article.content);
+  // 링크마다 따로 묻지 않고 본문의 대상을 모아 한 번에 확인한다. 실패해도 던지지 않아 본문은 그대로 보인다.
+  const linkTargets = await resolveLinkTargets(collectLinkTargets(blocks));
 
   return (
     <div className="min-h-screen bg-bg text-fg">
@@ -36,6 +40,7 @@ export async function DocumentPage(props: ArticleRouteProps) {
         <DocumentArticle
           article={article}
           blocks={blocks}
+          linkTargets={linkTargets}
           // 리비전 1은 생성 시점 내용이라 수정 횟수에서 뺀다.
           editCount={Math.max(revisions.totalElements - 1, 0)}
         />
