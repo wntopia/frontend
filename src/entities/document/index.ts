@@ -1,7 +1,16 @@
 // 서버 컴포넌트용 `getArticle`·`getArticleRevisions`는 `@/entities/document/server`에서 import 한다.
 export { fetchArticle, fetchArticleRevisions } from "./api/article";
+export { fetchBacklinks } from "./api/backlinks";
 export { searchArticles } from "./api/search";
-export { articleTitleExists } from "./api/title-lookup";
+export {
+  articleTitleExists,
+  findArticleIdByTitle,
+  resolveLinkTargets,
+} from "./api/title-lookup";
+export {
+  collectLinkTargets,
+  type WikiLinkTargets,
+} from "./model/link-targets";
 export { SEARCH_QUERY_MAX_LENGTH, stripSnippetSyntax } from "./model/search";
 export { RecentChangeItem } from "./ui/RecentChangeItem";
 export { PopularDocumentCard } from "./ui/PopularDocumentCard";

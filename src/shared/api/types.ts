@@ -77,6 +77,15 @@ export type LookupArticleTitlesResDto = {
   }[];
 };
 
+/**
+ * 링크를 건 문서 하나. 본문의 어디에 링크가 걸렸는지는 오지 않는다.
+ * 백엔드는 `[[문서명]]`만 링크로 센다 — `[[문서명|보일 글자]]`처럼 `|`가 들어간 링크는 역링크에 잡히지 않는다.
+ */
+export type BacklinkResDto = {
+  id: number;
+  title: string;
+};
+
 /** 편집 역사 목록의 한 항목. 본문 없이 메타데이터만 담는다. */
 export type ArticleRevisionSummaryResDto = {
   revision: number;

@@ -10,6 +10,7 @@ export type {
   ArticleSearchItemResDto,
   ArticleSearchResDto,
   AuthStatusResDto,
+  BacklinkResDto,
   CategoryResDto,
   DataGsmClubSummaryResDto,
   DataGsmStudentInfoResDto,
