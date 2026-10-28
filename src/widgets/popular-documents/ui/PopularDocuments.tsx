@@ -5,21 +5,21 @@ import {
   PopularDocumentCardSkeleton,
 } from "@/entities/document";
 import { nullOnFailure, publicServerApiFetch } from "@/shared/api/server";
+import { SidebarCard } from "@/shared/ui";
 
-/** 홈에 보이는 카드 수. 시안이 두 줄짜리 2열 그리드다. */
+/** 홈에 보이는 문서 수. 2열 두 줄로 놓는다. */
 const POPULAR_DOCUMENT_COUNT = 4;
 
-const GRID = "grid grid-cols-2 gap-3";
+const GRID = "grid grid-cols-2 gap-2.5";
 
-/** 홈의 '인기 문서' 그리드. 제목은 바로 그리고 카드는 불러오는 동안 자리표시를 보인다. */
+/** 홈 그리드의 '인기 문서' 칸. 제목은 바로 그리고 문서는 불러오는 동안 자리표시를 보인다. */
 export function PopularDocuments() {
   return (
-    <section>
-      <h2 className="mb-4 text-[19px] font-bold">인기 문서</h2>
+    <SidebarCard title="인기 문서">
       <Suspense fallback={<PopularDocumentsSkeleton />}>
         <PopularDocumentGrid />
       </Suspense>
-    </section>
+    </SidebarCard>
   );
 }
 
@@ -67,10 +67,9 @@ function PopularDocumentsSkeleton() {
   );
 }
 
-/** 바로 위 '최근 변경'의 안내와 같은 면과 여백을 써서 두 안내의 글줄이 나란히 맞게 한다. */
 function GridMessage({ children }: { children: string }) {
   return (
-    <p className="break-keep rounded-[14px] bg-surface px-[18px] py-[15px] text-[13.5px] text-fg-subtle elevate-1">
+    <p className="break-keep text-[13px] leading-[1.6] text-fg-subtle">
       {children}
     </p>
   );

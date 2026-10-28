@@ -2,8 +2,11 @@ import Link from "next/link";
 import type { PopularArticleResDto } from "@/shared/api";
 import { ROUTES } from "@/shared/config";
 
-/** 카드의 면과 여백. 자리표시도 같은 값을 써야 불러온 뒤 그리드 높이가 바뀌지 않는다. */
-const CARD = "block rounded-xl bg-surface p-4 elevate-1";
+/**
+ * 칸의 면과 여백. 홈 그리드의 '인기 문서' 카드 안에 놓이므로 그림자 없이 한 단 낮은 면으로 구분한다.
+ * 자리표시도 같은 값을 써야 불러온 뒤 그리드 높이가 바뀌지 않는다.
+ */
+const CARD = "block rounded-[10px] bg-sunken p-4";
 
 type PopularDocumentCardProps = {
   doc: PopularArticleResDto;
@@ -11,7 +14,7 @@ type PopularDocumentCardProps = {
   rank: number;
 };
 
-/** 인기 문서 그리드의 카드 */
+/** 인기 문서 그리드의 한 칸 */
 export function PopularDocumentCard({ doc, rank }: PopularDocumentCardProps) {
   return (
     <Link
@@ -19,7 +22,7 @@ export function PopularDocumentCard({ doc, rank }: PopularDocumentCardProps) {
       // 미리 가져오기도 문서를 조회해 조회수를 올린다 (`RecentChangeItem` 참고). 여기서는 순위에 오른 문서가
       // 홈에 보인다는 이유만으로 조회수를 더 얻어, 순위가 스스로 굳어지게 된다.
       prefetch={false}
-      className={`${CARD} transition hover:-translate-y-0.5 hover:elevate-2`}
+      className={`${CARD} transition-colors hover:bg-hover`}
     >
       <div className="mb-1.5 font-mono text-[11px] text-accent">
         {String(rank).padStart(2, "0")}

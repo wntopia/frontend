@@ -4,9 +4,14 @@ import { HomeHero } from "@/widgets/home-hero";
 import { PopularDocuments } from "@/widgets/popular-documents";
 import { RecentChanges } from "@/widgets/recent-changes";
 import { WikiStats } from "@/widgets/wiki-stats";
+import { WriteDocumentCta } from "@/widgets/write-document-cta";
+
+/** 그리드 한 칸. 위젯이 칸 높이를 끝까지 채워 같은 줄의 카드끼리 아랫선이 맞게 한다. */
+const CELL = "flex flex-col *:flex-1";
 
 /**
  * 홈 화면 — 위젯을 배치하고 여백만 담당한다.
+ * 검색 아래를 3열 그리드 하나로 묶어 모든 카드의 윗선·아랫선이 맞게 둔다.
  *
  * 데이터 위젯은 저마다 요청 시점에 백엔드를 읽어(문서를 고치면 다음 방문에 바로 보이도록) 이 화면은 동적
  * 렌더링이다. 위젯마다 자기 Suspense 경계 안에서 불러오므로, 느리거나 실패한 위젯이 나머지를 막지 않는다.
@@ -17,15 +22,22 @@ export function HomePage() {
       <Header variant="home" />
       <HomeHero />
 
-      <div className="mx-auto flex max-w-[1120px] gap-10 px-8 pb-[100px] pt-5">
-        <div className="flex min-w-0 flex-1 flex-col gap-10">
+      <div className="mx-auto grid max-w-[1120px] gap-4 px-8 pb-[100px] md:grid-cols-3">
+        <div className={`${CELL} md:col-span-2 md:row-span-2`}>
           <RecentChanges />
+        </div>
+        <div className={CELL}>
+          <WriteDocumentCta />
+        </div>
+        <div className={CELL}>
+          <WikiStats />
+        </div>
+        <div className={`${CELL} md:col-span-2`}>
           <PopularDocuments />
         </div>
-        <aside className="flex w-[260px] flex-shrink-0 flex-col gap-4">
-          <WikiStats />
+        <div className={CELL}>
           <CategoryList />
-        </aside>
+        </div>
       </div>
     </div>
   );
