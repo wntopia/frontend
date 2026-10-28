@@ -18,6 +18,8 @@ export function HistoryTopBar({
       <div className="mx-auto flex h-[58px] max-w-[1000px] items-center gap-4 px-8">
         <Link
           href={ROUTES.document(articleId)}
+          // 미리 가져오기가 문서를 조회해 조회수를 올린다 (CLAUDE.md '백엔드 연동과 인증')
+          prefetch={false}
           className="flex items-center gap-[7px] text-[13.5px] text-fg-soft hover:text-fg-soft"
         >
           <span className="text-[15px]">←</span> {documentTitle}

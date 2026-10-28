@@ -6,8 +6,17 @@ export {
   fetchPopularArticles,
   fetchRecentChanges,
 } from "./api/article";
+export { fetchBacklinks } from "./api/backlinks";
 export { searchArticles } from "./api/search";
-export { articleTitleExists } from "./api/title-lookup";
+export {
+  articleTitleExists,
+  findArticleIdByTitle,
+  resolveLinkTargets,
+} from "./api/title-lookup";
+export {
+  collectLinkTargets,
+  type WikiLinkTargets,
+} from "./model/link-targets";
 export { SEARCH_QUERY_MAX_LENGTH, stripSnippetSyntax } from "./model/search";
 export {
   RecentChangeItem,
@@ -30,7 +39,6 @@ export {
 export { SAMPLE_ARTICLE_ID } from "./model/mock";
 export { readArticleId, type ArticleRouteProps } from "./model/route-params";
 export type {
-  Backlink,
   ChangeSummarySegment,
   DocumentActivity,
   RecentChange,

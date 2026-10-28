@@ -71,7 +71,7 @@ export default HomePage;
 ## 라우팅
 
 경로는 `src/shared/config/routes.ts`의 `ROUTES`로만 참조한다. 문자열 하드코딩 금지.
-주소에 값이 들어가는 경로는 함수다 — `ROUTES.document(articleId)`, `ROUTES.search(query)`.
+주소에 값이 들어가는 경로는 함수다 — `ROUTES.document(articleId)`, `ROUTES.search(query)`, `ROUTES.missingDocument(title)`.
 
 | 경로 | `ROUTES` | 화면 |
 |---|---|---|
@@ -81,28 +81,31 @@ export default HomePage;
 | `/document/[articleId]/history` | `documentHistory(id)` | 편집역사 |
 | `/document/new?title=` | `documentNew(title?)` | 새 문서 작성 (로그인 필요). 편집 화면의 본체를 빈 본문으로 연다 |
 | `/search?q=&page=` | `search(query?, page?)` | 검색 결과. 첫 페이지는 `page` 없이 둔다 |
-| `/missing-document` | `missingDocument` | 미작성 문서 안내 화면 (404 핸들러가 아니다) |
+| `/missing-document?title=` | `missingDocument(title)` | 아직 작성되지 않은 문서의 안내 (404 핸들러가 아니다). 그 제목의 문서가 있으면 문서로 넘긴다 |
 | `/mypage` | `mypage` | 마이페이지 |
 | `/signin` | `signin` | 로그인. 실패하면 백엔드가 `?error&reason=…`을 붙여 이리로 돌려보낸다 |
 | `/signin/callback` | `signinCallback` | 로그인 성공 후 착지 지점. 로그인 전에 보던 화면으로 곧바로 넘긴다 |
 
 디자인에서 가져온 7개 화면이 모두 포팅되어 있다. 로그인 화면 둘과 새 문서 화면은 시안 없이 만들었다.
 
-**문서는 제목이 아니라 숫자 `articleId`로 가리킨다.** 백엔드가 id로만 조회하기 때문이다.
+**문서는 제목이 아니라 숫자 `articleId`로 가리킨다.** 문서를 다루는 백엔드 API(편집·편집역사·즐겨찾기)가 모두
+id로 받고, 제목은 정규화 규칙(공백·유니코드·대소문자) 때문에 한 문서에 여러 표기가 생겨 주소로 쓰기에 알맞지 않다.
+제목만 아는 곳(본문의 위키 링크)은 아래 '위키 링크' 규칙대로 id를 확인하거나 `ROUTES.missingDocument(title)`로 보낸다.
 `[articleId]` 아래의 view와 `generateMetadata`는 `readArticleId(props)`(`@/entities/document`)로 id를 읽는다 —
 문서 id가 될 수 없는 주소(`abc`, `0`, `007`)는 여기서 404가 된다.
 
 화면마다 백엔드 연결 상태가 다르다. 연결되지 않은 화면은 경로만 동적이고 데이터는 목이다.
 
 - 홈: 백엔드의 최근 변경 · 인기 문서 · 위키 현황 · 분류를 그린다. 위젯마다 따로 불러 하나가 실패해도 나머지는 보인다.
-- 문서: 백엔드의 문서와 최근 리비전, 지금 편집 중인 사람을 그린다. 본문의 위키 링크는 아직 `#`이다.
+- 문서: 백엔드의 문서와 최근 리비전, 지금 편집 중인 사람을 그린다. 본문의 위키 링크는 실제 문서나 '문서 없음' 화면으로 간다.
+- 문서 없음: 주소의 제목과, 그 제목을 링크한 문서(백엔드 역링크 첫 20개)를 그린다.
 - 검색: 백엔드 검색 결과를 `?page=`로 20개씩 나눠 그린다. 아직 쓰지 않은 문서는 결과에 나오지 않는다.
 - 편집 · 새 문서: 백엔드에 저장한다. 편집은 실시간 공동편집(WebSocket)으로 고치고 저장한 뒤 편집 화면에 남고,
   새 문서는 `POST`로 만들고 문서 상세로 넘어간다.
 - 편집역사: 어떤 id로 들어가도 같은 시안 문서를 그린다.
 
 목 데이터에서 시안 문서를 가리킬 때는 `ROUTES.document(SAMPLE_ARTICLE_ID)`를 쓰고, 대상이 정해지지 않은
-링크(다른 시안 문서, 위키 링크, 마이페이지의 기여 목록)는 `#`으로 남아 있다.
+링크(다른 시안 문서, 마이페이지의 기여 목록)는 `#`으로 남아 있다.
 
 `/api/v1/**` · `/ws/**` · `/callback`은 Next 라우트가 아니다. `next.config.ts`의 rewrites가 백엔드로 넘기는 프록시 경로다. `/callback`은 DataGSM이 로그인 후 돌려보내는 주소(`OAUTH_REDIRECT_PATH`)로, 백엔드 callback으로 이어진다.
 
@@ -118,6 +121,16 @@ export default HomePage;
 - **서버 컴포넌트에서 문서는 `getArticle` · `getArticleRevisions`(`@/entities/document/server`)로 읽는다.**
   없는 문서는 그 안에서 404로 끝난다. 화면과 `generateMetadata`가 함께 불러도 백엔드는 한 번만 불린다 —
   문서 조회는 부를 때마다 조회수를 올리기 때문이다. 시각은 `shared/lib`의 날짜 포맷(한국 시간대 고정)으로 적는다.
+- **문서로 가는 `<Link>`에는 모두 `prefetch={false}`를 준다** — 목록 카드·위키 링크·역링크·상단 바의 돌아가기 링크까지.
+  백엔드는 문서 조회를 조회수로 세는데, 미리 가져오기가 문서를 조회한다. Next 문서는 동적 화면의 기본 미리 가져오기가
+  `loading.tsx` 경계까지만이라고 하지만, 루트 `loading.tsx`가 있는 상태에서 홈을 열기만 해도 목록 문서들의 조회수가
+  오르는 것을 실제로 쟀다(#40, 리비전 조회는 없어 `generateMetadata` 쪽으로 보인다).
+- **위키 링크는 본문의 대상을 모아 한 번에 확인한다** — `resolveLinkTargets(collectLinkTargets(blocks))`의 결과를
+  `WikiContent`의 `linkTargets`로 넘긴다. 있으면 파란 링크(`ROUTES.document(id)`), 없으면 붉은 링크
+  (`ROUTES.missingDocument(title)`)다. 조회가 실패한 대상은 '판정 불가'로 남아 붉게 칠하지 않고 '문서 없음' 화면으로
+  보낸다. 그 화면이 다시 확인해 문서가 있으면 문서로 넘기므로 어느 쪽이든 제자리로 간다.
+- **제목의 존재 확인은 `POST /articles/titles/lookup`으로만 한다.** `GET /articles/by-title`은 조회수를 올린다.
+  제목 비교(공백·유니코드·대소문자)는 백엔드 규칙을 따르므로 프론트에서 제목끼리 견주지 않는다.
 - **리비전 1은 '문서 생성'으로, 편집자 이름 없이 문서의 `createdAt`으로 그린다.** 백엔드가 첫 수정 때에야
   리비전 1을 첫 수정자 이름으로 기록하기 때문이다 (`CREATION_REVISION` 주석 참고).
 - **401은 화면에서 에러가 아니다.** 세션 조회(`entities/session`)는 401을 '비로그인'(`null`)으로 바꿔 준다.

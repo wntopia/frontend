@@ -47,8 +47,10 @@ export function EditorTopBar({
   return (
     <header className="sticky top-0 z-50 bg-bg/[.92] elevate-header backdrop-blur-[10px]">
       <div className="mx-auto flex h-[58px] max-w-[1120px] items-center gap-4 px-8">
+        {/* 돌아갈 곳이 문서 화면이면 미리 가져오기가 문서를 조회해 조회수를 올린다 (CLAUDE.md '백엔드 연동과 인증') */}
         <Link
           href={backHref}
+          prefetch={false}
           onNavigate={onLeave}
           className="flex items-center gap-[7px] text-[13.5px] text-fg-soft hover:text-fg-soft"
         >
@@ -65,7 +67,12 @@ export function EditorTopBar({
         <button type="button" onClick={onTogglePreview} className={SECONDARY_BUTTON}>
           {showPreview ? "편집기로 돌아가기" : "미리보기"}
         </button>
-        <Link href={backHref} onNavigate={onLeave} className={SECONDARY_BUTTON}>
+        <Link
+          href={backHref}
+          prefetch={false}
+          onNavigate={onLeave}
+          className={SECONDARY_BUTTON}
+        >
           취소
         </Link>
         <button

@@ -1,4 +1,6 @@
+import { ROUTES } from "@/shared/config";
 import { MissingLink, WikiLink } from "@/shared/ui";
+import type { WikiLinkTargets } from "../model/link-targets";
 import type {
   WikiBlock,
   WikiHeadingLevel,
@@ -13,10 +15,10 @@ type WikiContentProps = {
   /** article: 문서 상세, preview: 편집 화면의 미리보기 */
   variant?: WikiContentVariant;
   /**
-   * 아직 작성되지 않은 문서로 판정된 링크 대상. 여기 있는 대상만 붉은 링크가 된다.
+   * 링크 대상마다 확인한 문서 id(`resolveLinkTargets`의 결과). 없는 문서로 판정된 대상만 붉은 링크가 된다.
    * 문서가 있는지는 백엔드에 물어야 알 수 있어, 렌더러가 스스로 정하지 않고 결과를 받는다.
    */
-  missingTargets?: ReadonlySet<string>;
+  linkTargets?: WikiLinkTargets;
 };
 
 type VariantStyle = {
@@ -56,11 +58,11 @@ const VARIANT_STYLES: Record<WikiContentVariant, VariantStyle> = {
 export function WikiContent({
   blocks,
   variant = "article",
-  missingTargets,
+  linkTargets,
 }: WikiContentProps) {
   const style = VARIANT_STYLES[variant];
   const inline = (nodes: WikiInline[]) => (
-    <Inline nodes={nodes} variant={variant} missingTargets={missingTargets} />
+    <Inline nodes={nodes} variant={variant} linkTargets={linkTargets} />
   );
 
   return (
@@ -102,10 +104,10 @@ export function WikiContent({
 type InlineProps = {
   nodes: WikiInline[];
   variant: WikiContentVariant;
-  missingTargets?: ReadonlySet<string>;
+  linkTargets?: WikiLinkTargets;
 };
 
-function Inline({ nodes, variant, missingTargets }: InlineProps) {
+function Inline({ nodes, variant, linkTargets }: InlineProps) {
   return nodes.map((node, index) => {
     switch (node.type) {
       case "text":
@@ -118,12 +120,14 @@ function Inline({ nodes, variant, missingTargets }: InlineProps) {
             <Inline
               nodes={node.children}
               variant={variant}
-              missingTargets={missingTargets}
+              linkTargets={linkTargets}
             />
           </b>
         );
       case "link": {
-        const missing = missingTargets?.has(node.target) ?? false;
+        // undefined: 확인하지 못함, null: 없는 문서
+        const articleId = linkTargets?.get(node.target);
+        const missing = articleId === null;
 
         // 미리보기에서 링크를 눌러 편집 화면을 벗어나면 저장하지 않은 본문을 잃는다.
         // 시안도 미리보기의 링크는 색만 입힌 글자로 그린다.
@@ -138,10 +142,30 @@ function Inline({ nodes, variant, missingTargets }: InlineProps) {
           );
         }
 
-        return missing ? (
-          <MissingLink key={index}>{node.label}</MissingLink>
-        ) : (
-          <WikiLink key={index}>{node.label}</WikiLink>
+        if (missing) {
+          return (
+            <MissingLink
+              key={index}
+              href={ROUTES.missingDocument(node.target)}
+            >
+              {node.label}
+            </MissingLink>
+          );
+        }
+
+        // 확인하지 못한 링크는 없다고 단정하지 않고 보통 링크로 그린다. 문서 id를 모르니 '문서 없음' 화면으로
+        // 보내는데, 그 화면이 열릴 때 다시 확인해 문서가 있으면 문서로 넘겨 주므로 어느 쪽이든 제자리로 간다.
+        return (
+          <WikiLink
+            key={index}
+            href={
+              articleId === undefined
+                ? ROUTES.missingDocument(node.target)
+                : ROUTES.document(articleId)
+            }
+          >
+            {node.label}
+          </WikiLink>
         );
       }
     }

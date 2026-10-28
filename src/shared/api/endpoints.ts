@@ -36,8 +36,20 @@ export const API_PATHS = {
     { page, size }: { page: number; size: number },
   ) =>
     `${API_PREFIX}/articles?q=${encodeURIComponent(query)}&page=${page}&size=${size}`,
-  /** 제목들이 실제 문서인지 한 번에 확인한다. 읽기만 하지만 제목 목록을 본문에 실어야 해서 POST다. */
+  /**
+   * 제목들이 실제 문서인지 한 번에 확인한다. 읽기만 하지만 제목 목록을 본문에 실어야 해서 POST다.
+   * 같은 일을 하는 `GET /articles/by-title`은 조회수를 올리므로, 존재 확인에는 이쪽만 쓴다.
+   */
   articleTitlesLookup: `${API_PREFIX}/articles/titles/lookup`,
+  /**
+   * 이 제목을 `[[문서명]]`으로 링크한 문서(제목 순). 아직 없는 문서의 제목으로도 조회된다.
+   * `page`는 0부터, `size`는 1~100이며 어기면 400이다.
+   */
+  articleBacklinks: (
+    title: string,
+    { page, size }: { page: number; size: number },
+  ) =>
+    `${API_PREFIX}/articles/backlinks?title=${encodeURIComponent(title)}&page=${page}&size=${size}`,
   /** 리비전 목록(최신 순). 페이지 단위로 온다 — `page`는 0부터, `size`는 1~100 */
   articleRevisions: (
     articleId: number,

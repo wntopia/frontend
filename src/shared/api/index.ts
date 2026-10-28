@@ -12,6 +12,7 @@ export type {
   ArticleSearchItemResDto,
   ArticleSearchResDto,
   AuthStatusResDto,
+  BacklinkResDto,
   CategoryListItemResDto,
   CategoryResDto,
   CollaborationMessage,
