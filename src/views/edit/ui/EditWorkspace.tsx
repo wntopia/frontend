@@ -91,8 +91,12 @@ export function EditWorkspace({
   const collaborative = provider !== null;
   const changed = collaborative
     ? // 연결된 동안의 편집은 바로 다른 사람과 서버에 가고, 방이 비면 백엔드가 자동으로 저장한다. 떠나서 잃는 것은
-      // 끊긴 동안 쓴 내용과 아직 저장하지 않은 이미지 · 편집 요약뿐이다.
-      snapshot.undelivered || image !== null || summary !== "" || minorEdit
+      // 끊긴 동안 쓴 내용(아직 못 보냈거나, 합치지 못해 화면에서 빠진 것)과 아직 저장하지 않은 이미지 · 편집 요약뿐이다.
+      snapshot.undelivered ||
+      snapshot.unmergedDraft !== null ||
+      image !== null ||
+      summary !== "" ||
+      minorEdit
     : title !== initialTitle || content !== initialContent || image !== null;
   // 저장에 성공해 문서로 넘어가는 중에는 묻지 않는다.
   const confirmLeave = useLeaveGuard(changed && status !== "saved");

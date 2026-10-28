@@ -27,16 +27,27 @@ export function CollaborationNotices({
   provider,
   snapshot,
 }: CollaborationNoticesProps) {
-  const [copied, setCopied] = useState<"done" | "failed" | null>(null);
+  // 복사 결과를 그 본문과 함께 둔다. 닫은 뒤 새로 합치지 못한 본문이 생겼을 때 앞의 결과('복사했습니다')가
+  // 새 본문에 이어 보이면, 아직 복사하지 않은 본문을 복사한 줄 알고 닫게 된다.
+  const [copyResult, setCopyResult] = useState<{
+    draft: string;
+    ok: boolean;
+  } | null>(null);
   const draft = snapshot.unmergedDraft;
+  const copied =
+    draft !== null && copyResult?.draft === draft
+      ? copyResult.ok
+        ? "done"
+        : "failed"
+      : null;
 
   async function copyDraft() {
     if (draft === null) return;
     try {
       await navigator.clipboard.writeText(draft);
-      setCopied("done");
+      setCopyResult({ draft, ok: true });
     } catch {
-      setCopied("failed");
+      setCopyResult({ draft, ok: false });
     }
   }
 
