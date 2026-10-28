@@ -13,6 +13,7 @@ export type {
   ArticleSearchResDto,
   AuthStatusResDto,
   BacklinkResDto,
+  CategoryListItemResDto,
   CategoryResDto,
   CollaborationMessage,
   CollaborationMessageType,
@@ -25,6 +26,9 @@ export type {
   LookupArticleTitlesReqDto,
   LookupArticleTitlesResDto,
   PageResDto,
+  PopularArticleResDto,
+  RecentChangeResDto,
   SnippetSegmentResDto,
   UpdateArticleImageReqDto,
+  WikiStatsResDto,
 } from "./types";
