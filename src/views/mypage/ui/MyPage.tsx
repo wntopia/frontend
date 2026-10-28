@@ -79,9 +79,9 @@ export async function MyPage() {
 
   return (
     <div className="min-h-screen bg-bg text-fg">
-      <Header />
+      <Header variant="home" />
 
-      <div className="mx-auto max-w-[1000px] px-8 pb-[120px] pt-11">
+      <div className="mx-auto max-w-[1120px] px-8 pb-[120px] pt-11">
         {/* 프로필 */}
         <div className="mb-[34px] flex items-center gap-[18px]">
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-elevated elevate-2 text-[22px] font-bold text-fg-muted">
@@ -165,7 +165,7 @@ export async function MyPage() {
             </div>
           </div>
 
-          <div className="w-[260px] flex-shrink-0">
+          <div className="w-[320px] flex-shrink-0">
             <div className="mb-[14px] text-base font-bold">즐겨찾는 문서</div>
             <div className="rounded-xl bg-surface p-1.5 elevate-1">
               {myFavorites === null ? (
