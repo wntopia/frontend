@@ -1,4 +1,8 @@
-import { WikiContent, type WikiBlock } from "@/entities/document";
+import {
+  WikiContent,
+  type WikiBlock,
+  type WikiLinkTargets,
+} from "@/entities/document";
 import type { ArticleResDto } from "@/shared/api";
 import { formatDateTime } from "@/shared/lib";
 
@@ -6,6 +10,8 @@ type DocumentArticleProps = {
   article: ArticleResDto;
   /** `parseWikiText(article.content)`의 결과. 목차와 같은 파싱 결과를 쓰도록 위에서 받는다 */
   blocks: WikiBlock[];
+  /** 본문 링크 대상마다 확인한 문서 id */
+  linkTargets: WikiLinkTargets;
   /** 생성 뒤로 수정된 횟수 */
   editCount: number;
 };
@@ -14,6 +20,7 @@ type DocumentArticleProps = {
 export function DocumentArticle({
   article,
   blocks,
+  linkTargets,
   editCount,
 }: DocumentArticleProps) {
   // 수정된 적 없는 문서는 updatedAt이 비어 있을 수 있어 생성 시각으로 대신한다.
@@ -63,7 +70,7 @@ export function DocumentArticle({
       )}
 
       <div className="mt-[46px]">
-        <WikiContent blocks={blocks} />
+        <WikiContent blocks={blocks} linkTargets={linkTargets} />
       </div>
     </article>
   );

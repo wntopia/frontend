@@ -3,6 +3,7 @@ import {
   API_BASE_URL,
   API_PREFIX,
   OAUTH_REDIRECT_PATH,
+  WS_PREFIX,
 } from "./src/shared/api/base-url";
 import { API_PATHS } from "./src/shared/api/endpoints";
 
@@ -17,6 +18,13 @@ const nextConfig: NextConfig = {
       {
         source: `${API_PREFIX}/:path*`,
         destination: `${API_BASE_URL}${API_PREFIX}/:path*`,
+      },
+      {
+        // 실시간 공동편집 WebSocket. Next 서버는 바깥 주소로 가는 rewrites에 온 업그레이드 요청을 그대로 프록시한다
+        // (문서화되지 않은 동작이라 Next를 올릴 때 다시 확인한다). 같은 오리진이라야 핸드셰이크에 세션 쿠키가 실린다.
+        // 백엔드는 Origin 헤더를 검사하므로 프론트 오리진이 백엔드의 허용 목록(CORS 설정)에 있어야 한다.
+        source: `${WS_PREFIX}/:path*`,
+        destination: `${API_BASE_URL}${WS_PREFIX}/:path*`,
       },
       {
         // DataGSM은 로그인 후 브라우저를 `<프론트 오리진>/callback`으로 돌려보낸다.

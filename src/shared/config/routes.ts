@@ -5,6 +5,8 @@ export const SEARCH_PAGE_PARAM = "page";
 
 /** 새 문서 화면에 미리 채울 제목을 실어 보내는 쿼리 이름 */
 export const NEW_DOCUMENT_TITLE_PARAM = "title";
+/** '문서 없음' 화면에 그 문서의 제목을 실어 보내는 쿼리 이름 */
+export const MISSING_DOCUMENT_TITLE_PARAM = "title";
 
 /** 편집 역사 화면의 페이지 번호(1부터)를 실어 보내는 쿼리 이름 */
 export const HISTORY_PAGE_PARAM = "page";
@@ -12,7 +14,9 @@ export const HISTORY_PAGE_PARAM = "page";
 /**
  * 앱 전역 라우트 경로. 주소에 값이 들어가는 화면은 경로를 만들어 주는 함수로 둔다.
  *
- * 문서는 제목이 아니라 숫자 id로 가리킨다 — 백엔드가 `articleId`로만 조회하기 때문이다.
+ * 문서는 제목이 아니라 숫자 id로 가리킨다. 문서를 다루는 백엔드 API(편집·편집 역사·즐겨찾기)가 모두 id로 받고,
+ * 제목은 정규화 규칙(공백·유니코드·대소문자) 때문에 한 문서에 여러 표기가 생겨 주소로 쓰기에 알맞지 않다.
+ * 제목만 아는 곳(위키 링크)은 `missingDocument(title)`을 거쳐 문서를 찾는다.
  */
 export const ROUTES = {
   home: "/",
@@ -38,8 +42,12 @@ export const ROUTES = {
     const base = `/search?${SEARCH_QUERY_PARAM}=${encodeURIComponent(query)}`;
     return page > 1 ? `${base}&${SEARCH_PAGE_PARAM}=${page}` : base;
   },
-  /** 아직 작성되지 않은 문서로 이동했을 때 보이는 화면 (404 핸들러가 아니다) */
-  missingDocument: "/missing-document",
+  /**
+   * 아직 작성되지 않은 문서의 제목으로 이동했을 때 보이는 화면 (404 핸들러가 아니다).
+   * 그 제목의 문서가 있으면 화면이 문서로 넘겨 주므로, 문서가 있는지 모르는 제목도 여기로 보낸다.
+   */
+  missingDocument: (title: string) =>
+    `/missing-document?${MISSING_DOCUMENT_TITLE_PARAM}=${encodeURIComponent(title)}`,
   signin: "/signin",
   /**
    * 로그인 성공 후 백엔드가 돌려보내는 착지 지점.

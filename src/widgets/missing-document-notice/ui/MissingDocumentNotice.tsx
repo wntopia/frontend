@@ -17,12 +17,15 @@ export function MissingDocumentNotice({ title }: MissingDocumentNoticeProps) {
       <div className="mb-2.5 font-mono text-xs uppercase tracking-[.1em] text-fg-subtle">
         문서 없음
       </div>
-      <h1 className="mb-[14px] text-[28px] font-extrabold">
+      {/* 제목은 주소에서 오므로 띄어쓰기 없이 길 수 있다. 화면 밖으로 넘치지 않게 한다 */}
+      <h1 className="mb-[14px] text-[28px] font-extrabold [overflow-wrap:anywhere]">
         {`'${title}' 문서가 아직 없습니다`}
       </h1>
       <p className="mx-auto mb-[30px] max-w-[480px] text-[15px] leading-[1.8] text-fg-soft">
-        이 문서는 다른 문서에서 링크되었지만 아직 작성되지 않았습니다. 알고 있는
-        내용이 있다면 지금 첫 문단을 작성해보세요.
+        {/* 시안은 '다른 문서에서 링크되었지만'으로 시작하지만, 검색이나 주소로 들어와 링크한 문서가 없을 때도
+            보이는 화면이라 어느 경우에나 맞는 문장으로 바꿨다. */}
+        아직 아무도 작성하지 않은 문서입니다. 알고 있는 내용이 있다면 지금 첫
+        문단을 작성해보세요.
       </p>
 
       <div className="flex justify-center gap-2.5">
