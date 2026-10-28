@@ -144,6 +144,17 @@ export type ArticleRevisionResDto = {
   charDelta: number | null;
 };
 
+/**
+ * 지금 문서의 공동편집 방에 들어와 있는 사람들. 방이 없거나 비었으면 `editing: false`의 빈 값이다.
+ * 같은 계정의 여러 탭은 한 명으로 센다.
+ */
+export type ArticleEditorsResDto = {
+  editing: boolean;
+  editorCount: number;
+  /** 학번을 뺀 이름. "○○ 외 N명"은 첫 이름과 `editorCount - 1`로 만든다 */
+  editorNames: string[];
+};
+
 export type FavoriteStatusResDto = {
   /** 내 즐겨찾기에 들어 있는지. 비로그인이면 항상 `false`다. */
   favorited: boolean;
@@ -196,3 +207,70 @@ export type DataGsmClubSummaryResDto = {
   foundedYear: number | null;
   abolishedYear: number | null;
 };
+
+/**
+ * 문서 생성 요청(`POST /articles`). `multipart/form-data`로 보내며 키가 곧 폼 필드 이름이다.
+ * 백엔드는 제목의 앞뒤 공백을 지우고 연속 공백을 한 칸으로 줄여 저장하고, 대소문자·전각/반각만 다른
+ * 제목도 같은 문서로 보아 409를 준다.
+ */
+export type CreateArticleReqDto = {
+  /** 공백만으로는 안 되고 255자까지. 만든 뒤에는 바꿀 수 없다. */
+  title: string;
+  /** 공백만으로는 안 된다. */
+  content: string;
+  /** 대표 이미지. 10MB까지 */
+  image?: File;
+  /** 분류. 분류를 고르는 화면이 아직 없어 보내지 않는다. */
+  categoryId?: number;
+};
+
+/**
+ * 대표 이미지 교체 요청(`PATCH /articles/{id}/image`). `multipart/form-data`로 보낸다.
+ * 본문은 받지 않는다 — 본문 저장은 공동편집 WebSocket의 `save` 메시지로 한다.
+ */
+export type UpdateArticleImageReqDto = {
+  /** 비어 있으면 400. 10MB까지 */
+  image: File;
+};
+
+/**
+ * 실시간 공동편집 WebSocket(`/ws/articles/{id}/collaboration`)에서 오가는 유일한 메시지 모양.
+ * 백엔드 `CollaborationMessage`와 같은 플랫 구조이고, 모두 JSON 텍스트 프레임이다.
+ *
+ * 백엔드는 Yjs 바이트(`dataB64`)를 해석하지 않고 릴레이와 저장만 한다. 병합은 프론트의 Yjs가 맡는다.
+ * 백엔드는 이 DTO로 다시 직렬화해 릴레이하므로 여기 없는 필드는 상대에게 닿지 않는다.
+ */
+export type CollaborationMessage = {
+  type: CollaborationMessageType;
+  /** Yjs 바이트의 base64 — update · awareness · sync(보낼 때) · bootstrap(진행 중 상태가 있을 때) */
+  dataB64?: string | null;
+  /** save · sync의 본문 글자, bootstrap(진행 중 상태가 없을 때) · external-update의 지금 본문 */
+  content?: string | null;
+  /** bootstrap(진행 중 상태가 없을 때) · external-update의 대표 이미지 주소 */
+  imageUrl?: string | null;
+  /** saved — 새 리비전 번호. 본문이 그대로라 리비전을 만들지 않았으면 `null` */
+  revision?: number | null;
+  /** save의 편집 요약. 500자를 넘으면 서버가 자른다 */
+  summary?: string | null;
+  /** save의 가벼운 수정 여부. 빼면 `false` */
+  minorEdit?: boolean | null;
+  /** save의 저장 사유(`manual` 등). 관측용이라 동작에 영향이 없다 */
+  reason?: string | null;
+  /** error의 사유 */
+  message?: string | null;
+};
+
+/**
+ * - 서버 → 클라: `bootstrap`(접속 직후 1회) · `saved`(방 전체) · `external-update` · `error`
+ * - 클라 → 서버: `sync`(릴레이하지 않음) · `save`
+ * - 양방향: `update` · `awareness` — 서버가 보낸 사람을 뺀 방 전체에 릴레이한다
+ */
+export type CollaborationMessageType =
+  | "bootstrap"
+  | "update"
+  | "awareness"
+  | "sync"
+  | "save"
+  | "saved"
+  | "external-update"
+  | "error";

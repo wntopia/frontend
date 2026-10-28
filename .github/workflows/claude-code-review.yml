@@ -19,8 +19,11 @@ env:
 jobs:
   review:
     # 댓글은 PR에 달린 `/claude-review`만 받습니다. 댓글 작성자의 쓰기 권한은 action이 확인합니다.
+    # 봇이 연 PR(harness-sync 등)은 action이 봇 실행을 거부해 실패로 남으므로 자동 리뷰를 건너뜁니다.
+    # 리뷰가 필요하면 사람이 `/claude-review` 댓글을 달면 됩니다.
     if: >-
-      (github.event_name == 'pull_request' && !github.event.pull_request.draft) ||
+      (github.event_name == 'pull_request' && !github.event.pull_request.draft &&
+       github.event.sender.type != 'Bot') ||
       (github.event_name == 'issue_comment' && github.event.issue.pull_request &&
        startsWith(github.event.comment.body, '/claude-review'))
     # 같은 PR의 리뷰가 겹치면 앞의 리뷰가 끝난 뒤에 돌립니다. 워크플로가 아니라 작업 단위로 걸어야

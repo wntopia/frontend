@@ -45,7 +45,7 @@ PR마다 CI(`.github/workflows/ci.yml`)가 `lint` → `typecheck` → `build`를
 app/       Next.js 라우트. 페이지 파일은 views의 컴포넌트를 re-export만 한다
 views/     한 화면 전체. 위젯을 배치하고 여백/레이아웃만 담당한다
 widgets/   화면의 한 덩어리 (최근 변경, 헤더, 리비전 타임라인 …)
-features/  사용자 동작 단위 (theme-switcher: 라이트/다크 전환, auth: 로그인·로그아웃·접근 제어, favorite-article: 문서 즐겨찾기)
+features/  사용자 동작 단위 (theme-switcher: 라이트/다크 전환, auth: 로그인·로그아웃·접근 제어, favorite-article: 문서 즐겨찾기, save-article: 문서 저장, collaboration: 실시간 공동편집)
 entities/  도메인 단위 UI와 타입 (document: RecentChangeItem …, session: 로그인한 사용자)
 shared/    어디서나 쓰는 것 (ROUTES, SidebarCard, WikiLink, Logo, api: 백엔드 호출, lib: 쿼리 값 읽기·날짜 포맷)
 ```
@@ -94,15 +94,17 @@ export default HomePage;
 
 화면마다 백엔드 연결 상태가 다르다. 연결되지 않은 화면은 경로만 동적이고 데이터는 목이다.
 
-- 문서: 백엔드의 문서와 최근 리비전을 그린다. 본문의 위키 링크는 아직 `#`이다.
+- 홈: 백엔드의 최근 변경 · 인기 문서 · 위키 현황 · 분류를 그린다. 위젯마다 따로 불러 하나가 실패해도 나머지는 보인다.
+- 문서: 백엔드의 문서와 최근 리비전, 지금 편집 중인 사람을 그린다. 본문의 위키 링크는 아직 `#`이다.
 - 검색: 백엔드 검색 결과를 `?page=`로 20개씩 나눠 그린다. 아직 쓰지 않은 문서는 결과에 나오지 않는다.
-- 편집: 어떤 id로 들어가도 같은 시안 문서를 그린다.
+- 편집 · 새 문서: 백엔드에 저장한다. 편집은 실시간 공동편집(WebSocket)으로 고치고 저장한 뒤 편집 화면에 남고,
+  새 문서는 `POST`로 만들고 문서 상세로 넘어간다.
 - 편집역사: 어떤 id로 들어가도 같은 시안 문서를 그린다.
 
 목 데이터에서 시안 문서를 가리킬 때는 `ROUTES.document(SAMPLE_ARTICLE_ID)`를 쓰고, 대상이 정해지지 않은
 링크(다른 시안 문서, 위키 링크, 마이페이지의 기여 목록)는 `#`으로 남아 있다.
 
-`/api/v1/**`와 `/callback`은 Next 라우트가 아니다. `next.config.ts`의 rewrites가 백엔드로 넘기는 프록시 경로다. `/callback`은 DataGSM이 로그인 후 돌려보내는 주소(`OAUTH_REDIRECT_PATH`)로, 백엔드 callback으로 이어진다.
+`/api/v1/**` · `/ws/**` · `/callback`은 Next 라우트가 아니다. `next.config.ts`의 rewrites가 백엔드로 넘기는 프록시 경로다. `/callback`은 DataGSM이 로그인 후 돌려보내는 주소(`OAUTH_REDIRECT_PATH`)로, 백엔드 callback으로 이어진다.
 
 ## 백엔드 연동과 인증
 
@@ -128,6 +130,7 @@ export default HomePage;
 - 로그인 시작은 `fetch`가 아니라 페이지 이동이다 (`SigninButton`). 복귀 주소는 외부 주소로 새지 않도록
   `sanitizeReturnTo`를 거친 것만 쓴다.
 - `student`가 없는 계정(교사 등)도 로그인한 사용자다. 다만 백엔드의 문서 수정 API는 이런 계정에 401을 준다.
+  문서 생성은 이런 계정도, 비로그인도 받지만 화면은 로그인을 요구한다 — 만든 사람이 기여 통계에 남게 하려고.
 
 ## 로딩 · 에러 · 404
 
@@ -148,6 +151,74 @@ export default HomePage;
 - 변경 요청이 401을 받아도 로그인 화면으로 자동으로 보내지 않는다. `Alert`에 `SigninButton`을 함께 둔다.
   자동 이동은 쓰던 내용을 날리고, `student`가 없는 계정은 다시 로그인해도 401이라 같은 자리를 맴돈다.
 
+## 편집 · 저장
+
+- 편집 화면 본체(`views/edit`의 `EditWorkspace`)가 입력 값을 모두 들고, 저장 동작은 `features/save-article`이 맡는다
+  (요청 함수, 검증, 실패 안내 문구, 이탈 경고, 대표 이미지 선택).
+- **새 문서는 `POST`(`multipart/form-data`), 기존 문서의 본문은 공동편집의 `save`, 대표 이미지는 `PATCH …/image`다.**
+  백엔드의 `PUT`은 편집 화면 밖의 비대화형 클라이언트용이라 쓰지 않는다. 멀티파트 요청은 `FormData`를 `apiFetch`의 `body`로 그대로
+  넘긴다 — Content-Type은 fetch가 boundary와 함께 붙이므로 정하지 않는다. 요청 DTO도 `shared/api/types.ts`에 둔다.
+- 기존 문서의 제목은 백엔드가 바꾸지 않아 읽기 전용이다. 편집 요약 · 가벼운 수정은 기존 문서의 저장(`save`)에만 있어 새 문서 화면에서는 숨긴다.
+- `student`가 없는 계정이 편집 화면에 들어오면 고칠 수 없다는 안내를 처음부터 보인다(`findAccountProblem`).
+  연결은 막지 않고 시도해 거절은 백엔드에 맡긴다 — 백엔드는 이런 계정을 공동편집 방에 들이지 않는다(1011로 닫힘).
+- 검증은 백엔드 제약을 그대로 옮긴다 — 제목 1~255자(자바 `String.length`와 같은 UTF-16 단위), 본문 필수,
+  편집 요약 500자, 대표 이미지 10MB. 이미지는 고르는 순간 거른다. 큰 파일은 서버가 끝까지 받은 뒤에야 거절한다.
+- 편집 화면은 기존 본문을 `getArticle`로 읽어 조회수를 올린다. 조회수를 올리지 않는 최신 본문 조회가 백엔드에 없다.
+  같은 계정의 30분 안 재조회는 세지 않아, 문서를 보다가 넘어오면 더 오르지 않는다. 같은 이유로 편집 링크는
+  미리 가져오지 않는다(`prefetch={false}`) — 탭 제목을 위한 문서 조회가 문서를 열 때마다 일어나기 때문이다.
+- **새 문서는 저장에 성공하면 `router.replace`로 문서 상세로 보낸다.** 편집 화면을 방문 기록에 남기면 뒤로 가기가 Next의
+  뒤로/앞으로 캐시에서 쓰던 내용이 든 화면을 꺼내, 그대로 다시 저장하게 된다. 기존 문서는 저장해도 편집 화면에 남는다.
+- 잃을 내용이 있으면 `useLeaveGuard`로 떠나기 전에 묻는다. 기존 문서는 끊긴 동안 쓴 내용 · 고른 이미지 · 편집 요약만
+  해당한다 — 연결된 동안의 편집은 바로 서버에 가고, 방이 비면 백엔드가 자동 저장한다. 새로고침 · 탭 닫기 · 로그인 버튼은 `beforeunload`가,
+  앱 안 링크는 `<Link onNavigate>`가 받는다. 편집 화면에 링크를 새로 두면 `onNavigate`에 걸어야 한다.
+  브라우저 뒤로 가기는 Next가 취소할 방법을 주지 않아 묻지 못한다.
+
+## 실시간 공동편집
+
+기존 문서의 편집 화면은 `features/collaboration`으로 백엔드의 공동편집 방(`/ws/articles/{id}/collaboration`)에 붙는다.
+메시지 규약은 백엔드 `docs/specs/realtime-collaboration.md`와 `CollaborationMessage`(`shared/api/types.ts`)를 본다.
+
+- **백엔드는 Yjs 바이트를 해석하지 않는다.** 릴레이(`update` · `awareness`)와 저장(`sync` 스냅샷, `save`)만 한다.
+  병합과 놓친 변경 채우기는 `CollaborationProvider`(Yjs 문서 + WebSocket)가 한다. React와는 `useCollaboration`으로 잇는다.
+- **WebSocket도 프록시를 탄다.** `toWebSocketUrl(API_PATHS.articleCollaboration(id))`로 같은 오리진에 열어야 세션 쿠키가
+  실린다. Next는 바깥 주소로 가는 rewrites의 업그레이드 요청을 그대로 넘긴다(문서화되지 않은 동작 — Next를 올리면 확인).
+  백엔드는 Origin을 검사하므로 프론트 오리진이 백엔드 `spring.security.cors.allowed-origins`에 있어야 한다(없으면 403).
+- **본문 textarea는 `Y.Text`에 직접 묶는다(`useCollaborativeText`).** 에디터를 들이지 않았다. 입력은 차이를 삭제·삽입으로,
+  원격 변경은 커서를 옮겨 다시 놓는다. 한글 조합 중에는 원격 변경을 문서에 넣는 것 자체를 미룬다(`holdRemoteUpdates`).
+  본문은 줄바꿈을 LF로 맞춰 넣는다(`normalizeLineBreaks`) — textarea가 CRLF를 LF로 돌려주기 때문이다.
+- **저장된 본문으로 시작할 때는 결정적 update로 채운다(`createSeedUpdate`).** 진행 중 상태가 없으면 백엔드는 접속한
+  모두에게 `content`를 주므로, 각자 평범하게 넣으면 본문이 두 번 들어간다. 본문 해시를 clientID로 쓰면 누가 만들어도 같은 update다.
+  다시 연결했는데 서버 상태의 뿌리가 다르면(방이 비어 상태가 지워진 뒤 새로 시작됨) 합치지 않고 서버 상태로 갈아탄다.
+- 놓친 변경은 접속마다 바꾸는 awareness의 `connection` 필드로 채운다. 이를 본 사람들이 자기 문서 전체를 `update`로 보낸다.
+  awareness 로컬 상태의 다른 필드(이름 · 커서 등, #16)는 자유지만 `connection`은 provider 몫이다.
+- **`external-update`의 본문은 자동으로 넣지 않는다.** 방 안의 저장 · 이미지 교체 뒤에도 오고(그 본문은 지금보다 오래됐을 수
+  있다), 모두가 각자 넣으면 사람 수만큼 들어간다. 2초 안에 `saved`가 따라오지 않은 정말 밖의 변경만 안내하고 사람이 고른다.
+  대표 이미지는 마지막 값을 바로 쓴다.
+- `saved`는 방 전체에 가고 누구의 것인지 담지 않아, 내가 `save`를 보낸 뒤 처음 오는 것을 내 결과로 본다.
+- 연결이 안 되면 저장 버튼을 막는다(PUT으로 대신 저장하지 않는다). 끊긴 동안의 편집은 브라우저에 쌓였다가 다시 연결되면 합쳐진다.
+  재연결은 지수 백오프(1초~30초)이고, 핸드셰이크가 실패하면 세션을 조회해 로그인이 풀렸으면 멈추고 다시 로그인을 안내한다.
+- 한 프레임은 512KB(백엔드 버퍼)를 넘지 않게 보낸다. 넘는 스냅샷은 보내지 않고 안내한다.
+
+### 접속자 표시 (Presence)
+
+- **awareness 로컬 상태는 `user`(`key` · `name` · `color`)와 `cursor`(`anchor` · `head`)를 쓴다.** `user`는 `usePresence`가,
+  `cursor`는 textarea와 함께 붙는 `PresenceCursors`(`useLocalCursor`)가 싣는다. awareness는 연결마다 새로 생기므로
+  스냅샷의 인스턴스가 바뀌면 다시 싣는다. 받은 상태는 무엇이든 올 수 있어 `readPresencePeers`로 모양을 확인하고 읽는다.
+- **커서는 textarea 위치가 아니라 Yjs 상대 위치(JSON)로 보낸다.** 받는 쪽이 자기 문서로 바꿔야 동시 편집 중에도 같은 글자에
+  붙는다. 같은 값은 다시 보내지 않고(중간에서 이어 치면 보내지 않는다) 한 프레임에 한 번만 보낸다. 한글 조합 중에는 보내지 않고,
+  포커스를 잃거나 미리보기로 가면 지운다.
+- **다른 사람의 커서는 textarea 위에 겹친 투명한 거울로 그린다.** 같은 글꼴 · 여백 · 줄바꿈으로 본문을 흘려 브라우저가 배치하게
+  하고 좌표를 직접 재지 않는다. 그래서 `DocumentEditor`의 textarea 클래스를 바꾸면 `PresenceCursors`의 `MIRROR_TEXT`도
+  함께 바꾼다. 거울에는 마지막 커서가 있는 줄까지만 넣는다.
+- **색은 `globals.css`의 `--presence-1` ~ `--presence-8`(두 모드 모두)에서 계정 id로 결정적으로 고른다.** awareness에는 색 값이 아니라
+  칸 번호를 실어 받는 사람의 모드에 맞는 색으로 그린다. 칸 번호로 고르는 값이라 `@theme`이 아니라 `:root`에 둔다.
+- **같은 계정의 여러 탭은 상단 바에서 한 명이고, 나(내 다른 탭 포함)는 상단 바에서 뺀다.** 커서는 탭마다 그리고 내 다른 탭은
+  '다른 탭'으로 표시한다. 계정 id와 이름(학번 제외)은 백엔드의 현재 편집자 API와 같은 기준이다.
+- 떠날 때 지운 상태를 보낸다 — 화면을 옮기면 `stop`이, 탭을 닫으면 `pagehide`가 보낸다. 백엔드는 끊긴 접속을 알려 주지 않아,
+  보내지 못하면(네트워크 끊김) awareness 타임아웃(30초)이 지나야 사라진다.
+- **문서 화면의 '○○ 편집 중'은 `GET …/editors`를 브라우저에서 20초마다 읽는다(`EditingBadge`).** 탭이 보일 때만 읽고 다시 보이면
+  바로 읽는다. 편집자가 없거나 읽지 못하면 숨긴다. 공동편집 방에 들어가면 편집자로 세어지므로 읽기 화면은 방에 붙지 않는다.
+
 ## 스타일 규칙
 
 색은 `globals.css`의 토큰을 Tailwind 유틸로 쓴다 — `bg-bg`, `bg-surface`, `bg-surface-2`,
@@ -167,8 +238,8 @@ export default HomePage;
 
 ## 컴포넌트 관례
 
-- **기본은 서버 컴포넌트.** `"use client"`는 실제 상태가 있는 파일에만 있다 (편집 화면 본체,
-  문서 메뉴, 문서 목차의 링크 목록, 리비전 카드, 테마 전환, 계정 버튼). 새로 붙일 때는 트리 최하단 컴포넌트에만 붙인다.
+- **기본은 서버 컴포넌트.** `"use client"`는 실제 상태가 있는 파일에만 있다 (편집 화면 본체, 공동편집 안내 · 커서,
+  문서 메뉴, 문서의 '편집 중' 표시, 문서 목차의 링크 목록, 리비전 카드, 테마 전환, 계정 버튼). 새로 붙일 때는 트리 최하단 컴포넌트에만 붙인다.
 - **목 데이터는 슬라이스의 `model/mock.ts`에 격리한다.** 백엔드가 붙을 때 이 파일만 갈아끼우면
   되도록, UI 컴포넌트에 데이터 리터럴을 박지 않는다.
 - **강조 위치는 데이터가 정한다.** 변경 요약(`ChangeSummarySegment`)과 검색 스니펫

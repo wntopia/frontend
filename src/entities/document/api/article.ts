@@ -1,6 +1,7 @@
 import {
   API_PATHS,
   apiFetch,
+  type ArticleEditorsResDto,
   type ArticleResDto,
   type ArticleRevisionSummaryResDto,
   type PageResDto,
@@ -51,4 +52,14 @@ export function fetchPopularArticles(
   fetcher: typeof apiFetch = apiFetch,
 ): Promise<PopularArticleResDto[]> {
   return fetcher<PopularArticleResDto[]>(API_PATHS.popularArticles(size));
+}
+
+/** 지금 이 문서를 공동편집 중인 사람들. 문서 조회와 달리 조회수를 올리지 않아 여러 번 불러도 된다. */
+export function fetchArticleEditors(
+  articleId: number,
+  signal?: AbortSignal,
+): Promise<ArticleEditorsResDto> {
+  return apiFetch<ArticleEditorsResDto>(API_PATHS.articleEditors(articleId), {
+    signal,
+  });
 }
