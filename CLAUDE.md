@@ -47,7 +47,7 @@ views/     한 화면 전체. 위젯을 배치하고 여백/레이아웃만 담�
 widgets/   화면의 한 덩어리 (최근 변경, 헤더, 리비전 타임라인 …)
 features/  사용자 동작 단위 (theme-switcher: 라이트/다크 전환, auth: 로그인·로그아웃·접근 제어, favorite-article: 문서 즐겨찾기, save-article: 문서 저장, collaboration: 실시간 공동편집)
 entities/  도메인 단위 UI와 타입 (document: RecentChangeItem …, session: 로그인한 사용자)
-shared/    어디서나 쓰는 것 (ROUTES, SidebarCard, WikiLink, Logo, api: 백엔드 호출, lib: 쿼리 값 읽기·날짜 포맷)
+shared/    어디서나 쓰는 것 (ROUTES, SidebarCard, WikiLink, Logo, api: 백엔드 호출, lib: 쿼리 값 읽기·날짜 포맷, icons: SVG 아이콘)
 ```
 
 슬라이스 구조는 `<슬라이스>/{ui,model,api}/` + 배럴 `index.ts`. `api`는 백엔드를 호출하는 함수 자리다.
@@ -262,6 +262,8 @@ id로 받고, 제목은 정규화 규칙(공백·유니코드·대소문자) 때
 
 ## 컴포넌트 관례
 
+- **SVG는 `shared/icons`에 아이콘마다 파일 하나로 두고 `@/shared/icons`로 가져다 쓴다.** 컴포넌트 안에 `<svg>`를 직접
+  그리지 않는다. 색은 `currentColor`를 따르므로 감싼 요소의 글자색으로 칠하고, 크기와 선 굵기는 `size` · `strokeWidth`로 준다.
 - **기본은 서버 컴포넌트.** `"use client"`는 실제 상태가 있는 파일에만 있다 (편집 화면 본체, 공동편집 안내 · 커서,
   문서 메뉴, 문서의 '편집 중' 표시, 문서 목차의 링크 목록, 리비전 카드, 테마 전환, 계정 버튼). 새로 붙일 때는 트리 최하단 컴포넌트에만 붙인다.
 - **목 데이터는 슬라이스의 `model/mock.ts`에 격리한다.** 백엔드가 붙을 때 이 파일만 갈아끼우면
