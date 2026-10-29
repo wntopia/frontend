@@ -169,6 +169,29 @@ export type FavoriteStatusResDto = {
   favorited: boolean;
 };
 
+export type ContributionStatsResDto = {
+  /** 첫 로그인 시각 */
+  joinedAt: IsoDateTime;
+  /** 기존 문서를 고친 횟수. 문서 생성은 들어가지 않는다 */
+  totalEdits: number;
+  createdArticles: number;
+  /** 한국 시간 오늘 0시부터 고친 횟수 */
+  todayEdits: number;
+};
+
+export type ContributionResDto = {
+  articleId: number;
+  title: string;
+  type: "CREATE" | "EDIT";
+  contributedAt: IsoDateTime;
+};
+
+export type FavoriteResDto = {
+  articleId: number;
+  title: string;
+  favoritedAt: IsoDateTime;
+};
+
 export type AuthStatusResDto = {
   authenticated: boolean;
   user: DataGsmUserInfoResDto | null;
